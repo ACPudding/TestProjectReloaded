@@ -1110,7 +1110,7 @@ namespace FGOSBIAReloaded
                         List<object> unpackeditem = (List<object>)miniMessagePacker.Unpack(item.Value);
                         string json = JsonConvert.SerializeObject(unpackeditem, Formatting.Indented);
                         File.WriteAllText(gamedata.FullName + "decrypted_masterdata/" + item.Key, json);
-                        updatestatus.Dispatcher.Invoke(new Action(() => {updatestatus.Content = "Writing file to: " + gamedata.FullName + "decrypted_masterdata/" + item.Key; }));
+                        updatestatus.Dispatcher.Invoke(new Action(() => {updatestatus.Content = "Writing file to: " + gamedata.FullName + "decrypted_masterdata\\" + item.Key; }));
                         progressbar.Dispatcher.Invoke(new Action(() =>
                         {
                             progressbar.Value = progressbar.Value + 38;
@@ -1262,7 +1262,7 @@ namespace FGOSBIAReloaded
                         List<object> unpackeditem = (List<object>)miniMessagePacker.Unpack(item.Value);
                         string json = JsonConvert.SerializeObject(unpackeditem, Formatting.Indented);
                         File.WriteAllText(gamedata.FullName + "decrypted_masterdata/" + item.Key, json);
-                        updatestatus.Dispatcher.Invoke(new Action(() => {updatestatus.Content = "Writing file to: " + gamedata.FullName + "decrypted_masterdata/" + item.Key; }));
+                        updatestatus.Dispatcher.Invoke(new Action(() => {updatestatus.Content = "Writing file to: " + gamedata.FullName + "decrypted_masterdata\\" + item.Key; }));
                         progressbar.Dispatcher.Invoke(new Action(() =>
                         {
                             progressbar.Value = progressbar.Value + 38;
@@ -1417,7 +1417,7 @@ namespace FGOSBIAReloaded
                         List<object> unpackeditem = (List<object>)miniMessagePacker.Unpack(item.Value);
                         string json = JsonConvert.SerializeObject(unpackeditem, Formatting.Indented);
                         File.WriteAllText(gamedata.FullName + "decrypted_masterdata/" + item.Key, json);
-                        updatestatus.Dispatcher.Invoke(new Action(() => {updatestatus.Content = "Writing file to: " + gamedata.FullName + "decrypted_masterdata/" + item.Key; }));
+                        updatestatus.Dispatcher.Invoke(new Action(() => {updatestatus.Content = "Writing file to: " + gamedata.FullName + "decrypted_masterdata\\" + item.Key; }));
                         progressbar.Dispatcher.Invoke(new Action(() =>
                         {
                             progressbar.Value = progressbar.Value + 38;
@@ -1567,7 +1567,7 @@ namespace FGOSBIAReloaded
                         List<object> unpackeditem = (List<object>)miniMessagePacker.Unpack(item.Value);
                         string json = JsonConvert.SerializeObject(unpackeditem, Formatting.Indented);
                         File.WriteAllText(gamedata.FullName + "decrypted_masterdata/" + item.Key, json);
-                        updatestatus.Dispatcher.Invoke(new Action(() => {updatestatus.Content = "Writing file to: " + gamedata.FullName + "decrypted_masterdata/" + item.Key; }));
+                        updatestatus.Dispatcher.Invoke(new Action(() => {updatestatus.Content = "Writing file to: " + gamedata.FullName + "decrypted_masterdata\\" + item.Key; }));
                         progressbar.Dispatcher.Invoke(new Action(() =>
                         {
                             progressbar.Value = progressbar.Value + 38;
@@ -1649,6 +1649,22 @@ namespace FGOSBIAReloaded
         private void Button_Click_4(object sender, RoutedEventArgs e)
         {
             MessageBox.Show("具体数值显示的为文件中的原始数据，水平有限，无法进行有效解析。\r\n/ 之间的为一个Buff的幅度\r\n1、如果为[a,b]则a为成功率(除以10就是百分比，如1000就是100%),b需要看技能描述，如果为出星或者生命值则b的大小即为幅度，若为NP，则将该数值除以100即为NP值。若b为1，则该组段可以忽略不看。\r\n2、如果为[a,b,c]或者[a,b,c,d]则在一般情况下a表示成功率(同1),b表示持续回合数即Turn,c表示次数(-1即为没有次数限制),d在大多数情况下除以10即为Buff幅度(%)，有时会有例外(可能也是没有意义).\r\n3、如果为[a,b,c,d,e]则a,b,c同2,d和e需要通过源文件进行详细手动分析。", "温馨提示:", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        private void Hyperlink_Click_1(object sender, RoutedEventArgs e)
+        {
+            // open URL
+
+            Hyperlink source = sender as Hyperlink;
+
+            if (source != null)
+
+            {
+
+                System.Diagnostics.Process.Start(source.NavigateUri.ToString());
+
+            }
+
         }
     }
 }
