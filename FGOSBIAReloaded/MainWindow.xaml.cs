@@ -919,6 +919,8 @@ namespace FGOSBIAReloaded
                     (ui2 as TextBox).Text = "";
                 }
             }
+            atkbalance1.Content = "( x 1.0 -)";
+            atkbalance2.Content = "( x 1.0 -)";
             JBOutput.IsEnabled = false;
         }
         private void SkillDetailCheck(string sklid)
