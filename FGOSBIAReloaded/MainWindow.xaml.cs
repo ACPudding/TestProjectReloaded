@@ -86,6 +86,8 @@ namespace FGOSBIAReloaded
                     MessageBox.Show("游戏数据损坏,请先点击下方的按钮下载游戏数据.", "温馨提示:", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
+                ClearTexts();
+                textbox1.Text = svtID;
                 string mstSvt = File.ReadAllText(gamedata.FullName + "decrypted_masterdata/" + "mstSvt");
                 string mstSvtLimit = File.ReadAllText(gamedata.FullName + "decrypted_masterdata/" + "mstSvtLimit");
                 string mstCv = File.ReadAllText(gamedata.FullName + "decrypted_masterdata/" + "mstCv");
@@ -116,7 +118,7 @@ namespace FGOSBIAReloaded
                 string mstTreasureDeviceLv = File.ReadAllText(gamedata.FullName + "decrypted_masterdata/" + "mstTreasureDeviceLv");
                 JArray mstTreasureDeviceLvArray = (JArray)JsonConvert.DeserializeObject(mstTreasureDeviceLv);
                 string[] PPK = new string[100];
-                PPK[11] = "A"; PPK[12] = "A+"; PPK[13] = "A++"; PPK[14] = "A-"; PPK[21] = "B"; PPK[22] = "B+"; PPK[23] = "B++"; PPK[24] = "B-"; PPK[31] = "C"; PPK[32] = "C+"; PPK[33] = "C++"; PPK[34] = "C-"; PPK[41] = "D"; PPK[42] = "D+"; PPK[43] = "D++"; PPK[44] = "D-"; PPK[51] = "E"; PPK[52] = "E+"; PPK[53] = "E++"; PPK[54] = "E-"; PPK[61] = "EX"; PPK[98] = "-"; PPK[0] = "-";
+                PPK[11] = "A"; PPK[12] = "A+"; PPK[13] = "A++"; PPK[14] = "A-"; PPK[15] = "A+++"; PPK[21] = "B"; PPK[22] = "B+"; PPK[23] = "B++"; PPK[24] = "B-"; PPK[25] = "B+++"; PPK[31] = "C"; PPK[32] = "C+"; PPK[33] = "C++"; PPK[34] = "C-"; PPK[35] = "C+++"; PPK[41] = "D"; PPK[42] = "D+"; PPK[43] = "D++"; PPK[44] = "D-"; PPK[45] = "D+++"; PPK[51] = "E"; PPK[52] = "E+"; PPK[53] = "E++"; PPK[54] = "E-"; PPK[55] = "E+++"; PPK[61] = "EX"; PPK[98] = "-"; PPK[0] = "-"; PPK[99] = "?";
                 var svtName = "";
                 var svtNameDisplay = "unknown";
                 string[] ClassName = new string[1500];
@@ -488,8 +490,8 @@ namespace FGOSBIAReloaded
                         magicData = int.Parse(svtmagic);
                         luckData = int.Parse(svtluck);
                         TreasureData = int.Parse(svttreasureDevice);
-                        sixwei.Content = "筋力: " + PPK[powerData] + "    耐久: " + PPK[defenseData] + "    敏捷: " + PPK[agilityData] +
-                        "\n\n魔力: " + PPK[magicData] + "    幸运: " + PPK[luckData] + "    宝具: " + PPK[TreasureData];
+                        sixwei.Content = "筋力: " + PPK[powerData] + "        耐久: " + PPK[defenseData] + "\n敏捷: " + PPK[agilityData] +
+                        "        魔力: " + PPK[magicData] + "\n幸运: " + PPK[luckData] + "        宝具: " + PPK[TreasureData];
                         break;
                     }
                 }
@@ -922,6 +924,7 @@ namespace FGOSBIAReloaded
             atkbalance1.Content = "( x 1.0 -)";
             atkbalance2.Content = "( x 1.0 -)";
             JBOutput.IsEnabled = false;
+            sixwei.Content = "";
         }
         private void SkillDetailCheck(string sklid)
         {
