@@ -50,9 +50,10 @@ namespace FGOSBIAReloaded
                 string svtID = "";
                 svtID = Convert.ToString(textbox1.Text);
                 JB.svtid = svtID;
+                JB.JB1 = ""; JB.JB2 = ""; JB.JB3 = ""; JB.JB4 = ""; JB.JB5 = ""; JB.JB6 = ""; JB.JB7 = "";
                 if (!System.IO.Directory.Exists(gamedata.FullName))
                 {
-                    MessageBox.Show("没有游戏数据,请先点击下方的按钮下载游戏数据.", "温馨提示:", MessageBoxButton.OK, MessageBoxImage.Information);
+                    MessageBox.Show("没有游戏数据,请先下载游戏数据(位于\"关于\"选项卡).", "温馨提示:", MessageBoxButton.OK, MessageBoxImage.Information);
                     Button1.IsEnabled = true;
                     return;
                 }
@@ -70,7 +71,7 @@ namespace FGOSBIAReloaded
                         !File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstSkillDetail") ||
                         !File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstSvtSkill"))
                     {
-                        MessageBox.Show("游戏数据损坏,请先点击下方的按钮下载游戏数据.", "温馨提示:", MessageBoxButton.OK, MessageBoxImage.Error);
+                        MessageBox.Show("游戏数据损坏,请重新下载游戏数据(位于\"关于\"选项卡).", "温馨提示:", MessageBoxButton.OK, MessageBoxImage.Error);
                         Button1.IsEnabled = true;
                         return;
                     }
@@ -78,12 +79,13 @@ namespace FGOSBIAReloaded
                 if (!Regex.IsMatch(svtID, "^\\d+$"))
                 {
                     MessageBox.Show("从者ID输入错误,请检查.", "温馨提示:", MessageBoxButton.OK, MessageBoxImage.Error);
+                    ClearTexts();
                     Button1.IsEnabled = true;
                     return;
                 }
                 if (!File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstSvtComment"))
                 {
-                    MessageBox.Show("游戏数据损坏,请先点击下方的按钮下载游戏数据.", "温馨提示:", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show("游戏数据损坏,请重新下载游戏数据(位于\"关于\"选项卡).", "温馨提示:", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
                 ClearTexts();
@@ -112,7 +114,12 @@ namespace FGOSBIAReloaded
                 JArray mstSkillDetailArray = (JArray)JsonConvert.DeserializeObject(mstSkillDetail);
                 if (!File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstTreasureDeviceLv"))
                 {
-                    MessageBox.Show("游戏数据损坏,请先点击下方的按钮下载游戏数据.", "温馨提示:", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show("游戏数据损坏,请重新下载游戏数据(位于\"关于\"选项卡).", "温馨提示:", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+                if (!File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstSkillLv"))
+                {
+                    MessageBox.Show("游戏数据损坏,请重新下载游戏数据(位于\"关于\"选项卡).", "温馨提示:", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
                 string mstTreasureDeviceLv = File.ReadAllText(gamedata.FullName + "decrypted_masterdata/" + "mstTreasureDeviceLv");
@@ -707,7 +714,6 @@ namespace FGOSBIAReloaded
                             skill3valuelv1.Text = SkillLvs.skilllv1sval;
                             skill3valuelv6.Text = SkillLvs.skilllv6sval;
                             skill3valuelv10.Text = SkillLvs.skilllv10sval;
-
                         }
                     }
                     if (((JObject)SCTMP)["svtId"].ToString() == svtID && ((JObject)SCTMP)["id"].ToString() == "2")
@@ -812,6 +818,15 @@ namespace FGOSBIAReloaded
                     }));
                 }
                 Button1.IsEnabled = true;
+                if (classData == 1001)
+                {
+                    MessageBox.Show("此ID为礼装ID,图鉴编号为礼装的图鉴编号.礼装描述在羁绊文本的文本1处,礼装效果在技能1栏中.", "温馨提示:", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                if (cards.Text == "[Q,Q,Q,Q,Q]" && classData != 1001)
+                {
+                    MessageBox.Show("此ID为小怪(或部分boss以及种火芙芙),配卡、技能、宝具信息解析并不准确，请知悉.", "温馨提示:", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                }
             }));
         }
 
@@ -934,11 +949,12 @@ namespace FGOSBIAReloaded
             DirectoryInfo gamedata = new DirectoryInfo(path + @"\Android\masterdata\");
             DirectoryInfo folder = new DirectoryInfo(path + @"\Android\");
             string svtID = Convert.ToString(textbox1.Text);
-            if (!File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstSkillLv"))
-            {
-                MessageBox.Show("游戏数据损坏,请先点击下方的按钮下载游戏数据.", "温馨提示:", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
+            SkillLvs.skilllv1sval = "";
+            SkillLvs.skilllv6sval = "";
+            SkillLvs.skilllv10sval = "";
+            SkillLvs.skilllv1chargetime = "";
+            SkillLvs.skilllv6chargetime = "";
+            SkillLvs.skilllv10chargetime = "";
             string mstSkillLv = File.ReadAllText(gamedata.FullName + "decrypted_masterdata/" + "mstSkillLv");
             JArray mstSkillLvArray = (JArray)JsonConvert.DeserializeObject(mstSkillLv);
             foreach (var SKLTMP in mstSkillLvArray) //查找某个字段与值
@@ -1648,7 +1664,7 @@ namespace FGOSBIAReloaded
 
         private void Button_Click_4(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("具体数值显示的为文件中的原始数据，水平有限，无法进行有效解析。\r\n/ 之间的为一个Buff的幅度\r\n1、如果为[a,b]则a为成功率(除以10就是百分比，如1000就是100%),b需要看技能描述，如果为出星或者生命值则b的大小即为幅度，若为NP，则将该数值除以100即为NP值。若b为1，则该组段可以忽略不看。\r\n2、如果为[a,b,c]或者[a,b,c,d]则在一般情况下a表示成功率(同1),b表示持续回合数即Turn,c表示次数(-1即为没有次数限制),d在大多数情况下除以10即为Buff幅度(%)，有时会有例外(可能也是没有意义).\r\n3、如果为[a,b,c,d,e]则a,b,c同2,d和e需要通过源文件进行详细手动分析。", "温馨提示:", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show("具体数值显示的为文件中的原始数据，水平有限，无法进行有效解析。\r\n【以下内容均为理论推测，仅适用于大部分结果。】\r\n/ 之间的为一个Buff的幅度\r\n1、如果为[a,b]则a为成功率(除以10就是百分比，如1000就是100%),b需要看技能描述，如果为出星或者生命值则b的大小即为幅度，若为NP，则将该数值除以100即为NP值。若b为1，则该组段可以忽略不看。\r\n2、如果为[a,b,c]或者[a,b,c,d]则在一般情况下a表示成功率(同1),b表示持续回合数即Turn,c表示次数(-1即为没有次数限制),d在大多数情况下除以10即为Buff幅度(%)，有时会有例外(可能也是没有意义).\r\n3、如果为[a,b,c,d,e]则a,b,c同2,d和e需要通过源文件进行详细手动分析。", "温馨提示:", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private void Hyperlink_Click_1(object sender, RoutedEventArgs e)
