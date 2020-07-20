@@ -69,7 +69,8 @@ namespace FGOSBIAReloaded
                         !File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstTreasureDeviceDetail") ||
                         !File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstSkill") ||
                         !File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstSkillDetail") ||
-                        !File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstSvtSkill"))
+                        !File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstSvtSkill") ||
+                        !File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstFunc"))
                     {
                         MessageBox.Show("游戏数据损坏,请重新下载游戏数据(位于\"关于\"选项卡).", "温馨提示:", MessageBoxButton.OK, MessageBoxImage.Error);
                         Button1.IsEnabled = true;
@@ -124,6 +125,8 @@ namespace FGOSBIAReloaded
                 }
                 string mstTreasureDeviceLv = File.ReadAllText(gamedata.FullName + "decrypted_masterdata/" + "mstTreasureDeviceLv");
                 JArray mstTreasureDeviceLvArray = (JArray)JsonConvert.DeserializeObject(mstTreasureDeviceLv);
+                string mstFunc = File.ReadAllText(gamedata.FullName + "decrypted_masterdata/" + "mstFunc");
+                JArray mstFuncArray = (JArray)JsonConvert.DeserializeObject(mstFunc);
                 string[] PPK = new string[100];
                 PPK[11] = "A"; PPK[12] = "A+"; PPK[13] = "A++"; PPK[14] = "A-"; PPK[15] = "A+++"; PPK[21] = "B"; PPK[22] = "B+"; PPK[23] = "B++"; PPK[24] = "B-"; PPK[25] = "B+++"; PPK[31] = "C"; PPK[32] = "C+"; PPK[33] = "C++"; PPK[34] = "C-"; PPK[35] = "C+++"; PPK[41] = "D"; PPK[42] = "D+"; PPK[43] = "D++"; PPK[44] = "D-"; PPK[45] = "D+++"; PPK[51] = "E"; PPK[52] = "E+"; PPK[53] = "E++"; PPK[54] = "E-"; PPK[55] = "E+++"; PPK[61] = "EX"; PPK[98] = "-"; PPK[0] = "-"; PPK[99] = "?";
                 var svtName = "";
@@ -215,7 +218,6 @@ namespace FGOSBIAReloaded
                 int luckData = 0;
                 int TreasureData = 0;
                 int genderData = 0;
-                bool check = true;
                 foreach (var svtIDtmp in mstSvtArray) //查找某个字段与值
                 {
                     if (((JObject)svtIDtmp)["id"].ToString() == svtID)
@@ -700,6 +702,7 @@ namespace FGOSBIAReloaded
                             skill1valuelv1.Text = SkillLvs.skilllv1sval;
                             skill1valuelv6.Text = SkillLvs.skilllv6sval;
                             skill1valuelv10.Text = SkillLvs.skilllv10sval;
+                            skill1Funcs.Text = SkillLvs.SKLFuncstr;
                             SkillDetailCheck(skill2ID);
                             skill2cdlv1.Text = SkillLvs.skilllv1chargetime;
                             skill2cdlv6.Text = SkillLvs.skilllv6chargetime;
@@ -707,6 +710,7 @@ namespace FGOSBIAReloaded
                             skill2valuelv1.Text = SkillLvs.skilllv1sval;
                             skill2valuelv6.Text = SkillLvs.skilllv6sval;
                             skill2valuelv10.Text = SkillLvs.skilllv10sval;
+                            skill2Funcs.Text = SkillLvs.SKLFuncstr;
                             SkillDetailCheck(skill3ID);
                             skill3cdlv1.Text = SkillLvs.skilllv1chargetime;
                             skill3cdlv6.Text = SkillLvs.skilllv6chargetime;
@@ -714,6 +718,7 @@ namespace FGOSBIAReloaded
                             skill3valuelv1.Text = SkillLvs.skilllv1sval;
                             skill3valuelv6.Text = SkillLvs.skilllv6sval;
                             skill3valuelv10.Text = SkillLvs.skilllv10sval;
+                            skill3Funcs.Text = SkillLvs.SKLFuncstr;
                         }
                     }
                     if (((JObject)SCTMP)["svtId"].ToString() == svtID && ((JObject)SCTMP)["id"].ToString() == "2")
@@ -955,8 +960,17 @@ namespace FGOSBIAReloaded
             SkillLvs.skilllv1chargetime = "";
             SkillLvs.skilllv6chargetime = "";
             SkillLvs.skilllv10chargetime = "";
+            SkillLvs.SKLFuncstr = "";
             string mstSkillLv = File.ReadAllText(gamedata.FullName + "decrypted_masterdata/" + "mstSkillLv");
             JArray mstSkillLvArray = (JArray)JsonConvert.DeserializeObject(mstSkillLv);
+            string mstFunc = File.ReadAllText(gamedata.FullName + "decrypted_masterdata/" + "mstFunc");
+            JArray mstFuncArray = (JArray)JsonConvert.DeserializeObject(mstFunc);
+            string svtSKFuncID;
+            string[] svtSKFuncIDArray;
+            List<string> svtSKFuncIDList;
+            List<string> svtSKFuncList = new List<string> { };
+            string[] svtSKFuncArray;
+            string svtSKFunc = String.Empty;
             foreach (var SKLTMP in mstSkillLvArray) //查找某个字段与值
             {
                 if (((JObject)SKLTMP)["skillId"].ToString() == sklid && ((JObject)SKLTMP)["lv"].ToString() == "1")
@@ -986,9 +1000,26 @@ namespace FGOSBIAReloaded
                     SkillLvs.skilllv10EffectArray1 = SkillLvs.skilllv10sval.Split('/');
                     string[][] skilllv10EffectArray2 = new string[SkillLvs.skilllv10sval.Length][];
                     SkillLvs.skilllv10chargetime = SKLobjtmp["chargeTurn"].ToString();
+                    svtSKFuncID = SKLobjtmp["funcId"].ToString().Replace("\n", "").Replace("\t", "").Replace("\r", "").Replace(" ", "").Replace("[", "").Replace("]", "");
+                    svtSKFuncIDList = new List<string>(svtSKFuncID.Split(','));
+                    svtSKFuncIDArray = svtSKFuncIDList.ToArray();
+                    foreach (string skfuncidtmp in svtSKFuncIDArray)
+                    {
+                        foreach (string functmp in mstFuncArray)
+                        {
+                            if (((JObject)functmp)["id"].ToString() == skfuncidtmp)
+                            {
+                                var mstFuncobjtmp = JObject.Parse(functmp.ToString());
+                                svtSKFuncList.Add(mstFuncobjtmp["popupText"].ToString());
+                            }
+                        }
+                    }
                 }
             }
-        }));
+            svtSKFuncArray = svtSKFuncList.ToArray();
+            svtSKFunc = String.Join(", ", svtSKFuncArray);
+            SkillLvs.SKLFuncstr = svtSKFunc;
+            }));
         }
         private void Button_Click_2(object sender, RoutedEventArgs e)
         {
@@ -1664,7 +1695,7 @@ namespace FGOSBIAReloaded
 
         private void Button_Click_4(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("具体数值显示的为文件中的原始数据，水平有限，无法进行有效解析。\r\n【以下内容均为理论推测，仅适用于大部分结果。】\r\n/ 之间的为一个Buff的幅度\r\n1、如果为[a,b]则a为成功率(除以10就是百分比，如1000就是100%),b需要看技能描述，如果为出星或者生命值则b的大小即为幅度，若为NP，则将该数值除以100即为NP值。若b为1，则该组段可以忽略不看。\r\n2、如果为[a,b,c]或者[a,b,c,d]则在一般情况下a表示成功率(同1),b表示持续回合数即Turn,c表示次数(-1即为没有次数限制),d在大多数情况下除以10即为Buff幅度(%)，有时会有例外(可能也是没有意义).\r\n3、如果为[a,b,c,d,e]则a,b,c同2,d和e需要通过源文件进行详细手动分析。", "温馨提示:", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show("具体数值显示的为文件中的原始数据，水平有限，无法进行有效解析。\r\n注:由于文本框高度过窄,\"宝具信息\"选项卡内具体数值前的等级Label(lv.x)双击后即可显示详细数据对话框.\r\n【以下内容均为理论推测，仅适用于大部分结果。】\r\n/ 之间的为一个Buff的幅度\r\n1、如果为[a,b]则a为成功率(除以10就是百分比，如1000就是100%),b需要看技能描述，如果为出星或者生命值则b的大小即为幅度，若为NP，则将该数值除以100即为NP值。若b为1，则该组段可以忽略不看。\r\n2、如果为[a,b,c]或者[a,b,c,d]则在一般情况下a表示成功率(同1),b表示持续回合数即Turn,c表示次数(-1即为没有次数限制),d在大多数情况下除以10即为Buff幅度(%)，有时会有例外(可能也是没有意义).\r\n3、如果为[a,b,c,d,e]则a,b,c同2,d和e需要通过源文件进行详细手动分析。", "温馨提示:", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private void Hyperlink_Click_1(object sender, RoutedEventArgs e)
@@ -1681,6 +1712,51 @@ namespace FGOSBIAReloaded
 
             }
 
+        }
+
+        private void Npvaluelv1_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (npvaluelv1.Text == "")
+            {
+                return;
+            }
+            MessageBox.Show("以下列出一宝时所有Over Charge情况下的数据:\r\n" + npvaluelv1.Text, "宝具等级lv1详细数据", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        private void Npvaluelv2_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (npvaluelv2.Text == "")
+            {
+                return;
+            }
+            MessageBox.Show("以下列出二宝时所有Over Charge情况下的数据:\r\n" + npvaluelv2.Text, "宝具等级lv2详细数据", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        private void Npvaluelv3_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (npvaluelv3.Text == "")
+            {
+                return;
+            }
+            MessageBox.Show("以下列出三宝时所有Over Charge情况下的数据:\r\n" + npvaluelv3.Text, "宝具等级lv3详细数据", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        private void Npvaluelv4_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (npvaluelv4.Text == "")
+            {
+                return;
+            }
+            MessageBox.Show("以下列出四宝时所有Over Charge情况下的数据:\r\n" + npvaluelv4.Text, "宝具等级lv4详细数据", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        private void Npvaluelv5_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (npvaluelv5.Text == "")
+            {
+                return;
+            }
+            MessageBox.Show("以下列出五宝时所有Over Charge情况下的数据:\r\n" + npvaluelv5.Text, "宝具等级lv5详细数据", MessageBoxButton.OK, MessageBoxImage.Information);
         }
     }
 }
