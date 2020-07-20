@@ -138,7 +138,7 @@
                     <Label Content="lv.10:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top" Width="97" FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="White" Margin="28,275,0,0"/>
                     <TextBox  x:Name="skill1valuelv10"  HorizontalAlignment="Left" Height="45" Margin="66,275,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="416" Background="#FF484848" IsReadOnly="True" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="LightGray" FontFamily="Microsoft YaHei" Grid.ColumnSpan="2"/>
                     <Button Content="?" HorizontalAlignment="Left" Height="25" Margin="2,302,0,0" VerticalAlignment="Top" Width="27" FontFamily="Microsoft JhengHei UI" Click="Button_Click_4"/>
-                    <Label Content="函数列表:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top" Width="97" FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="White" Margin="2,96,0,0"/>
+                    <Label Content="函数列表:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top" Width="97" FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="White" Margin="2,96,0,0" MouseDoubleClick="skl1Func_Clicked_Mission" Cursor="Help"/>
                     <TextBox  x:Name="skill1Funcs"  HorizontalAlignment="Left" Height="26" Margin="66,97,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="416" Background="#FF484848" IsReadOnly="True" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="LightGray" FontFamily="Microsoft YaHei" Grid.ColumnSpan="2"/>
                 </Grid>
             </TabItem>
@@ -163,7 +163,7 @@
                     <Label Content="lv.10:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top" Width="97" FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="White" Margin="28,275,0,0"/>
                     <TextBox  x:Name="skill2valuelv10"  HorizontalAlignment="Left" Height="45" Margin="66,275,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="416" Background="#FF484848" IsReadOnly="True" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="LightGray" FontFamily="Microsoft YaHei" Grid.ColumnSpan="2"/>
                     <Button Content="?" HorizontalAlignment="Left" Height="13" Margin="2,302,0,0" VerticalAlignment="Top" Width="27" FontFamily="Microsoft JhengHei UI" Click="Button_Click_4"/>
-                    <Label Content="函数列表:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top" Width="97" FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="White" Margin="2,96,0,0"/>
+                    <Label Content="函数列表:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top" Width="97" FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="White" Margin="2,96,0,0" MouseDoubleClick="skl2Func_Clicked_Mission" Cursor="Help"/>
                     <TextBox  x:Name="skill2Funcs"  HorizontalAlignment="Left" Height="17" Margin="66,97,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="416" Background="#FF484848" IsReadOnly="True" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="LightGray" FontFamily="Microsoft YaHei" Grid.ColumnSpan="2"/>
                 </Grid>
             </TabItem>
@@ -188,7 +188,7 @@
                     <Label Content="lv.10:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top" Width="97" FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="White" Margin="28,275,0,0"/>
                     <TextBox  x:Name="skill3valuelv10"  HorizontalAlignment="Left" Height="45" Margin="66,275,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="416" Background="#FF484848" IsReadOnly="True" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="LightGray" FontFamily="Microsoft YaHei" Grid.ColumnSpan="2"/>
                     <Button Content="?" HorizontalAlignment="Left" Height="13" Margin="2,302,0,0" VerticalAlignment="Top" Width="27" FontFamily="Microsoft JhengHei UI" Click="Button_Click_4"/>
-                    <Label Content="函数列表:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top" Width="97" FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="White" Margin="2,96,0,0"/>
+                    <Label Content="函数列表:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top" Width="97" FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="White" Margin="2,96,0,0" MouseDoubleClick="skl3Func_Clicked_Mission" Cursor="Help"/>
                     <TextBox  x:Name="skill3Funcs"  HorizontalAlignment="Left" Height="17" Margin="66,97,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="416" Background="#FF484848" IsReadOnly="True" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="LightGray" FontFamily="Microsoft YaHei" Grid.ColumnSpan="2"/>
                 </Grid>
             </TabItem>
