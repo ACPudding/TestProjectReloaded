@@ -1,29 +1,22 @@
-﻿using MahApps.Metro.Controls;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Diagnostics;
+using System.IO;
+using System.Text.RegularExpressions;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Text.RegularExpressions;
-using System.IO;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json;
-using System.Threading;
 using FGOSBIAReloaded.Properties;
+using MahApps.Metro.Controls;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace FGOSBIAReloaded
 {
     /// <summary>
-    /// MainWindow.xaml 的交互逻辑
+    ///     MainWindow.xaml 的交互逻辑
     /// </summary>
     public partial class MainWindow : MetroWindow
     {
@@ -41,7 +34,7 @@ namespace FGOSBIAReloaded
 
         public void AnalyzeServant()
         {
-            Dispatcher.Invoke(new Action(() =>
+            Dispatcher.Invoke(() =>
             {
                 Button1.IsEnabled = false;
                 var path = Directory.GetCurrentDirectory();
@@ -65,26 +58,24 @@ namespace FGOSBIAReloaded
                     Button1.IsEnabled = true;
                     return;
                 }
-                else
+
+                if (!File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstSvt") ||
+                    !File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstSvtLimit") ||
+                    !File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstCv") ||
+                    !File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstIllustrator") ||
+                    !File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstSvtCard") ||
+                    !File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstTreasureDevice") ||
+                    !File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstSvtTreasureDevice") ||
+                    !File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstTreasureDeviceDetail") ||
+                    !File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstSkill") ||
+                    !File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstSkillDetail") ||
+                    !File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstSvtSkill") ||
+                    !File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstFunc"))
                 {
-                    if (!File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstSvt") ||
-                        !File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstSvtLimit") ||
-                        !File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstCv") ||
-                        !File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstIllustrator") ||
-                        !File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstSvtCard") ||
-                        !File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstTreasureDevice") ||
-                        !File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstSvtTreasureDevice") ||
-                        !File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstTreasureDeviceDetail") ||
-                        !File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstSkill") ||
-                        !File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstSkillDetail") ||
-                        !File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstSvtSkill") ||
-                        !File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstFunc"))
-                    {
-                        MessageBox.Show("游戏数据损坏,请重新下载游戏数据(位于\"关于\"选项卡).", "温馨提示:", MessageBoxButton.OK,
-                            MessageBoxImage.Error);
-                        Button1.IsEnabled = true;
-                        return;
-                    }
+                    MessageBox.Show("游戏数据损坏,请重新下载游戏数据(位于\"关于\"选项卡).", "温馨提示:", MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+                    Button1.IsEnabled = true;
+                    return;
                 }
 
                 if (!Regex.IsMatch(svtID, "^\\d+$"))
@@ -130,7 +121,7 @@ namespace FGOSBIAReloaded
                 var mstSvtSkillArray = (JArray) JsonConvert.DeserializeObject(mstSvtSkill);
                 var mstSkillDetailArray = (JArray) JsonConvert.DeserializeObject(mstSkillDetail);
                 var mstFunc = File.ReadAllText(gamedata.FullName + "decrypted_masterdata/" + "mstFunc");
-                var mstFuncArray = (JArray)JsonConvert.DeserializeObject(mstFunc);
+                var mstFuncArray = (JArray) JsonConvert.DeserializeObject(mstFunc);
                 if (!File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstTreasureDeviceLv"))
                 {
                     MessageBox.Show("游戏数据损坏,请重新下载游戏数据(位于\"关于\"选项卡).", "温馨提示:", MessageBoxButton.OK,
@@ -312,13 +303,13 @@ namespace FGOSBIAReloaded
                 string svtClassPassiveID;
                 var svtClassPassiveIDArray = new string[] { };
                 List<string> svtClassPassiveIDList;
-                var svtClassPassiveList = new List<string> { };
+                var svtClassPassiveList = new List<string>();
                 string[] svtClassPassiveArray;
                 var svtClassPassive = string.Empty;
                 string svtTreasureDeviceFuncID;
                 var svtTreasureDeviceFuncIDArray = new string[] { };
                 List<string> svtTreasureDeviceFuncIDList;
-                var svtTreasureDeviceFuncList = new List<string> { };
+                var svtTreasureDeviceFuncList = new List<string>();
                 string[] svtTreasureDeviceFuncArray;
                 var svtTreasureDeviceFunc = string.Empty;
                 var svtArtsCardhit = 1;
@@ -391,9 +382,9 @@ namespace FGOSBIAReloaded
                         genderData = int.Parse(svtgender);
                         gendle.Text = gender[genderData];
                         starrate = float.Parse(svtstarrate) / 10;
-                        ssvtstarrate.Text = starrate.ToString() + "%";
+                        ssvtstarrate.Text = starrate + "%";
                         deathrate = float.Parse(svtdeathrate) / 10;
-                        ssvtdeathrate.Text = deathrate.ToString() + "%";
+                        ssvtdeathrate.Text = deathrate + "%";
                         break;
                     }
 
@@ -408,7 +399,7 @@ namespace FGOSBIAReloaded
                         foreach (var c in svtArtsCardhitDamage)
                             if (c == ',')
                                 svtArtsCardhit++;
-                        artscard.Text = svtArtsCardhit.ToString() + " hit " + svtArtsCardhitDamage;
+                        artscard.Text = svtArtsCardhit + " hit " + svtArtsCardhitDamage;
                     }
 
                     if (((JObject) svtCardtmp)["svtId"].ToString() == svtID &&
@@ -420,7 +411,7 @@ namespace FGOSBIAReloaded
                         foreach (var c in svtBustersCardhitDamage)
                             if (c == ',')
                                 svtBustersCardhit++;
-                        bustercard.Text = svtBustersCardhit.ToString() + " hit " + svtBustersCardhitDamage;
+                        bustercard.Text = svtBustersCardhit + " hit " + svtBustersCardhitDamage;
                     }
 
                     if (((JObject) svtCardtmp)["svtId"].ToString() == svtID &&
@@ -432,7 +423,7 @@ namespace FGOSBIAReloaded
                         foreach (var c in svtQuicksCardhitDamage)
                             if (c == ',')
                                 svtQuicksCardhit++;
-                        quickcard.Text = svtQuicksCardhit.ToString() + " hit " + svtQuicksCardhitDamage;
+                        quickcard.Text = svtQuicksCardhit + " hit " + svtQuicksCardhitDamage;
                     }
 
                     if (((JObject) svtCardtmp)["svtId"].ToString() == svtID &&
@@ -444,7 +435,7 @@ namespace FGOSBIAReloaded
                         foreach (var c in svtExtraCardhitDamage)
                             if (c == ',')
                                 svtExtraCardhit++;
-                        extracard.Text = svtExtraCardhit.ToString() + " hit " + svtExtraCardhitDamage;
+                        extracard.Text = svtExtraCardhit + " hit " + svtExtraCardhitDamage;
                     }
                 }
 
@@ -927,13 +918,15 @@ namespace FGOSBIAReloaded
                         svtTreasureDeviceFuncIDArray = svtTreasureDeviceFuncIDList.ToArray();
                     }
                 }
+
                 foreach (var skfuncidtmp in svtTreasureDeviceFuncIDArray)
                 foreach (var functmp in mstFuncArray)
-                    if (((JObject)functmp)["id"].ToString() == skfuncidtmp)
+                    if (((JObject) functmp)["id"].ToString() == skfuncidtmp)
                     {
                         var mstFuncobjtmp = JObject.Parse(functmp.ToString());
                         svtTreasureDeviceFuncList.Add(mstFuncobjtmp["popupText"].ToString());
                     }
+
                 svtTreasureDeviceFuncArray = svtTreasureDeviceFuncList.ToArray();
                 svtTreasureDeviceFunc = string.Join(", ", svtTreasureDeviceFuncArray);
                 SkillLvs.TDFuncstr = svtTreasureDeviceFunc;
@@ -1045,53 +1038,53 @@ namespace FGOSBIAReloaded
                 }
 
                 if (classData == 3)
-                    Dispatcher.Invoke(new Action(() =>
+                    Dispatcher.Invoke(() =>
                     {
                         atkbalance1.Content = "( x 1.05 △)";
                         atkbalance2.Content = "( x 1.05 △)";
-                    }));
+                    });
                 else if (classData == 5)
-                    Dispatcher.Invoke(new Action(() =>
+                    Dispatcher.Invoke(() =>
                     {
                         atkbalance1.Content = "( x 0.9 ▽)";
                         atkbalance2.Content = "( x 0.9 ▽)";
-                    }));
+                    });
                 else if (classData == 6)
-                    Dispatcher.Invoke(new Action(() =>
+                    Dispatcher.Invoke(() =>
                     {
                         atkbalance1.Content = "( x 0.9 ▽)";
                         atkbalance2.Content = "( x 0.9 ▽)";
-                    }));
+                    });
                 else if (classData == 2)
-                    Dispatcher.Invoke(new Action(() =>
+                    Dispatcher.Invoke(() =>
                     {
                         atkbalance1.Content = "( x 0.95 ▽)";
                         atkbalance2.Content = "( x 0.95 ▽)";
-                    }));
+                    });
                 else if (classData == 7)
-                    Dispatcher.Invoke(new Action(() =>
+                    Dispatcher.Invoke(() =>
                     {
                         atkbalance1.Content = "( x 1.1 △)";
                         atkbalance2.Content = "( x 1.1 △)";
-                    }));
+                    });
                 else if (classData == 9)
-                    Dispatcher.Invoke(new Action(() =>
+                    Dispatcher.Invoke(() =>
                     {
                         atkbalance1.Content = "( x 1.1 △)";
                         atkbalance2.Content = "( x 1.1 △)";
-                    }));
+                    });
                 else if (classData == 11)
-                    Dispatcher.Invoke(new Action(() =>
+                    Dispatcher.Invoke(() =>
                     {
                         atkbalance1.Content = "( x 1.1 △)";
                         atkbalance2.Content = "( x 1.1 △)";
-                    }));
+                    });
                 else
-                    Dispatcher.Invoke(new Action(() =>
+                    Dispatcher.Invoke(() =>
                     {
                         atkbalance1.Content = "( x 1.0 -)";
                         atkbalance2.Content = "( x 1.0 -)";
-                    }));
+                    });
                 Button1.IsEnabled = true;
                 if (classData == 1001)
                     MessageBox.Show("此ID为礼装ID,图鉴编号为礼装的图鉴编号.礼装描述在羁绊文本的文本1处,礼装效果在技能1栏中.", "温馨提示:", MessageBoxButton.OK,
@@ -1099,7 +1092,7 @@ namespace FGOSBIAReloaded
                 if (cards.Text == "[Q,Q,Q,Q,Q]" && classData != 1001)
                     MessageBox.Show("此ID为小怪(或部分boss以及种火芙芙),配卡、技能、宝具信息解析并不准确，请知悉.", "温馨提示:", MessageBoxButton.OK,
                         MessageBoxImage.Information);
-            }));
+            });
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
@@ -1114,34 +1107,32 @@ namespace FGOSBIAReloaded
                     MessageBoxImage.Information);
                 return;
             }
-            else
+
+            if (!File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstSvt") ||
+                !File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstSvtLimit") ||
+                !File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstCv") ||
+                !File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstIllustrator") ||
+                !File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstSvtCard") ||
+                !File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstTreasureDevice") ||
+                !File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstSvtTreasureDevice") ||
+                !File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstTreasureDeviceDetail") ||
+                !File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstSkill") ||
+                !File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstSkillDetail") ||
+                !File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstSvtSkill"))
             {
-                if (!File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstSvt") ||
-                    !File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstSvtLimit") ||
-                    !File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstCv") ||
-                    !File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstIllustrator") ||
-                    !File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstSvtCard") ||
-                    !File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstTreasureDevice") ||
-                    !File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstSvtTreasureDevice") ||
-                    !File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstTreasureDeviceDetail") ||
-                    !File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstSkill") ||
-                    !File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstSkillDetail") ||
-                    !File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstSvtSkill"))
-                {
-                    MessageBox.Show("游戏数据损坏,请先下载游戏数据(位于\"关于\"菜单栏中).", "温馨提示:", MessageBoxButton.OK,
-                        MessageBoxImage.Error);
-                    return;
-                }
+                MessageBox.Show("游戏数据损坏,请先下载游戏数据(位于\"关于\"菜单栏中).", "温馨提示:", MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+                return;
             }
 
             var mstSvt = File.ReadAllText(gamedata.FullName + "decrypted_masterdata/" + "mstSvt");
             var mstSvtArray = (JArray) JsonConvert.DeserializeObject(mstSvt);
             foreach (var svtIDtmp in mstSvtArray) //查找某个字段与值
-                output = output + "ID: " + ((JObject) svtIDtmp)["id"].ToString() + "    " + "名称: " +
-                         ((JObject) svtIDtmp)["name"].ToString() + "\r\n";
+                output = output + "ID: " + ((JObject) svtIDtmp)["id"] + "    " + "名称: " +
+                         ((JObject) svtIDtmp)["name"] + "\r\n";
             File.WriteAllText(path + "/SearchIDList.txt", output);
             MessageBox.Show("导出成功,文件名为 SearchIDList.txt", "完成", MessageBoxButton.OK, MessageBoxImage.Information);
-            System.Diagnostics.Process.Start(path + "/SearchIDList.txt");
+            Process.Start(path + "/SearchIDList.txt");
         }
 
         private void ClearTexts()
@@ -1187,7 +1178,7 @@ namespace FGOSBIAReloaded
 
         private void SkillDetailCheck(string sklid)
         {
-            Dispatcher.Invoke(new Action(() =>
+            Dispatcher.Invoke(() =>
             {
                 var path = Directory.GetCurrentDirectory();
                 var gamedata = new DirectoryInfo(path + @"\Android\masterdata\");
@@ -1207,7 +1198,7 @@ namespace FGOSBIAReloaded
                 string svtSKFuncID;
                 string[] svtSKFuncIDArray;
                 List<string> svtSKFuncIDList;
-                var svtSKFuncList = new List<string> { };
+                var svtSKFuncList = new List<string>();
                 string[] svtSKFuncArray;
                 var svtSKFunc = string.Empty;
                 foreach (var SKLTMP in mstSkillLvArray) //查找某个字段与值
@@ -1261,7 +1252,7 @@ namespace FGOSBIAReloaded
                 svtSKFuncArray = svtSKFuncList.ToArray();
                 svtSKFunc = string.Join(", ", svtSKFuncArray);
                 SkillLvs.SKLFuncstr = svtSKFunc;
-            }));
+            });
         }
 
         private void Button_Click_2(object sender, RoutedEventArgs e)
@@ -1276,26 +1267,26 @@ namespace FGOSBIAReloaded
 
             var source = sender as Hyperlink;
 
-            if (source != null) System.Diagnostics.Process.Start(source.NavigateUri.ToString());
+            if (source != null) Process.Start(source.NavigateUri.ToString());
         }
 
         private void HttpRequestData()
         {
-            updatedatabutton.Dispatcher.Invoke(new Action(() => { updatedatabutton.IsEnabled = false; }));
-            updatestatus.Dispatcher.Invoke(new Action(() => { updatestatus.Content = ""; }));
-            updatestatus.Dispatcher.Invoke(new Action(() => { updatesign.Content = "数据下载进行中,请勿退出!"; }));
-            progressbar.Dispatcher.Invoke(new Action(() =>
+            updatedatabutton.Dispatcher.Invoke(() => { updatedatabutton.IsEnabled = false; });
+            updatestatus.Dispatcher.Invoke(() => { updatestatus.Content = ""; });
+            updatestatus.Dispatcher.Invoke(() => { updatesign.Content = "数据下载进行中,请勿退出!"; });
+            progressbar.Dispatcher.Invoke(() =>
             {
                 progressbar.Value = 0;
                 progressbar.Visibility = Visibility.Visible;
-            }));
+            });
             var path = Directory.GetCurrentDirectory();
             var gamedata = new DirectoryInfo(path + @"\Android\masterdata\");
             var folder = new DirectoryInfo(path + @"\Android\");
-            progressbar.Dispatcher.Invoke(new Action(() => { progressbar.Value = progressbar.Value + 500; }));
+            progressbar.Dispatcher.Invoke(() => { progressbar.Value = progressbar.Value + 500; });
             if (!Directory.Exists(folder.FullName))
             {
-                updatestatus.Dispatcher.Invoke(new Action(() => { updatestatus.Content = "正在创建Android目录..."; }));
+                updatestatus.Dispatcher.Invoke(() => { updatestatus.Content = "正在创建Android目录..."; });
                 Directory.CreateDirectory(folder.FullName);
                 if (File.Exists(gamedata.FullName + "webview") || File.Exists(gamedata.FullName + "raw") ||
                     File.Exists(gamedata.FullName + "assetbundle") || File.Exists(gamedata.FullName + "webview") ||
@@ -1309,16 +1300,16 @@ namespace FGOSBIAReloaded
                             var subdir = new DirectoryInfo(i.FullName);
                             subdir.Delete(true); //删除子目录和文件
                             updatestatus.Dispatcher.Invoke(
-                                new Action(() => { updatestatus.Content = "删除: " + subdir; }));
+                                () => { updatestatus.Content = "删除: " + subdir; });
                             continue;
                         }
 
                         i.Delete();
-                        updatestatus.Dispatcher.Invoke(new Action(() => { updatestatus.Content = "删除: " + i; }));
+                        updatestatus.Dispatcher.Invoke(() => { updatestatus.Content = "删除: " + i; });
                     }
 
-                    updatestatus.Dispatcher.Invoke(new Action(() => { updatestatus.Content = "开始下载/更新游戏数据......"; }));
-                    progressbar.Dispatcher.Invoke(new Action(() => { progressbar.Value = progressbar.Value + 500; }));
+                    updatestatus.Dispatcher.Invoke(() => { updatestatus.Content = "开始下载/更新游戏数据......"; });
+                    progressbar.Dispatcher.Invoke(() => { progressbar.Value = progressbar.Value + 500; });
 
                     var result = HttpRequest.PhttpReq("https://game.fate-go.jp/gamedata/top", "appVer=2.13.2");
                     var res = JObject.Parse(result);
@@ -1328,13 +1319,10 @@ namespace FGOSBIAReloaded
                         {
                             var tmp = res["response"][0]["fail"]["detail"].ToString();
                             tmp = Regex.Replace(tmp, @".*新ver.：(.*)、現.*", "$1", RegexOptions.Singleline);
-                            updatestatus.Dispatcher.Invoke(new Action(() =>
-                            {
-                                updatestatus.Content = "当前游戏版本: " + tmp.ToString();
-                            }));
+                            updatestatus.Dispatcher.Invoke(() => { updatestatus.Content = "当前游戏版本: " + tmp; });
 
                             result = HttpRequest.PhttpReq("https://game.fate-go.jp/gamedata/top",
-                                "appVer=" + tmp.ToString());
+                                "appVer=" + tmp);
                             res = JObject.Parse(result);
                         }
                         else if (res["response"][0]["fail"]["action"].ToString() == "maint")
@@ -1352,21 +1340,18 @@ namespace FGOSBIAReloaded
                                 foreach (Match m in mc)
                                 {
                                     var url = m.Result("${url}");
-                                    System.Diagnostics.Process.Start(url);
+                                    Process.Start(url);
                                 }
                             }
 
-                            updatestatus.Dispatcher.Invoke(new Action(() => { updatestatus.Content = ""; }));
-                            updatestatus.Dispatcher.Invoke(new Action(() => { updatesign.Content = ""; }));
-                            progressbar.Dispatcher.Invoke(new Action(() =>
+                            updatestatus.Dispatcher.Invoke(() => { updatestatus.Content = ""; });
+                            updatestatus.Dispatcher.Invoke(() => { updatesign.Content = ""; });
+                            progressbar.Dispatcher.Invoke(() =>
                             {
                                 progressbar.Visibility = Visibility.Hidden;
                                 updatedatabutton.IsEnabled = true;
-                            }));
+                            });
                             return;
-                        }
-                        else
-                        {
                         }
                     }
 
@@ -1375,24 +1360,24 @@ namespace FGOSBIAReloaded
                     File.WriteAllText(gamedata.FullName + "raw", result);
                     File.WriteAllText(gamedata.FullName + "assetbundle",
                         res["response"][0]["success"]["assetbundle"].ToString());
-                    updatestatus.Dispatcher.Invoke(new Action(() =>
+                    updatestatus.Dispatcher.Invoke(() =>
                     {
                         updatestatus.Content = "Writing file to: " + gamedata.FullName + "assetbundle";
-                    }));
-                    progressbar.Dispatcher.Invoke(new Action(() => { progressbar.Value = progressbar.Value + 38; }));
+                    });
+                    progressbar.Dispatcher.Invoke(() => { progressbar.Value = progressbar.Value + 38; });
                     File.WriteAllText(gamedata.FullName + "master", res["response"][0]["success"]["master"].ToString());
-                    updatestatus.Dispatcher.Invoke(new Action(() =>
+                    updatestatus.Dispatcher.Invoke(() =>
                     {
                         updatestatus.Content = "Writing file to: " + gamedata.FullName + "master";
-                    }));
-                    progressbar.Dispatcher.Invoke(new Action(() => { progressbar.Value = progressbar.Value + 38; }));
+                    });
+                    progressbar.Dispatcher.Invoke(() => { progressbar.Value = progressbar.Value + 38; });
                     File.WriteAllText(gamedata.FullName + "webview",
                         res["response"][0]["success"]["webview"].ToString());
-                    updatestatus.Dispatcher.Invoke(new Action(() =>
+                    updatestatus.Dispatcher.Invoke(() =>
                     {
                         updatestatus.Content = "Writing file to: " + gamedata.FullName + "webview";
-                    }));
-                    progressbar.Dispatcher.Invoke(new Action(() => { progressbar.Value = progressbar.Value + 38; }));
+                    });
+                    progressbar.Dispatcher.Invoke(() => { progressbar.Value = progressbar.Value + 38; });
                     var data = File.ReadAllText(gamedata.FullName + "master");
                     if (!Directory.Exists(gamedata.FullName + "decrypted_masterdata"))
                         Directory.CreateDirectory(gamedata.FullName + "decrypted_masterdata");
@@ -1406,15 +1391,12 @@ namespace FGOSBIAReloaded
                         var unpackeditem = (List<object>) miniMessagePacker.Unpack(item.Value);
                         var json = JsonConvert.SerializeObject(unpackeditem, Formatting.Indented);
                         File.WriteAllText(gamedata.FullName + "decrypted_masterdata/" + item.Key, json);
-                        updatestatus.Dispatcher.Invoke(new Action(() =>
+                        updatestatus.Dispatcher.Invoke(() =>
                         {
                             updatestatus.Content = "Writing file to: " + gamedata.FullName +
                                                    "decrypted_masterdata\\" + item.Key;
-                        }));
-                        progressbar.Dispatcher.Invoke(new Action(() =>
-                        {
-                            progressbar.Value = progressbar.Value + 38;
-                        }));
+                        });
+                        progressbar.Dispatcher.Invoke(() => { progressbar.Value = progressbar.Value + 38; });
                     }
 
                     var data2 = File.ReadAllText(gamedata.FullName + "assetbundle");
@@ -1422,40 +1404,40 @@ namespace FGOSBIAReloaded
                         (Dictionary<string, object>) MasterDataUnpacker.MouseInfoMsgPack(
                             Convert.FromBase64String(data2));
                     string str = null;
-                    foreach (var a in dictionary) str += a.Key + ": " + a.Value.ToString() + "\r\n";
+                    foreach (var a in dictionary) str += a.Key + ": " + a.Value + "\r\n";
                     File.WriteAllText(gamedata.FullName + "assetbundle.txt", str);
-                    updatestatus.Dispatcher.Invoke(new Action(() =>
+                    updatestatus.Dispatcher.Invoke(() =>
                     {
-                        updatestatus.Content = "folder name: " + dictionary["folderName"].ToString();
-                    }));
-                    progressbar.Dispatcher.Invoke(new Action(() => { progressbar.Value = progressbar.Value + 38; }));
+                        updatestatus.Content = "folder name: " + dictionary["folderName"];
+                    });
+                    progressbar.Dispatcher.Invoke(() => { progressbar.Value = progressbar.Value + 38; });
                     var data3 = File.ReadAllText(gamedata.FullName + "webview");
                     var dictionary2 =
                         (Dictionary<string, object>) MasterDataUnpacker.MouseGame2MsgPack(
                             Convert.FromBase64String(data3));
-                    var str2 = "baseURL: " + dictionary2["baseURL"].ToString() + "\r\n contactURL: " +
-                               dictionary2["contactURL"].ToString() + "\r\n";
-                    updatestatus.Dispatcher.Invoke(new Action(() => { updatestatus.Content = str2; }));
-                    progressbar.Dispatcher.Invoke(new Action(() => { progressbar.Value = progressbar.Value + 38; }));
+                    var str2 = "baseURL: " + dictionary2["baseURL"] + "\r\n contactURL: " +
+                               dictionary2["contactURL"] + "\r\n";
+                    updatestatus.Dispatcher.Invoke(() => { updatestatus.Content = str2; });
+                    progressbar.Dispatcher.Invoke(() => { progressbar.Value = progressbar.Value + 38; });
                     var filePassInfo = (Dictionary<string, object>) dictionary2["filePass"];
-                    foreach (var a in filePassInfo) str += a.Key + ": " + a.Value.ToString() + "\r\n";
+                    foreach (var a in filePassInfo) str += a.Key + ": " + a.Value + "\r\n";
                     File.WriteAllText(gamedata.FullName + "webview.txt", str2);
-                    updatestatus.Dispatcher.Invoke(new Action(() =>
+                    updatestatus.Dispatcher.Invoke(() =>
                     {
                         updatestatus.Content = "Writing file to: " + gamedata.FullName + "webview.txt";
-                    }));
+                    });
 
-                    updatestatus.Dispatcher.Invoke(new Action(() => { updatestatus.Content = "下载完成，可以开始解析."; }));
+                    updatestatus.Dispatcher.Invoke(() => { updatestatus.Content = "下载完成，可以开始解析."; });
 
-                    progressbar.Dispatcher.Invoke(new Action(() => { progressbar.Value = progressbar.Maximum; }));
+                    progressbar.Dispatcher.Invoke(() => { progressbar.Value = progressbar.Maximum; });
                     MessageBox.Show("下载完成，可以开始解析.", "完成", MessageBoxButton.OK, MessageBoxImage.Information);
-                    updatestatus.Dispatcher.Invoke(new Action(() => { updatestatus.Content = ""; }));
-                    updatestatus.Dispatcher.Invoke(new Action(() => { updatesign.Content = ""; }));
-                    progressbar.Dispatcher.Invoke(new Action(() =>
+                    updatestatus.Dispatcher.Invoke(() => { updatestatus.Content = ""; });
+                    updatestatus.Dispatcher.Invoke(() => { updatesign.Content = ""; });
+                    progressbar.Dispatcher.Invoke(() =>
                     {
                         progressbar.Visibility = Visibility.Hidden;
                         updatedatabutton.IsEnabled = true;
-                    }));
+                    });
                 }
                 else
                 {
@@ -1467,17 +1449,17 @@ namespace FGOSBIAReloaded
                             var subdir = new DirectoryInfo(i.FullName);
                             subdir.Delete(true); //删除子目录和文件
                             updatestatus.Dispatcher.Invoke(
-                                new Action(() => { updatestatus.Content = "删除: " + subdir; }));
+                                () => { updatestatus.Content = "删除: " + subdir; });
 
                             continue;
                         }
 
                         i.Delete();
-                        updatestatus.Dispatcher.Invoke(new Action(() => { updatestatus.Content = "删除: " + i; }));
+                        updatestatus.Dispatcher.Invoke(() => { updatestatus.Content = "删除: " + i; });
                     }
 
-                    updatestatus.Dispatcher.Invoke(new Action(() => { updatestatus.Content = "开始下载/更新游戏数据......"; }));
-                    progressbar.Dispatcher.Invoke(new Action(() => { progressbar.Value = progressbar.Value + 500; }));
+                    updatestatus.Dispatcher.Invoke(() => { updatestatus.Content = "开始下载/更新游戏数据......"; });
+                    progressbar.Dispatcher.Invoke(() => { progressbar.Value = progressbar.Value + 500; });
 
                     var result = HttpRequest.PhttpReq("https://game.fate-go.jp/gamedata/top", "appVer=2.13.2");
                     var res = JObject.Parse(result);
@@ -1487,13 +1469,10 @@ namespace FGOSBIAReloaded
                         {
                             var tmp = res["response"][0]["fail"]["detail"].ToString();
                             tmp = Regex.Replace(tmp, @".*新ver.：(.*)、現.*", "$1", RegexOptions.Singleline);
-                            updatestatus.Dispatcher.Invoke(new Action(() =>
-                            {
-                                updatestatus.Content = "当前游戏版本: " + tmp.ToString();
-                            }));
+                            updatestatus.Dispatcher.Invoke(() => { updatestatus.Content = "当前游戏版本: " + tmp; });
 
                             result = HttpRequest.PhttpReq("https://game.fate-go.jp/gamedata/top",
-                                "appVer=" + tmp.ToString());
+                                "appVer=" + tmp);
                             res = JObject.Parse(result);
                         }
                         else if (res["response"][0]["fail"]["action"].ToString() == "maint")
@@ -1511,21 +1490,18 @@ namespace FGOSBIAReloaded
                                 foreach (Match m in mc)
                                 {
                                     var url = m.Result("${url}");
-                                    System.Diagnostics.Process.Start(url);
+                                    Process.Start(url);
                                 }
                             }
 
-                            updatestatus.Dispatcher.Invoke(new Action(() => { updatestatus.Content = ""; }));
-                            updatestatus.Dispatcher.Invoke(new Action(() => { updatesign.Content = ""; }));
-                            progressbar.Dispatcher.Invoke(new Action(() =>
+                            updatestatus.Dispatcher.Invoke(() => { updatestatus.Content = ""; });
+                            updatestatus.Dispatcher.Invoke(() => { updatesign.Content = ""; });
+                            progressbar.Dispatcher.Invoke(() =>
                             {
                                 progressbar.Visibility = Visibility.Hidden;
                                 updatedatabutton.IsEnabled = true;
-                            }));
+                            });
                             return;
-                        }
-                        else
-                        {
                         }
                     }
 
@@ -1534,24 +1510,24 @@ namespace FGOSBIAReloaded
                     File.WriteAllText(gamedata.FullName + "raw", result);
                     File.WriteAllText(gamedata.FullName + "assetbundle",
                         res["response"][0]["success"]["assetbundle"].ToString());
-                    updatestatus.Dispatcher.Invoke(new Action(() =>
+                    updatestatus.Dispatcher.Invoke(() =>
                     {
                         updatestatus.Content = "Writing file to: " + gamedata.FullName + "assetbundle";
-                    }));
-                    progressbar.Dispatcher.Invoke(new Action(() => { progressbar.Value = progressbar.Value + 38; }));
+                    });
+                    progressbar.Dispatcher.Invoke(() => { progressbar.Value = progressbar.Value + 38; });
                     File.WriteAllText(gamedata.FullName + "master", res["response"][0]["success"]["master"].ToString());
-                    updatestatus.Dispatcher.Invoke(new Action(() =>
+                    updatestatus.Dispatcher.Invoke(() =>
                     {
                         updatestatus.Content = "Writing file to: " + gamedata.FullName + "master";
-                    }));
-                    progressbar.Dispatcher.Invoke(new Action(() => { progressbar.Value = progressbar.Value + 38; }));
+                    });
+                    progressbar.Dispatcher.Invoke(() => { progressbar.Value = progressbar.Value + 38; });
                     File.WriteAllText(gamedata.FullName + "webview",
                         res["response"][0]["success"]["webview"].ToString());
-                    updatestatus.Dispatcher.Invoke(new Action(() =>
+                    updatestatus.Dispatcher.Invoke(() =>
                     {
                         updatestatus.Content = "Writing file to: " + gamedata.FullName + "webview";
-                    }));
-                    progressbar.Dispatcher.Invoke(new Action(() => { progressbar.Value = progressbar.Value + 38; }));
+                    });
+                    progressbar.Dispatcher.Invoke(() => { progressbar.Value = progressbar.Value + 38; });
                     var data = File.ReadAllText(gamedata.FullName + "master");
                     if (!Directory.Exists(gamedata.FullName + "decrypted_masterdata"))
                         Directory.CreateDirectory(gamedata.FullName + "decrypted_masterdata");
@@ -1565,15 +1541,12 @@ namespace FGOSBIAReloaded
                         var unpackeditem = (List<object>) miniMessagePacker.Unpack(item.Value);
                         var json = JsonConvert.SerializeObject(unpackeditem, Formatting.Indented);
                         File.WriteAllText(gamedata.FullName + "decrypted_masterdata/" + item.Key, json);
-                        updatestatus.Dispatcher.Invoke(new Action(() =>
+                        updatestatus.Dispatcher.Invoke(() =>
                         {
                             updatestatus.Content = "Writing file to: " + gamedata.FullName +
                                                    "decrypted_masterdata\\" + item.Key;
-                        }));
-                        progressbar.Dispatcher.Invoke(new Action(() =>
-                        {
-                            progressbar.Value = progressbar.Value + 38;
-                        }));
+                        });
+                        progressbar.Dispatcher.Invoke(() => { progressbar.Value = progressbar.Value + 38; });
                     }
 
                     var data2 = File.ReadAllText(gamedata.FullName + "assetbundle");
@@ -1581,40 +1554,40 @@ namespace FGOSBIAReloaded
                         (Dictionary<string, object>) MasterDataUnpacker.MouseInfoMsgPack(
                             Convert.FromBase64String(data2));
                     string str = null;
-                    foreach (var a in dictionary) str += a.Key + ": " + a.Value.ToString() + "\r\n";
+                    foreach (var a in dictionary) str += a.Key + ": " + a.Value + "\r\n";
                     File.WriteAllText(gamedata.FullName + "assetbundle.txt", str);
-                    updatestatus.Dispatcher.Invoke(new Action(() =>
+                    updatestatus.Dispatcher.Invoke(() =>
                     {
-                        updatestatus.Content = "folder name: " + dictionary["folderName"].ToString();
-                    }));
-                    progressbar.Dispatcher.Invoke(new Action(() => { progressbar.Value = progressbar.Value + 38; }));
+                        updatestatus.Content = "folder name: " + dictionary["folderName"];
+                    });
+                    progressbar.Dispatcher.Invoke(() => { progressbar.Value = progressbar.Value + 38; });
                     var data3 = File.ReadAllText(gamedata.FullName + "webview");
                     var dictionary2 =
                         (Dictionary<string, object>) MasterDataUnpacker.MouseGame2MsgPack(
                             Convert.FromBase64String(data3));
-                    var str2 = "baseURL: " + dictionary2["baseURL"].ToString() + "\r\n contactURL: " +
-                               dictionary2["contactURL"].ToString() + "\r\n";
-                    updatestatus.Dispatcher.Invoke(new Action(() => { updatestatus.Content = str2; }));
-                    progressbar.Dispatcher.Invoke(new Action(() => { progressbar.Value = progressbar.Value + 38; }));
+                    var str2 = "baseURL: " + dictionary2["baseURL"] + "\r\n contactURL: " +
+                               dictionary2["contactURL"] + "\r\n";
+                    updatestatus.Dispatcher.Invoke(() => { updatestatus.Content = str2; });
+                    progressbar.Dispatcher.Invoke(() => { progressbar.Value = progressbar.Value + 38; });
                     var filePassInfo = (Dictionary<string, object>) dictionary2["filePass"];
-                    foreach (var a in filePassInfo) str += a.Key + ": " + a.Value.ToString() + "\r\n";
+                    foreach (var a in filePassInfo) str += a.Key + ": " + a.Value + "\r\n";
                     File.WriteAllText(gamedata.FullName + "webview.txt", str2);
-                    updatestatus.Dispatcher.Invoke(new Action(() =>
+                    updatestatus.Dispatcher.Invoke(() =>
                     {
                         updatestatus.Content = "Writing file to: " + gamedata.FullName + "webview.txt";
-                    }));
+                    });
 
-                    updatestatus.Dispatcher.Invoke(new Action(() => { updatestatus.Content = "下载完成，可以开始解析."; }));
+                    updatestatus.Dispatcher.Invoke(() => { updatestatus.Content = "下载完成，可以开始解析."; });
 
-                    progressbar.Dispatcher.Invoke(new Action(() => { progressbar.Value = progressbar.Maximum; }));
+                    progressbar.Dispatcher.Invoke(() => { progressbar.Value = progressbar.Maximum; });
                     MessageBox.Show("下载完成，可以开始解析.", "完成", MessageBoxButton.OK, MessageBoxImage.Information);
-                    updatestatus.Dispatcher.Invoke(new Action(() => { updatestatus.Content = ""; }));
-                    updatestatus.Dispatcher.Invoke(new Action(() => { updatesign.Content = ""; }));
-                    progressbar.Dispatcher.Invoke(new Action(() =>
+                    updatestatus.Dispatcher.Invoke(() => { updatestatus.Content = ""; });
+                    updatestatus.Dispatcher.Invoke(() => { updatesign.Content = ""; });
+                    progressbar.Dispatcher.Invoke(() =>
                     {
                         progressbar.Visibility = Visibility.Hidden;
                         updatedatabutton.IsEnabled = true;
-                    }));
+                    });
                 }
             }
             else
@@ -1631,17 +1604,17 @@ namespace FGOSBIAReloaded
                             var subdir = new DirectoryInfo(i.FullName);
                             subdir.Delete(true); //删除子目录和文件
                             updatestatus.Dispatcher.Invoke(
-                                new Action(() => { updatestatus.Content = "删除: " + subdir; }));
+                                () => { updatestatus.Content = "删除: " + subdir; });
 
                             continue;
                         }
 
                         i.Delete();
-                        updatestatus.Dispatcher.Invoke(new Action(() => { updatestatus.Content = "删除: " + i; }));
+                        updatestatus.Dispatcher.Invoke(() => { updatestatus.Content = "删除: " + i; });
                     }
 
-                    updatestatus.Dispatcher.Invoke(new Action(() => { updatestatus.Content = "开始下载/更新游戏数据......"; }));
-                    progressbar.Dispatcher.Invoke(new Action(() => { progressbar.Value = progressbar.Value + 500; }));
+                    updatestatus.Dispatcher.Invoke(() => { updatestatus.Content = "开始下载/更新游戏数据......"; });
+                    progressbar.Dispatcher.Invoke(() => { progressbar.Value = progressbar.Value + 500; });
 
                     var result = HttpRequest.PhttpReq("https://game.fate-go.jp/gamedata/top", "appVer=2.13.2");
                     var res = JObject.Parse(result);
@@ -1651,13 +1624,10 @@ namespace FGOSBIAReloaded
                         {
                             var tmp = res["response"][0]["fail"]["detail"].ToString();
                             tmp = Regex.Replace(tmp, @".*新ver.：(.*)、現.*", "$1", RegexOptions.Singleline);
-                            updatestatus.Dispatcher.Invoke(new Action(() =>
-                            {
-                                updatestatus.Content = "当前游戏版本: " + tmp.ToString();
-                            }));
+                            updatestatus.Dispatcher.Invoke(() => { updatestatus.Content = "当前游戏版本: " + tmp; });
 
                             result = HttpRequest.PhttpReq("https://game.fate-go.jp/gamedata/top",
-                                "appVer=" + tmp.ToString());
+                                "appVer=" + tmp);
                             res = JObject.Parse(result);
                         }
                         else if (res["response"][0]["fail"]["action"].ToString() == "maint")
@@ -1675,21 +1645,18 @@ namespace FGOSBIAReloaded
                                 foreach (Match m in mc)
                                 {
                                     var url = m.Result("${url}");
-                                    System.Diagnostics.Process.Start(url);
+                                    Process.Start(url);
                                 }
                             }
 
-                            updatestatus.Dispatcher.Invoke(new Action(() => { updatestatus.Content = ""; }));
-                            updatestatus.Dispatcher.Invoke(new Action(() => { updatesign.Content = ""; }));
-                            progressbar.Dispatcher.Invoke(new Action(() =>
+                            updatestatus.Dispatcher.Invoke(() => { updatestatus.Content = ""; });
+                            updatestatus.Dispatcher.Invoke(() => { updatesign.Content = ""; });
+                            progressbar.Dispatcher.Invoke(() =>
                             {
                                 progressbar.Visibility = Visibility.Hidden;
                                 updatedatabutton.IsEnabled = true;
-                            }));
+                            });
                             return;
-                        }
-                        else
-                        {
                         }
                     }
 
@@ -1698,24 +1665,24 @@ namespace FGOSBIAReloaded
                     File.WriteAllText(gamedata.FullName + "raw", result);
                     File.WriteAllText(gamedata.FullName + "assetbundle",
                         res["response"][0]["success"]["assetbundle"].ToString());
-                    updatestatus.Dispatcher.Invoke(new Action(() =>
+                    updatestatus.Dispatcher.Invoke(() =>
                     {
                         updatestatus.Content = "Writing file to: " + gamedata.FullName + "assetbundle";
-                    }));
-                    progressbar.Dispatcher.Invoke(new Action(() => { progressbar.Value = progressbar.Value + 38; }));
+                    });
+                    progressbar.Dispatcher.Invoke(() => { progressbar.Value = progressbar.Value + 38; });
                     File.WriteAllText(gamedata.FullName + "master", res["response"][0]["success"]["master"].ToString());
-                    updatestatus.Dispatcher.Invoke(new Action(() =>
+                    updatestatus.Dispatcher.Invoke(() =>
                     {
                         updatestatus.Content = "Writing file to: " + gamedata.FullName + "master";
-                    }));
-                    progressbar.Dispatcher.Invoke(new Action(() => { progressbar.Value = progressbar.Value + 38; }));
+                    });
+                    progressbar.Dispatcher.Invoke(() => { progressbar.Value = progressbar.Value + 38; });
                     File.WriteAllText(gamedata.FullName + "webview",
                         res["response"][0]["success"]["webview"].ToString());
-                    updatestatus.Dispatcher.Invoke(new Action(() =>
+                    updatestatus.Dispatcher.Invoke(() =>
                     {
                         updatestatus.Content = "Writing file to: " + gamedata.FullName + "webview";
-                    }));
-                    progressbar.Dispatcher.Invoke(new Action(() => { progressbar.Value = progressbar.Value + 38; }));
+                    });
+                    progressbar.Dispatcher.Invoke(() => { progressbar.Value = progressbar.Value + 38; });
                     var data = File.ReadAllText(gamedata.FullName + "master");
                     if (!Directory.Exists(gamedata.FullName + "decrypted_masterdata"))
                         Directory.CreateDirectory(gamedata.FullName + "decrypted_masterdata");
@@ -1729,15 +1696,12 @@ namespace FGOSBIAReloaded
                         var unpackeditem = (List<object>) miniMessagePacker.Unpack(item.Value);
                         var json = JsonConvert.SerializeObject(unpackeditem, Formatting.Indented);
                         File.WriteAllText(gamedata.FullName + "decrypted_masterdata/" + item.Key, json);
-                        updatestatus.Dispatcher.Invoke(new Action(() =>
+                        updatestatus.Dispatcher.Invoke(() =>
                         {
                             updatestatus.Content = "Writing file to: " + gamedata.FullName +
                                                    "decrypted_masterdata\\" + item.Key;
-                        }));
-                        progressbar.Dispatcher.Invoke(new Action(() =>
-                        {
-                            progressbar.Value = progressbar.Value + 38;
-                        }));
+                        });
+                        progressbar.Dispatcher.Invoke(() => { progressbar.Value = progressbar.Value + 38; });
                     }
 
                     var data2 = File.ReadAllText(gamedata.FullName + "assetbundle");
@@ -1745,40 +1709,40 @@ namespace FGOSBIAReloaded
                         (Dictionary<string, object>) MasterDataUnpacker.MouseInfoMsgPack(
                             Convert.FromBase64String(data2));
                     string str = null;
-                    foreach (var a in dictionary) str += a.Key + ": " + a.Value.ToString() + "\r\n";
+                    foreach (var a in dictionary) str += a.Key + ": " + a.Value + "\r\n";
                     File.WriteAllText(gamedata.FullName + "assetbundle.txt", str);
-                    updatestatus.Dispatcher.Invoke(new Action(() =>
+                    updatestatus.Dispatcher.Invoke(() =>
                     {
-                        updatestatus.Content = "folder name: " + dictionary["folderName"].ToString();
-                    }));
-                    progressbar.Dispatcher.Invoke(new Action(() => { progressbar.Value = progressbar.Value + 38; }));
+                        updatestatus.Content = "folder name: " + dictionary["folderName"];
+                    });
+                    progressbar.Dispatcher.Invoke(() => { progressbar.Value = progressbar.Value + 38; });
                     var data3 = File.ReadAllText(gamedata.FullName + "webview");
                     var dictionary2 =
                         (Dictionary<string, object>) MasterDataUnpacker.MouseGame2MsgPack(
                             Convert.FromBase64String(data3));
-                    var str2 = "baseURL: " + dictionary2["baseURL"].ToString() + "\r\n contactURL: " +
-                               dictionary2["contactURL"].ToString() + "\r\n";
-                    updatestatus.Dispatcher.Invoke(new Action(() => { updatestatus.Content = str2; }));
-                    progressbar.Dispatcher.Invoke(new Action(() => { progressbar.Value = progressbar.Value + 38; }));
+                    var str2 = "baseURL: " + dictionary2["baseURL"] + "\r\n contactURL: " +
+                               dictionary2["contactURL"] + "\r\n";
+                    updatestatus.Dispatcher.Invoke(() => { updatestatus.Content = str2; });
+                    progressbar.Dispatcher.Invoke(() => { progressbar.Value = progressbar.Value + 38; });
                     var filePassInfo = (Dictionary<string, object>) dictionary2["filePass"];
-                    foreach (var a in filePassInfo) str += a.Key + ": " + a.Value.ToString() + "\r\n";
+                    foreach (var a in filePassInfo) str += a.Key + ": " + a.Value + "\r\n";
                     File.WriteAllText(gamedata.FullName + "webview.txt", str2);
-                    updatestatus.Dispatcher.Invoke(new Action(() =>
+                    updatestatus.Dispatcher.Invoke(() =>
                     {
                         updatestatus.Content = "Writing file to: " + gamedata.FullName + "webview.txt";
-                    }));
+                    });
 
-                    updatestatus.Dispatcher.Invoke(new Action(() => { updatestatus.Content = "下载完成，可以开始解析."; }));
+                    updatestatus.Dispatcher.Invoke(() => { updatestatus.Content = "下载完成，可以开始解析."; });
 
-                    progressbar.Dispatcher.Invoke(new Action(() => { progressbar.Value = progressbar.Maximum; }));
+                    progressbar.Dispatcher.Invoke(() => { progressbar.Value = progressbar.Maximum; });
                     MessageBox.Show("下载完成，可以开始解析.", "完成", MessageBoxButton.OK, MessageBoxImage.Information);
-                    updatestatus.Dispatcher.Invoke(new Action(() => { updatestatus.Content = ""; }));
-                    updatestatus.Dispatcher.Invoke(new Action(() => { updatesign.Content = ""; }));
-                    progressbar.Dispatcher.Invoke(new Action(() =>
+                    updatestatus.Dispatcher.Invoke(() => { updatestatus.Content = ""; });
+                    updatestatus.Dispatcher.Invoke(() => { updatesign.Content = ""; });
+                    progressbar.Dispatcher.Invoke(() =>
                     {
                         progressbar.Visibility = Visibility.Hidden;
                         updatedatabutton.IsEnabled = true;
-                    }));
+                    });
                 }
                 else
                 {
@@ -1790,17 +1754,17 @@ namespace FGOSBIAReloaded
                             var subdir = new DirectoryInfo(i.FullName);
                             subdir.Delete(true); //删除子目录和文件
                             updatestatus.Dispatcher.Invoke(
-                                new Action(() => { updatestatus.Content = "删除: " + subdir; }));
+                                () => { updatestatus.Content = "删除: " + subdir; });
 
                             continue;
                         }
 
                         i.Delete();
-                        updatestatus.Dispatcher.Invoke(new Action(() => { updatestatus.Content = "删除: " + i; }));
+                        updatestatus.Dispatcher.Invoke(() => { updatestatus.Content = "删除: " + i; });
                     }
 
-                    updatestatus.Dispatcher.Invoke(new Action(() => { updatestatus.Content = "开始下载/更新游戏数据......"; }));
-                    progressbar.Dispatcher.Invoke(new Action(() => { progressbar.Value = progressbar.Value + 500; }));
+                    updatestatus.Dispatcher.Invoke(() => { updatestatus.Content = "开始下载/更新游戏数据......"; });
+                    progressbar.Dispatcher.Invoke(() => { progressbar.Value = progressbar.Value + 500; });
 
                     var result = HttpRequest.PhttpReq("https://game.fate-go.jp/gamedata/top", "appVer=2.13.2");
                     var res = JObject.Parse(result);
@@ -1810,13 +1774,10 @@ namespace FGOSBIAReloaded
                         {
                             var tmp = res["response"][0]["fail"]["detail"].ToString();
                             tmp = Regex.Replace(tmp, @".*新ver.：(.*)、現.*", "$1", RegexOptions.Singleline);
-                            updatestatus.Dispatcher.Invoke(new Action(() =>
-                            {
-                                updatestatus.Content = "当前游戏版本: " + tmp.ToString();
-                            }));
+                            updatestatus.Dispatcher.Invoke(() => { updatestatus.Content = "当前游戏版本: " + tmp; });
 
                             result = HttpRequest.PhttpReq("https://game.fate-go.jp/gamedata/top",
-                                "appVer=" + tmp.ToString());
+                                "appVer=" + tmp);
                             res = JObject.Parse(result);
                         }
                         else if (res["response"][0]["fail"]["action"].ToString() == "maint")
@@ -1834,21 +1795,18 @@ namespace FGOSBIAReloaded
                                 foreach (Match m in mc)
                                 {
                                     var url = m.Result("${url}");
-                                    System.Diagnostics.Process.Start(url);
+                                    Process.Start(url);
                                 }
                             }
 
-                            updatestatus.Dispatcher.Invoke(new Action(() => { updatestatus.Content = ""; }));
-                            updatestatus.Dispatcher.Invoke(new Action(() => { updatesign.Content = ""; }));
-                            progressbar.Dispatcher.Invoke(new Action(() =>
+                            updatestatus.Dispatcher.Invoke(() => { updatestatus.Content = ""; });
+                            updatestatus.Dispatcher.Invoke(() => { updatesign.Content = ""; });
+                            progressbar.Dispatcher.Invoke(() =>
                             {
                                 progressbar.Visibility = Visibility.Hidden;
                                 updatedatabutton.IsEnabled = true;
-                            }));
+                            });
                             return;
-                        }
-                        else
-                        {
                         }
                     }
 
@@ -1857,24 +1815,24 @@ namespace FGOSBIAReloaded
                     File.WriteAllText(gamedata.FullName + "raw", result);
                     File.WriteAllText(gamedata.FullName + "assetbundle",
                         res["response"][0]["success"]["assetbundle"].ToString());
-                    updatestatus.Dispatcher.Invoke(new Action(() =>
+                    updatestatus.Dispatcher.Invoke(() =>
                     {
                         updatestatus.Content = "Writing file to: " + gamedata.FullName + "assetbundle";
-                    }));
-                    progressbar.Dispatcher.Invoke(new Action(() => { progressbar.Value = progressbar.Value + 38; }));
+                    });
+                    progressbar.Dispatcher.Invoke(() => { progressbar.Value = progressbar.Value + 38; });
                     File.WriteAllText(gamedata.FullName + "master", res["response"][0]["success"]["master"].ToString());
-                    updatestatus.Dispatcher.Invoke(new Action(() =>
+                    updatestatus.Dispatcher.Invoke(() =>
                     {
                         updatestatus.Content = "Writing file to: " + gamedata.FullName + "master";
-                    }));
-                    progressbar.Dispatcher.Invoke(new Action(() => { progressbar.Value = progressbar.Value + 38; }));
+                    });
+                    progressbar.Dispatcher.Invoke(() => { progressbar.Value = progressbar.Value + 38; });
                     File.WriteAllText(gamedata.FullName + "webview",
                         res["response"][0]["success"]["webview"].ToString());
-                    updatestatus.Dispatcher.Invoke(new Action(() =>
+                    updatestatus.Dispatcher.Invoke(() =>
                     {
                         updatestatus.Content = "Writing file to: " + gamedata.FullName + "webview";
-                    }));
-                    progressbar.Dispatcher.Invoke(new Action(() => { progressbar.Value = progressbar.Value + 38; }));
+                    });
+                    progressbar.Dispatcher.Invoke(() => { progressbar.Value = progressbar.Value + 38; });
                     var data = File.ReadAllText(gamedata.FullName + "master");
                     if (!Directory.Exists(gamedata.FullName + "decrypted_masterdata"))
                         Directory.CreateDirectory(gamedata.FullName + "decrypted_masterdata");
@@ -1888,15 +1846,12 @@ namespace FGOSBIAReloaded
                         var unpackeditem = (List<object>) miniMessagePacker.Unpack(item.Value);
                         var json = JsonConvert.SerializeObject(unpackeditem, Formatting.Indented);
                         File.WriteAllText(gamedata.FullName + "decrypted_masterdata/" + item.Key, json);
-                        updatestatus.Dispatcher.Invoke(new Action(() =>
+                        updatestatus.Dispatcher.Invoke(() =>
                         {
                             updatestatus.Content = "Writing file to: " + gamedata.FullName +
                                                    "decrypted_masterdata\\" + item.Key;
-                        }));
-                        progressbar.Dispatcher.Invoke(new Action(() =>
-                        {
-                            progressbar.Value = progressbar.Value + 38;
-                        }));
+                        });
+                        progressbar.Dispatcher.Invoke(() => { progressbar.Value = progressbar.Value + 38; });
                     }
 
                     var data2 = File.ReadAllText(gamedata.FullName + "assetbundle");
@@ -1904,39 +1859,39 @@ namespace FGOSBIAReloaded
                         (Dictionary<string, object>) MasterDataUnpacker.MouseInfoMsgPack(
                             Convert.FromBase64String(data2));
                     string str = null;
-                    foreach (var a in dictionary) str += a.Key + ": " + a.Value.ToString() + "\r\n";
+                    foreach (var a in dictionary) str += a.Key + ": " + a.Value + "\r\n";
                     File.WriteAllText(gamedata.FullName + "assetbundle.txt", str);
-                    updatestatus.Dispatcher.Invoke(new Action(() =>
+                    updatestatus.Dispatcher.Invoke(() =>
                     {
-                        updatestatus.Content = "folder name: " + dictionary["folderName"].ToString();
-                    }));
-                    progressbar.Dispatcher.Invoke(new Action(() => { progressbar.Value = progressbar.Value + 38; }));
+                        updatestatus.Content = "folder name: " + dictionary["folderName"];
+                    });
+                    progressbar.Dispatcher.Invoke(() => { progressbar.Value = progressbar.Value + 38; });
                     var data3 = File.ReadAllText(gamedata.FullName + "webview");
                     var dictionary2 =
                         (Dictionary<string, object>) MasterDataUnpacker.MouseGame2MsgPack(
                             Convert.FromBase64String(data3));
-                    var str2 = "baseURL: " + dictionary2["baseURL"].ToString() + "\r\n contactURL: " +
-                               dictionary2["contactURL"].ToString() + "\r\n";
-                    updatestatus.Dispatcher.Invoke(new Action(() => { updatestatus.Content = str2; }));
-                    progressbar.Dispatcher.Invoke(new Action(() => { progressbar.Value = progressbar.Value + 38; }));
+                    var str2 = "baseURL: " + dictionary2["baseURL"] + "\r\n contactURL: " +
+                               dictionary2["contactURL"] + "\r\n";
+                    updatestatus.Dispatcher.Invoke(() => { updatestatus.Content = str2; });
+                    progressbar.Dispatcher.Invoke(() => { progressbar.Value = progressbar.Value + 38; });
                     var filePassInfo = (Dictionary<string, object>) dictionary2["filePass"];
-                    foreach (var a in filePassInfo) str += a.Key + ": " + a.Value.ToString() + "\r\n";
+                    foreach (var a in filePassInfo) str += a.Key + ": " + a.Value + "\r\n";
                     File.WriteAllText(gamedata.FullName + "webview.txt", str2);
-                    updatestatus.Dispatcher.Invoke(new Action(() =>
+                    updatestatus.Dispatcher.Invoke(() =>
                     {
                         updatestatus.Content = "Writing file to: " + gamedata.FullName + "webview.txt";
-                    }));
+                    });
 
-                    updatestatus.Dispatcher.Invoke(new Action(() => { updatestatus.Content = "下载完成，可以开始解析."; }));
-                    progressbar.Dispatcher.Invoke(new Action(() => { progressbar.Value = progressbar.Maximum; }));
+                    updatestatus.Dispatcher.Invoke(() => { updatestatus.Content = "下载完成，可以开始解析."; });
+                    progressbar.Dispatcher.Invoke(() => { progressbar.Value = progressbar.Maximum; });
                     MessageBox.Show("下载完成，可以开始解析.", "完成", MessageBoxButton.OK, MessageBoxImage.Information);
-                    updatestatus.Dispatcher.Invoke(new Action(() => { updatestatus.Content = ""; }));
-                    updatestatus.Dispatcher.Invoke(new Action(() => { updatesign.Content = ""; }));
-                    progressbar.Dispatcher.Invoke(new Action(() =>
+                    updatestatus.Dispatcher.Invoke(() => { updatestatus.Content = ""; });
+                    updatestatus.Dispatcher.Invoke(() => { updatesign.Content = ""; });
+                    progressbar.Dispatcher.Invoke(() =>
                     {
                         progressbar.Visibility = Visibility.Hidden;
                         updatedatabutton.IsEnabled = true;
-                    }));
+                    });
                 }
             }
         }
@@ -1980,41 +1935,51 @@ namespace FGOSBIAReloaded
 
             var source = sender as Hyperlink;
 
-            if (source != null) System.Diagnostics.Process.Start(source.NavigateUri.ToString());
+            if (source != null) Process.Start(source.NavigateUri.ToString());
         }
 
         private void Npvaluelv1_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (npvaluelv1.Text == "") return;
-            MessageBox.Show("宝具所有函数有(对应/之间的内容):\r\n" + SkillLvs.TDFuncstr + "\r\n\r\n以下列出一宝时所有Over Charge情况下的数据:\r\n" + npvaluelv1.Text, "宝具等级lv1详细数据", MessageBoxButton.OK,
+            MessageBox.Show(
+                "宝具所有函数有(对应/之间的内容):\r\n" + SkillLvs.TDFuncstr + "\r\n\r\n以下列出一宝时所有Over Charge情况下的数据:\r\n" +
+                npvaluelv1.Text, "宝具等级lv1详细数据", MessageBoxButton.OK,
                 MessageBoxImage.Information);
         }
 
         private void Npvaluelv2_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (npvaluelv2.Text == "") return;
-            MessageBox.Show("宝具所有函数有(对应/之间的内容):\r\n" + SkillLvs.TDFuncstr + "\r\n\r\n以下列出二宝时所有Over Charge情况下的数据:\r\n" + npvaluelv2.Text, "宝具等级lv2详细数据", MessageBoxButton.OK,
+            MessageBox.Show(
+                "宝具所有函数有(对应/之间的内容):\r\n" + SkillLvs.TDFuncstr + "\r\n\r\n以下列出二宝时所有Over Charge情况下的数据:\r\n" +
+                npvaluelv2.Text, "宝具等级lv2详细数据", MessageBoxButton.OK,
                 MessageBoxImage.Information);
         }
 
         private void Npvaluelv3_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (npvaluelv3.Text == "") return;
-            MessageBox.Show("宝具所有函数有(对应/之间的内容):\r\n" + SkillLvs.TDFuncstr + "\r\n\r\n以下列出三宝时所有Over Charge情况下的数据:\r\n" + npvaluelv3.Text, "宝具等级lv3详细数据", MessageBoxButton.OK,
+            MessageBox.Show(
+                "宝具所有函数有(对应/之间的内容):\r\n" + SkillLvs.TDFuncstr + "\r\n\r\n以下列出三宝时所有Over Charge情况下的数据:\r\n" +
+                npvaluelv3.Text, "宝具等级lv3详细数据", MessageBoxButton.OK,
                 MessageBoxImage.Information);
         }
 
         private void Npvaluelv4_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (npvaluelv4.Text == "") return;
-            MessageBox.Show("宝具所有函数有(对应/之间的内容):\r\n" + SkillLvs.TDFuncstr + "\r\n\r\n以下列出四宝时所有Over Charge情况下的数据:\r\n" + npvaluelv4.Text, "宝具等级lv4详细数据", MessageBoxButton.OK,
+            MessageBox.Show(
+                "宝具所有函数有(对应/之间的内容):\r\n" + SkillLvs.TDFuncstr + "\r\n\r\n以下列出四宝时所有Over Charge情况下的数据:\r\n" +
+                npvaluelv4.Text, "宝具等级lv4详细数据", MessageBoxButton.OK,
                 MessageBoxImage.Information);
         }
 
         private void Npvaluelv5_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (npvaluelv5.Text == "") return;
-            MessageBox.Show("宝具所有函数有(对应/之间的内容):\r\n" + SkillLvs.TDFuncstr + "\r\n\r\n以下列出五宝时所有Over Charge情况下的数据:\r\n" + npvaluelv5.Text, "宝具等级lv5详细数据", MessageBoxButton.OK,
+            MessageBox.Show(
+                "宝具所有函数有(对应/之间的内容):\r\n" + SkillLvs.TDFuncstr + "\r\n\r\n以下列出五宝时所有Over Charge情况下的数据:\r\n" +
+                npvaluelv5.Text, "宝具等级lv5详细数据", MessageBoxButton.OK,
                 MessageBoxImage.Information);
         }
 
