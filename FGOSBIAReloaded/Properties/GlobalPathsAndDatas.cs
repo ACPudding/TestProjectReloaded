@@ -14,6 +14,7 @@ namespace FGOSBIAReloaded.Properties
         public static string path = Directory.GetCurrentDirectory();
         public static DirectoryInfo gamedata = new DirectoryInfo(path + @"\Android\masterdata\");
         public static DirectoryInfo folder = new DirectoryInfo(path + @"\Android\");
+        public static DirectoryInfo outputdir = new DirectoryInfo(path + @"\Output\");
         public static string mstSvt = File.ReadAllText(gamedata.FullName + "decrypted_masterdata/" + "mstSvt");
         public static string mstSvtLimit = File.ReadAllText(gamedata.FullName + "decrypted_masterdata/" + "mstSvtLimit");
         public static string mstCv = File.ReadAllText(gamedata.FullName + "decrypted_masterdata/" + "mstCv");
