@@ -52,5 +52,33 @@ namespace FGOSBIAReloaded
                 return false;
             }
         }
+
+        public static bool BeforeDownloadCheckFolderExists()
+        {
+            if (!Directory.Exists(GlobalPathsAndDatas.folder.FullName))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public static bool BeforeDownloadCheckAssetExists()
+        {
+            if (File.Exists(GlobalPathsAndDatas.gamedata.FullName + "webview") ||
+                File.Exists(GlobalPathsAndDatas.gamedata.FullName + "raw") ||
+                File.Exists(GlobalPathsAndDatas.gamedata.FullName + "assetbundle") ||
+                File.Exists(GlobalPathsAndDatas.gamedata.FullName + "webview") ||
+                File.Exists(GlobalPathsAndDatas.gamedata.FullName + "master"))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
     }
 }
