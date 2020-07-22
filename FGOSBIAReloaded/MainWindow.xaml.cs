@@ -109,8 +109,6 @@ namespace FGOSBIAReloaded
             ServantTreasureDeviceSvalCheck(svtTDID);
             var SSIC = new Thread(ServantSkillInformationCheck);
             SSIC.Start();
-            var SSLC = new Thread(ServantSkillLevelCheck);
-            SSLC.Start();
             Button1.Dispatcher.Invoke(() => { Button1.IsEnabled = true; });
             Dispatcher.Invoke(() =>
             {
@@ -1090,6 +1088,8 @@ namespace FGOSBIAReloaded
             SkillLvs.skillID1 = skill1ID;
             SkillLvs.skillID2 = skill2ID;
             SkillLvs.skillID3 = skill3ID;
+            var SSLC = new Thread(ServantSkillLevelCheck);
+            SSLC.Start();
 
             Dispatcher.Invoke(() =>
             {

@@ -8,6 +8,6 @@ namespace FGOSBIAReloaded.Properties
 {
     class CommonStrings
     {
-        public static string Version = "版本号: v2.2.1__b3";
+        public static string Version = "版本号: v2.2.1__b4";
     }
 }
