@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows;
@@ -32,7 +33,7 @@ namespace FGOSBIAReloaded
             SA.Start();
         }
 
-        public void StartAnalyze()
+        private void StartAnalyze()
         {
             textbox1.Dispatcher.Invoke(() => { textbox1.Text = Regex.Replace(textbox1.Text, @"\s", ""); });
             var svtID = "";
@@ -206,40 +207,38 @@ namespace FGOSBIAReloaded
 
                 textbox1.Dispatcher.Invoke(() =>
                 {
-                    if (((JObject) TreasureDevicestmp)["seqId"].ToString() == textbox1.Text &&
-                        ((JObject) TreasureDevicestmp)["ruby"].ToString() == "-" &&
-                        ((JObject) TreasureDevicestmp)["id"].ToString().Length == 3)
+                    if (((JObject) TreasureDevicestmp)["seqId"].ToString() != textbox1.Text ||
+                        ((JObject) TreasureDevicestmp)["ruby"].ToString() != "-" ||
+                        ((JObject) TreasureDevicestmp)["id"].ToString().Length != 3) return;
+                    var mstTDobjtmp2 = JObject.Parse(TreasureDevicestmp.ToString());
+                    NPName = mstTDobjtmp2["name"].ToString();
+                    npname.Dispatcher.Invoke(() => { npname.Text = NPName; });
+                    NPrank = mstTDobjtmp2["rank"].ToString();
+                    NPruby = mstTDobjtmp2["ruby"].ToString();
+                    npruby.Dispatcher.Invoke(() => { npruby.Text = NPruby; });
+                    NPtypeText = mstTDobjtmp2["typeText"].ToString();
+                    nprank.Dispatcher.Invoke(() => { nprank.Text = NPrank + " ( " + NPtypeText + " ) "; });
+                    svtNPDamageType = mstTDobjtmp2["effectFlag"].ToString().Replace("0", "无伤害宝具")
+                        .Replace("1", "群体宝具").Replace("2", "单体宝具");
+                    nptype.Dispatcher.Invoke(() => { nptype.Text = svtNPDamageType; });
+                    if (svtNPDamageType == "-")
                     {
-                        var mstTDobjtmp2 = JObject.Parse(TreasureDevicestmp.ToString());
-                        NPName = mstTDobjtmp2["name"].ToString();
-                        npname.Dispatcher.Invoke(() => { npname.Text = NPName; });
-                        NPrank = mstTDobjtmp2["rank"].ToString();
-                        NPruby = mstTDobjtmp2["ruby"].ToString();
-                        npruby.Dispatcher.Invoke(() => { npruby.Text = NPruby; });
-                        NPtypeText = mstTDobjtmp2["typeText"].ToString();
-                        nprank.Dispatcher.Invoke(() => { nprank.Text = NPrank + " ( " + NPtypeText + " ) "; });
-                        svtNPDamageType = mstTDobjtmp2["effectFlag"].ToString().Replace("0", "无伤害宝具")
-                            .Replace("1", "群体宝具").Replace("2", "单体宝具");
-                        nptype.Dispatcher.Invoke(() => { nptype.Text = svtNPDamageType; });
-                        if (svtNPDamageType == "-")
-                        {
-                            svtNPCardhit = 0;
-                            svtNPCardhitDamage = "[ - ]";
-                        }
-
-                        NPDetail = "该ID的配卡与宝具解析不准确,请留意.";
-                        foreach (var svtTreasureDevicestmp in GlobalPathsAndDatas.mstSvtTreasureDevicedArray) //查找某个字段与值
-                            if (((JObject) svtTreasureDevicestmp)["treasureDeviceId"].ToString() ==
-                                ((JObject) TreasureDevicestmp)["id"].ToString())
-                            {
-                                var mstsvtTDobjtmp2 = JObject.Parse(svtTreasureDevicestmp.ToString());
-                                svtNPCardhitDamage = mstsvtTDobjtmp2["damage"].ToString().Replace("\n", "")
-                                    .Replace("\t", "").Replace("\r", "").Replace(" ", "");
-                                svtNPCardType = mstsvtTDobjtmp2["cardId"].ToString().Replace("2", "Buster")
-                                    .Replace("1", "Arts").Replace("3", "Quick");
-                                break;
-                            }
+                        svtNPCardhit = 0;
+                        svtNPCardhitDamage = "[ - ]";
                     }
+
+                    NPDetail = "该ID的配卡与宝具解析不准确,请留意.";
+                    foreach (var svtTreasureDevicestmp in GlobalPathsAndDatas.mstSvtTreasureDevicedArray) //查找某个字段与值
+                        if (((JObject) svtTreasureDevicestmp)["treasureDeviceId"].ToString() ==
+                            ((JObject) TreasureDevicestmp)["id"].ToString())
+                        {
+                            var mstsvtTDobjtmp2 = JObject.Parse(svtTreasureDevicestmp.ToString());
+                            svtNPCardhitDamage = mstsvtTDobjtmp2["damage"].ToString().Replace("\n", "")
+                                .Replace("\t", "").Replace("\r", "").Replace(" ", "");
+                            svtNPCardType = mstsvtTDobjtmp2["cardId"].ToString().Replace("2", "Buster")
+                                .Replace("1", "Arts").Replace("3", "Quick");
+                            break;
+                        }
                 });
             }
 
@@ -253,9 +252,7 @@ namespace FGOSBIAReloaded
             });
             treasuredevicescard.Dispatcher.Invoke(() =>
             {
-                foreach (var c in svtNPCardhitDamage)
-                    if (c == ',')
-                        svtNPCardhit++;
+                svtNPCardhit += svtNPCardhitDamage.Count(c => c == ',');
                 treasuredevicescard.Text = svtNPCardhit + " hit " + svtNPCardhitDamage;
             });
             npcardtype.Dispatcher.Invoke(() => { npcardtype.Text = svtNPCardType; });
@@ -268,36 +265,42 @@ namespace FGOSBIAReloaded
                     {
                         var TreasureDevicesobjtmp2 = JObject.Parse(TreasureDevicestmp2.ToString());
                         newtmpid = TreasureDevicesobjtmp2["id"].ToString();
-                        if (newtmpid.Length == 6)
+                        switch (newtmpid.Length)
                         {
-                            var FinTDID_TMP = newtmpid;
-                            foreach (var TDDtmp2 in GlobalPathsAndDatas.mstTreasureDeviceDetailArray) //查找某个字段与值
-                                if (((JObject) TDDtmp2)["id"].ToString() == FinTDID_TMP)
-                                {
-                                    var TDDobjtmp2 = JObject.Parse(TDDtmp2.ToString());
-                                    NPDetail = TDDobjtmp2["detail"].ToString().Replace("[{0}]", " [Lv.1 - Lv.5] ")
-                                        .Replace("[g]", "").Replace("[o]", "").Replace("[/g]", "")
-                                        .Replace("[/o]", "").Replace(@"＆", "\r\n ＋").Replace(@"＋", "\r\n ＋")
-                                        .Replace("\r\n \r\n", "\r\n");
-                                    var TDDetailDisplay = NPDetail;
-                                }
-                        }
-                        else if (newtmpid.Length == 7)
-                        {
-                            if (newtmpid.Substring(0, 2) == "10" || newtmpid.Substring(0, 2) == "11" ||
-                                newtmpid.Substring(0, 2) == "23" || newtmpid.Substring(0, 2) == "25")
+                            case 6:
                             {
                                 var FinTDID_TMP = newtmpid;
                                 foreach (var TDDtmp2 in GlobalPathsAndDatas.mstTreasureDeviceDetailArray) //查找某个字段与值
                                     if (((JObject) TDDtmp2)["id"].ToString() == FinTDID_TMP)
                                     {
                                         var TDDobjtmp2 = JObject.Parse(TDDtmp2.ToString());
-                                        NPDetail = TDDobjtmp2["detail"].ToString()
-                                            .Replace("[{0}]", " [Lv.1 - Lv.5] ").Replace("[g]", "")
-                                            .Replace("[o]", "").Replace("[/g]", "").Replace("[/o]", "")
-                                            .Replace(@"＆", "\r\n ＋").Replace(@"＋", "\r\n ＋")
+                                        NPDetail = TDDobjtmp2["detail"].ToString().Replace("[{0}]", " [Lv.1 - Lv.5] ")
+                                            .Replace("[g]", "").Replace("[o]", "").Replace("[/g]", "")
+                                            .Replace("[/o]", "").Replace(@"＆", "\r\n ＋").Replace(@"＋", "\r\n ＋")
                                             .Replace("\r\n \r\n", "\r\n");
                                     }
+
+                                break;
+                            }
+                            case 7:
+                            {
+                                if (newtmpid.Substring(0, 2) == "10" || newtmpid.Substring(0, 2) == "11" ||
+                                    newtmpid.Substring(0, 2) == "23" || newtmpid.Substring(0, 2) == "25")
+                                {
+                                    var FinTDID_TMP = newtmpid;
+                                    foreach (var TDDtmp2 in GlobalPathsAndDatas.mstTreasureDeviceDetailArray) //查找某个字段与值
+                                        if (((JObject) TDDtmp2)["id"].ToString() == FinTDID_TMP)
+                                        {
+                                            var TDDobjtmp2 = JObject.Parse(TDDtmp2.ToString());
+                                            NPDetail = TDDobjtmp2["detail"].ToString()
+                                                .Replace("[{0}]", " [Lv.1 - Lv.5] ").Replace("[g]", "")
+                                                .Replace("[o]", "").Replace("[/g]", "").Replace("[/o]", "")
+                                                .Replace(@"＆", "\r\n ＋").Replace(@"＋", "\r\n ＋")
+                                                .Replace("\r\n \r\n", "\r\n");
+                                        }
+                                }
+
+                                break;
                             }
                         }
                     }
@@ -314,33 +317,31 @@ namespace FGOSBIAReloaded
         {
             Dispatcher.Invoke(() =>
             {
-                if (jibantext1.Text != "")
-                {
-                    SkillDetailCheck(SkillLvs.skillID1);
-                    skill1cdlv1.Text = SkillLvs.skilllv1chargetime;
-                    skill1cdlv6.Text = SkillLvs.skilllv6chargetime;
-                    skill1cdlv10.Text = SkillLvs.skilllv10chargetime;
-                    skill1valuelv1.Text = SkillLvs.skilllv1sval;
-                    skill1valuelv6.Text = SkillLvs.skilllv6sval;
-                    skill1valuelv10.Text = SkillLvs.skilllv10sval;
-                    skill1Funcs.Text = SkillLvs.SKLFuncstr;
-                    SkillDetailCheck(SkillLvs.skillID2);
-                    skill2cdlv1.Text = SkillLvs.skilllv1chargetime;
-                    skill2cdlv6.Text = SkillLvs.skilllv6chargetime;
-                    skill2cdlv10.Text = SkillLvs.skilllv10chargetime;
-                    skill2valuelv1.Text = SkillLvs.skilllv1sval;
-                    skill2valuelv6.Text = SkillLvs.skilllv6sval;
-                    skill2valuelv10.Text = SkillLvs.skilllv10sval;
-                    skill2Funcs.Text = SkillLvs.SKLFuncstr;
-                    SkillDetailCheck(SkillLvs.skillID3);
-                    skill3cdlv1.Text = SkillLvs.skilllv1chargetime;
-                    skill3cdlv6.Text = SkillLvs.skilllv6chargetime;
-                    skill3cdlv10.Text = SkillLvs.skilllv10chargetime;
-                    skill3valuelv1.Text = SkillLvs.skilllv1sval;
-                    skill3valuelv6.Text = SkillLvs.skilllv6sval;
-                    skill3valuelv10.Text = SkillLvs.skilllv10sval;
-                    skill3Funcs.Text = SkillLvs.SKLFuncstr;
-                }
+                if (jibantext1.Text == "") return;
+                SkillDetailCheck(SkillLvs.skillID1);
+                skill1cdlv1.Text = SkillLvs.skilllv1chargetime;
+                skill1cdlv6.Text = SkillLvs.skilllv6chargetime;
+                skill1cdlv10.Text = SkillLvs.skilllv10chargetime;
+                skill1valuelv1.Text = SkillLvs.skilllv1sval;
+                skill1valuelv6.Text = SkillLvs.skilllv6sval;
+                skill1valuelv10.Text = SkillLvs.skilllv10sval;
+                skill1Funcs.Text = SkillLvs.SKLFuncstr;
+                SkillDetailCheck(SkillLvs.skillID2);
+                skill2cdlv1.Text = SkillLvs.skilllv1chargetime;
+                skill2cdlv6.Text = SkillLvs.skilllv6chargetime;
+                skill2cdlv10.Text = SkillLvs.skilllv10chargetime;
+                skill2valuelv1.Text = SkillLvs.skilllv1sval;
+                skill2valuelv6.Text = SkillLvs.skilllv6sval;
+                skill2valuelv10.Text = SkillLvs.skilllv10sval;
+                skill2Funcs.Text = SkillLvs.SKLFuncstr;
+                SkillDetailCheck(SkillLvs.skillID3);
+                skill3cdlv1.Text = SkillLvs.skilllv1chargetime;
+                skill3cdlv6.Text = SkillLvs.skilllv6chargetime;
+                skill3cdlv10.Text = SkillLvs.skilllv10chargetime;
+                skill3valuelv1.Text = SkillLvs.skilllv1sval;
+                skill3valuelv6.Text = SkillLvs.skilllv6sval;
+                skill3valuelv10.Text = SkillLvs.skilllv10sval;
+                skill3Funcs.Text = SkillLvs.SKLFuncstr;
             });
         }
 
@@ -516,7 +517,6 @@ namespace FGOSBIAReloaded
                 var TreasureData = 0;
                 var genderData = 0;
                 var CardArrange = "[A,B,C,D,E]";
-                var svtArtsCardQuantity = 0;
                 foreach (var svtIDtmp in GlobalPathsAndDatas.mstSvtArray) //查找某个字段与值
                     if (((JObject) svtIDtmp)["id"].ToString() == JB.svtid)
                     {
@@ -589,9 +589,7 @@ namespace FGOSBIAReloaded
                         break;
                     }
 
-                foreach (var c in CardArrange)
-                    if (c == 'A')
-                        svtArtsCardQuantity++;
+                var svtArtsCardQuantity = CardArrange.Count(c => c == 'A');
                 if (svtArtsCardQuantity == 0)
                 {
                     NPrate = 0;
@@ -605,57 +603,52 @@ namespace FGOSBIAReloaded
                     notrealnprate.Text = NPrate.ToString("P");
                 }
 
-                if (classData == 3)
-                    Dispatcher.Invoke(() =>
-                    {
-                        atkbalance1.Content = "( x 1.05 △)";
-                        atkbalance2.Content = "( x 1.05 △)";
-                    });
-                else if (classData == 5)
-                    Dispatcher.Invoke(() =>
-                    {
-                        atkbalance1.Content = "( x 0.9 ▽)";
-                        atkbalance2.Content = "( x 0.9 ▽)";
-                    });
-                else if (classData == 6)
-                    Dispatcher.Invoke(() =>
-                    {
-                        atkbalance1.Content = "( x 0.9 ▽)";
-                        atkbalance2.Content = "( x 0.9 ▽)";
-                    });
-                else if (classData == 2)
-                    Dispatcher.Invoke(() =>
-                    {
-                        atkbalance1.Content = "( x 0.95 ▽)";
-                        atkbalance2.Content = "( x 0.95 ▽)";
-                    });
-                else if (classData == 7)
-                    Dispatcher.Invoke(() =>
-                    {
-                        atkbalance1.Content = "( x 1.1 △)";
-                        atkbalance2.Content = "( x 1.1 △)";
-                    });
-                else if (classData == 9)
-                    Dispatcher.Invoke(() =>
-                    {
-                        atkbalance1.Content = "( x 1.1 △)";
-                        atkbalance2.Content = "( x 1.1 △)";
-                    });
-                else if (classData == 11)
-                    Dispatcher.Invoke(() =>
-                    {
-                        atkbalance1.Content = "( x 1.1 △)";
-                        atkbalance2.Content = "( x 1.1 △)";
-                    });
-                else if (classData == 1001)
-                    MessageBox.Show("此ID为礼装ID,图鉴编号为礼装的图鉴编号.礼装描述在羁绊文本的文本1处,礼装效果在技能1栏中.", "温馨提示:", MessageBoxButton.OK,
-                        MessageBoxImage.Information);
-                else
-                    Dispatcher.Invoke(() =>
-                    {
-                        atkbalance1.Content = "( x 1.0 -)";
-                        atkbalance2.Content = "( x 1.0 -)";
-                    });
+                switch (classData)
+                {
+                    case 3:
+                        Dispatcher.Invoke(() =>
+                        {
+                            atkbalance1.Content = "( x 1.05 △)";
+                            atkbalance2.Content = "( x 1.05 △)";
+                        });
+                        break;
+                    case 5:
+                    case 6:
+                        Dispatcher.Invoke(() =>
+                        {
+                            atkbalance1.Content = "( x 0.9 ▽)";
+                            atkbalance2.Content = "( x 0.9 ▽)";
+                        });
+                        break;
+                    case 2:
+                        Dispatcher.Invoke(() =>
+                        {
+                            atkbalance1.Content = "( x 0.95 ▽)";
+                            atkbalance2.Content = "( x 0.95 ▽)";
+                        });
+                        break;
+                    case 7:
+                    case 9:
+                    case 11:
+                        Dispatcher.Invoke(() =>
+                        {
+                            atkbalance1.Content = "( x 1.1 △)";
+                            atkbalance2.Content = "( x 1.1 △)";
+                        });
+                        break;
+                    case 1001:
+                        MessageBox.Show("此ID为礼装ID,图鉴编号为礼装的图鉴编号.礼装描述在羁绊文本的文本1处,礼装效果在技能1栏中.", "温馨提示:",
+                            MessageBoxButton.OK,
+                            MessageBoxImage.Information);
+                        break;
+                    default:
+                        Dispatcher.Invoke(() =>
+                        {
+                            atkbalance1.Content = "( x 1.0 -)";
+                            atkbalance2.Content = "( x 1.0 -)";
+                        });
+                        break;
+                }
             });
         }
 
@@ -853,7 +846,6 @@ namespace FGOSBIAReloaded
             string svtTreasureDeviceFuncID;
             var svtTreasureDeviceFuncIDArray = new string[] { };
             List<string> svtTreasureDeviceFuncIDList;
-            var svtTreasureDeviceFuncList = new List<string>();
             string[] svtTreasureDeviceFuncArray;
             var svtTreasureDeviceFunc = string.Empty;
             foreach (var TDLVtmp in GlobalPathsAndDatas.mstTreasureDeviceLvArray) //查找某个字段与值
@@ -988,15 +980,12 @@ namespace FGOSBIAReloaded
                 }
             }
 
-            foreach (var skfuncidtmp in svtTreasureDeviceFuncIDArray)
-            foreach (var functmp in GlobalPathsAndDatas.mstFuncArray)
-                if (((JObject) functmp)["id"].ToString() == skfuncidtmp)
-                {
-                    var mstFuncobjtmp = JObject.Parse(functmp.ToString());
-                    svtTreasureDeviceFuncList.Add(mstFuncobjtmp["popupText"].ToString());
-                }
-
-            svtTreasureDeviceFuncArray = svtTreasureDeviceFuncList.ToArray();
+            svtTreasureDeviceFuncArray = (from skfuncidtmp in svtTreasureDeviceFuncIDArray
+                from functmp in GlobalPathsAndDatas.mstFuncArray
+                where ((JObject) functmp)["id"].ToString() == skfuncidtmp
+                select JObject.Parse(functmp.ToString())
+                into mstFuncobjtmp
+                select mstFuncobjtmp["popupText"].ToString()).ToArray();
             svtTreasureDeviceFunc = string.Join(", ", svtTreasureDeviceFuncArray);
             SkillLvs.TDFuncstr = svtTreasureDeviceFunc;
         }
@@ -1005,20 +994,17 @@ namespace FGOSBIAReloaded
         {
             var svtClassPassiveIDArray = new string[] { };
             List<string> svtClassPassiveIDList;
-            var svtClassPassiveList = new List<string>();
             string[] svtClassPassiveArray;
             var svtClassPassive = string.Empty;
             svtClassPassiveIDList = new List<string>(SkillLvs.ClassPassiveID.Split(','));
             svtClassPassiveIDArray = svtClassPassiveIDList.ToArray();
-            foreach (var skilltmp in GlobalPathsAndDatas.mstSkillArray) //查找某个字段与值
-            foreach (var classpassiveidtmp in svtClassPassiveIDArray)
-                if (((JObject) skilltmp)["id"].ToString() == classpassiveidtmp)
-                {
-                    var mstsvtPskillobjtmp = JObject.Parse(skilltmp.ToString());
-                    svtClassPassiveList.Add(mstsvtPskillobjtmp["name"].ToString());
-                }
 
-            svtClassPassiveArray = svtClassPassiveList.ToArray();
+            svtClassPassiveArray = (from skilltmp in GlobalPathsAndDatas.mstSkillArray
+                from classpassiveidtmp in svtClassPassiveIDArray
+                where ((JObject) skilltmp)["id"].ToString() == classpassiveidtmp
+                select JObject.Parse(skilltmp.ToString())
+                into mstsvtPskillobjtmp
+                select mstsvtPskillobjtmp["name"].ToString()).ToArray();
             svtClassPassive = string.Join(", ", svtClassPassiveArray);
             classskill.Dispatcher.Invoke(() => { classskill.Text = svtClassPassive; });
         }
@@ -1159,12 +1145,11 @@ namespace FGOSBIAReloaded
         {
             Dispatcher.Invoke(() =>
             {
-                var output = "";
                 if (CheckNeededFiles.CheckDirectoryExists()) return;
                 if (CheckNeededFiles.CheckFilesExists()) return;
-                foreach (var svtIDtmp in GlobalPathsAndDatas.mstSvtArray) //查找某个字段与值
-                    output = output + "ID: " + ((JObject) svtIDtmp)["id"] + "    " + "名称: " +
-                             ((JObject) svtIDtmp)["name"] + "\r\n";
+                var output = GlobalPathsAndDatas.mstSvtArray.Aggregate("",
+                    (current, svtIDtmp) => current + "ID: " + ((JObject) svtIDtmp)["id"] + "    " + "名称: " +
+                                           ((JObject) svtIDtmp)["name"] + "\r\n");
                 File.WriteAllText(GlobalPathsAndDatas.path + "/SearchIDList.txt", output);
                 MessageBox.Show("导出成功,文件名为 SearchIDList.txt", "完成", MessageBoxButton.OK, MessageBoxImage.Information);
                 Process.Start(GlobalPathsAndDatas.path + "/SearchIDList.txt");
@@ -1241,8 +1226,6 @@ namespace FGOSBIAReloaded
                         SkillLvs.skilllv1sval = SKLobjtmp["svals"].ToString().Replace("\n", "").Replace("\r", "")
                             .Replace("[", "").Replace("]", "*").Replace("\"", "").Replace(" ", "").Replace("*,", "/");
                         SkillLvs.skilllv1sval = SkillLvs.skilllv1sval.Substring(0, SkillLvs.skilllv1sval.Length - 2);
-                        SkillLvs.skilllv1EffectArray1 = SkillLvs.skilllv1sval.Split('/');
-                        var skilllv1EffectArray2 = new string[SkillLvs.skilllv1sval.Length][];
                         SkillLvs.skilllv1chargetime = SKLobjtmp["chargeTurn"].ToString();
                     }
 
@@ -1252,8 +1235,6 @@ namespace FGOSBIAReloaded
                         SkillLvs.skilllv6sval = SKLobjtmp["svals"].ToString().Replace("\n", "").Replace("\r", "")
                             .Replace("[", "").Replace("]", "*").Replace("\"", "").Replace(" ", "").Replace("*,", "/");
                         SkillLvs.skilllv6sval = SkillLvs.skilllv6sval.Substring(0, SkillLvs.skilllv6sval.Length - 2);
-                        SkillLvs.skilllv6EffectArray1 = SkillLvs.skilllv6sval.Split('/');
-                        var skilllv6EffectArray2 = new string[SkillLvs.skilllv6sval.Length][];
                         SkillLvs.skilllv6chargetime = SKLobjtmp["chargeTurn"].ToString();
                     }
 
@@ -1264,20 +1245,17 @@ namespace FGOSBIAReloaded
                         SkillLvs.skilllv10sval = SKLobjtmp["svals"].ToString().Replace("\n", "").Replace("\r", "")
                             .Replace("[", "").Replace("]", "*").Replace("\"", "").Replace(" ", "").Replace("*,", "/");
                         SkillLvs.skilllv10sval = SkillLvs.skilllv10sval.Substring(0, SkillLvs.skilllv10sval.Length - 2);
-                        SkillLvs.skilllv10EffectArray1 = SkillLvs.skilllv10sval.Split('/');
-                        var skilllv10EffectArray2 = new string[SkillLvs.skilllv10sval.Length][];
                         SkillLvs.skilllv10chargetime = SKLobjtmp["chargeTurn"].ToString();
                         svtSKFuncID = SKLobjtmp["funcId"].ToString().Replace("\n", "").Replace("\t", "")
                             .Replace("\r", "").Replace(" ", "").Replace("[", "").Replace("]", "");
                         svtSKFuncIDList = new List<string>(svtSKFuncID.Split(','));
                         svtSKFuncIDArray = svtSKFuncIDList.ToArray();
-                        foreach (var skfuncidtmp in svtSKFuncIDArray)
-                        foreach (var functmp in GlobalPathsAndDatas.mstFuncArray)
-                            if (((JObject) functmp)["id"].ToString() == skfuncidtmp)
-                            {
-                                var mstFuncobjtmp = JObject.Parse(functmp.ToString());
-                                svtSKFuncList.Add(mstFuncobjtmp["popupText"].ToString());
-                            }
+                        svtSKFuncList.AddRange(from skfuncidtmp in svtSKFuncIDArray
+                            from functmp in GlobalPathsAndDatas.mstFuncArray
+                            where ((JObject) functmp)["id"].ToString() == skfuncidtmp
+                            select JObject.Parse(functmp.ToString())
+                            into mstFuncobjtmp
+                            select mstFuncobjtmp["popupText"].ToString());
                     }
                 }
 
@@ -1331,46 +1309,48 @@ namespace FGOSBIAReloaded
             var result = HttpRequest.PhttpReq("https://game.fate-go.jp/gamedata/top", "appVer=2.14.0");
             var res = JObject.Parse(result);
             if (res["response"][0]["fail"]["action"] != null)
-            {
-                if (res["response"][0]["fail"]["action"].ToString() == "app_version_up")
+                switch (res["response"][0]["fail"]["action"].ToString())
                 {
-                    var tmp = res["response"][0]["fail"]["detail"].ToString();
-                    tmp = Regex.Replace(tmp, @".*新ver.：(.*)、現.*", "$1", RegexOptions.Singleline);
-                    updatestatus.Dispatcher.Invoke(() => { updatestatus.Content = "当前游戏版本: " + tmp; });
-
-                    result = HttpRequest.PhttpReq("https://game.fate-go.jp/gamedata/top",
-                        "appVer=" + tmp);
-                    res = JObject.Parse(result);
-                }
-                else if (res["response"][0]["fail"]["action"].ToString() == "maint")
-                {
-                    var tmp = res["response"][0]["fail"]["detail"].ToString();
-                    if (MessageBox.Show(
-                            "游戏服务器正在维护，请在维护后下载/更新数据. \r\n以下为服务器公告内容:\r\n\r\n『" +
-                            tmp.Replace("[00FFFF]", "").Replace("[url=", "")
-                                .Replace("][u]公式サイト お知らせ[/u][/url][-]", "") + "』\r\n\r\n点击\"确定\"可打开公告页面.",
-                            "维护中", MessageBoxButton.OKCancel, MessageBoxImage.Information) ==
-                        MessageBoxResult.OK)
+                    case "app_version_up":
                     {
-                        var re = new Regex(@"(?<url>http(s)?://([\w-]+\.)+[\w-]+(/[\w- ./?%&=]*)?)");
-                        var mc = re.Matches(tmp);
-                        foreach (Match m in mc)
-                        {
-                            var url = m.Result("${url}");
-                            Process.Start(url);
-                        }
+                        var tmp = res["response"][0]["fail"]["detail"].ToString();
+                        tmp = Regex.Replace(tmp, @".*新ver.：(.*)、現.*", "$1", RegexOptions.Singleline);
+                        updatestatus.Dispatcher.Invoke(() => { updatestatus.Content = "当前游戏版本: " + tmp; });
+
+                        result = HttpRequest.PhttpReq("https://game.fate-go.jp/gamedata/top",
+                            "appVer=" + tmp);
+                        res = JObject.Parse(result);
+                        break;
                     }
-
-                    updatestatus.Dispatcher.Invoke(() => { updatestatus.Content = ""; });
-                    updatestatus.Dispatcher.Invoke(() => { updatesign.Content = ""; });
-                    progressbar.Dispatcher.Invoke(() =>
+                    case "maint":
                     {
-                        progressbar.Visibility = Visibility.Hidden;
-                        updatedatabutton.IsEnabled = true;
-                    });
-                    return;
+                        var tmp = res["response"][0]["fail"]["detail"].ToString();
+                        if (MessageBox.Show(
+                                "游戏服务器正在维护，请在维护后下载/更新数据. \r\n以下为服务器公告内容:\r\n\r\n『" +
+                                tmp.Replace("[00FFFF]", "").Replace("[url=", "")
+                                    .Replace("][u]公式サイト お知らせ[/u][/url][-]", "") + "』\r\n\r\n点击\"确定\"可打开公告页面.",
+                                "维护中", MessageBoxButton.OKCancel, MessageBoxImage.Information) ==
+                            MessageBoxResult.OK)
+                        {
+                            var re = new Regex(@"(?<url>http(s)?://([\w-]+\.)+[\w-]+(/[\w- ./?%&=]*)?)");
+                            var mc = re.Matches(tmp);
+                            foreach (Match m in mc)
+                            {
+                                var url = m.Result("${url}");
+                                Process.Start(url);
+                            }
+                        }
+
+                        updatestatus.Dispatcher.Invoke(() => { updatestatus.Content = ""; });
+                        updatestatus.Dispatcher.Invoke(() => { updatesign.Content = ""; });
+                        progressbar.Dispatcher.Invoke(() =>
+                        {
+                            progressbar.Visibility = Visibility.Hidden;
+                            updatedatabutton.IsEnabled = true;
+                        });
+                        return;
+                    }
                 }
-            }
 
             if (File.Exists(gamedata.FullName + "webview") || File.Exists(gamedata.FullName + "raw") ||
                 File.Exists(gamedata.FullName + "assetbundle") || File.Exists(gamedata.FullName + "webview") ||
@@ -1440,8 +1420,8 @@ namespace FGOSBIAReloaded
             var dictionary =
                 (Dictionary<string, object>) MasterDataUnpacker.MouseInfoMsgPack(
                     Convert.FromBase64String(data2));
-            string str = null;
-            foreach (var a in dictionary) str += a.Key + ": " + a.Value + "\r\n";
+            var str = dictionary.Aggregate<KeyValuePair<string, object>, string>(null,
+                (current, a) => current + a.Key + ": " + a.Value + "\r\n");
             File.WriteAllText(gamedata.FullName + "assetbundle.txt", str);
             updatestatus.Dispatcher.Invoke(() =>
             {
@@ -1457,7 +1437,7 @@ namespace FGOSBIAReloaded
             updatestatus.Dispatcher.Invoke(() => { updatestatus.Content = str2; });
             progressbar.Dispatcher.Invoke(() => { progressbar.Value = progressbar.Value + 40; });
             var filePassInfo = (Dictionary<string, object>) dictionary2["filePass"];
-            foreach (var a in filePassInfo) str += a.Key + ": " + a.Value + "\r\n";
+            str = filePassInfo.Aggregate(str, (current, a) => current + a.Key + ": " + a.Value + "\r\n");
             File.WriteAllText(gamedata.FullName + "webview.txt", str2);
             updatestatus.Dispatcher.Invoke(() =>
             {
@@ -1609,26 +1589,24 @@ namespace FGOSBIAReloaded
             }
             else
             {
-                if (!File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstSvt") ||
-                    !File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstSvtLimit") ||
-                    !File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstCv") ||
-                    !File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstIllustrator") ||
-                    !File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstSvtCard") ||
-                    !File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstTreasureDevice") ||
-                    !File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstSvtTreasureDevice") ||
-                    !File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstTreasureDeviceDetail") ||
-                    !File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstSkill") ||
-                    !File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstSkillDetail") ||
-                    !File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstSvtSkill") ||
-                    !File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstFunc") ||
-                    !File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstSvtComment") ||
-                    !File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstTreasureDeviceLv") ||
-                    !File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstSkillLv"))
-                {
-                    MessageBox.Show("游戏数据损坏,请重新下载游戏数据(位于\"关于\"选项卡).", "温馨提示:", MessageBoxButton.OK,
-                        MessageBoxImage.Error);
-                    Button1.IsEnabled = false;
-                }
+                if (File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstSvt") &&
+                    File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstSvtLimit") &&
+                    File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstCv") &&
+                    File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstIllustrator") &&
+                    File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstSvtCard") &&
+                    File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstTreasureDevice") &&
+                    File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstSvtTreasureDevice") &&
+                    File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstTreasureDeviceDetail") &&
+                    File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstSkill") &&
+                    File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstSkillDetail") &&
+                    File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstSvtSkill") &&
+                    File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstFunc") &&
+                    File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstSvtComment") &&
+                    File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstTreasureDeviceLv") &&
+                    File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstSkillLv")) return;
+                MessageBox.Show("游戏数据损坏,请重新下载游戏数据(位于\"关于\"选项卡).", "温馨提示:", MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+                Button1.IsEnabled = false;
             }
         }
     }

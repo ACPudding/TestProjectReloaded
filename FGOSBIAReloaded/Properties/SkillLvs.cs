@@ -19,12 +19,6 @@ namespace FGOSBIAReloaded.Properties
         public static string skillID3;
         public static string SKLFuncstr;
         public static string TDFuncstr;
-        public static string[][] skilllv1EffectArray;
-        public static string[][] skilllv6EffectArray;
-        public static string[][] skilllv10EffectArray;
-        public static string[] skilllv1EffectArray1;
-        public static string[] skilllv6EffectArray1;
-        public static string[] skilllv10EffectArray1;
         public static string ClassPassiveID;
     }
 }
