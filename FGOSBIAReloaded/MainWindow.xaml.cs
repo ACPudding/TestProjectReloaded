@@ -29,6 +29,14 @@ namespace FGOSBIAReloaded
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             Button1.IsEnabled = false;
+            if (!Regex.IsMatch(textbox1.Text, "^\\d+$"))
+            {
+                MessageBox.Show("从者ID输入错误,请检查.", "温馨提示:", MessageBoxButton.OK, MessageBoxImage.Error);
+                ClearTexts();
+                Button1.Dispatcher.Invoke(() => { Button1.IsEnabled = true; });
+                return;
+            }
+
             var SA = new Thread(StartAnalyze);
             SA.Start();
         }
@@ -47,15 +55,6 @@ namespace FGOSBIAReloaded
             JB.JB5 = "";
             JB.JB6 = "";
             JB.JB7 = "";
-
-            if (!Regex.IsMatch(svtID, "^\\d+$"))
-            {
-                MessageBox.Show("从者ID输入错误,请检查.", "温馨提示:", MessageBoxButton.OK, MessageBoxImage.Error);
-                ClearTexts();
-                Button1.Dispatcher.Invoke(() => { Button1.IsEnabled = true; });
-                return;
-            }
-
             ClearTexts();
             textbox1.Dispatcher.Invoke(() => { textbox1.Text = svtID; });
             foreach (var svtTreasureDevicestmp in GlobalPathsAndDatas.mstSvtTreasureDevicedArray) //查找某个字段与值
@@ -349,36 +348,36 @@ namespace FGOSBIAReloaded
         {
             Dispatcher.Invoke(() =>
             {
-                var PPK = new string[100];
-                PPK[11] = "A";
-                PPK[12] = "A+";
-                PPK[13] = "A++";
-                PPK[14] = "A-";
-                PPK[15] = "A+++";
-                PPK[21] = "B";
-                PPK[22] = "B+";
-                PPK[23] = "B++";
-                PPK[24] = "B-";
-                PPK[25] = "B+++";
-                PPK[31] = "C";
-                PPK[32] = "C+";
-                PPK[33] = "C++";
-                PPK[34] = "C-";
-                PPK[35] = "C+++";
-                PPK[41] = "D";
-                PPK[42] = "D+";
-                PPK[43] = "D++";
-                PPK[44] = "D-";
-                PPK[45] = "D+++";
-                PPK[51] = "E";
-                PPK[52] = "E+";
-                PPK[53] = "E++";
-                PPK[54] = "E-";
-                PPK[55] = "E+++";
-                PPK[61] = "EX";
-                PPK[98] = "-";
-                PPK[0] = "-";
-                PPK[99] = "?";
+                var RankString = new string[100];
+                RankString[11] = "A";
+                RankString[12] = "A+";
+                RankString[13] = "A++";
+                RankString[14] = "A-";
+                RankString[15] = "A+++";
+                RankString[21] = "B";
+                RankString[22] = "B+";
+                RankString[23] = "B++";
+                RankString[24] = "B-";
+                RankString[25] = "B+++";
+                RankString[31] = "C";
+                RankString[32] = "C+";
+                RankString[33] = "C++";
+                RankString[34] = "C-";
+                RankString[35] = "C+++";
+                RankString[41] = "D";
+                RankString[42] = "D+";
+                RankString[43] = "D++";
+                RankString[44] = "D-";
+                RankString[45] = "D+++";
+                RankString[51] = "E";
+                RankString[52] = "E+";
+                RankString[53] = "E++";
+                RankString[54] = "E-";
+                RankString[55] = "E+++";
+                RankString[61] = "EX";
+                RankString[98] = "-";
+                RankString[0] = "-";
+                RankString[99] = "?";
                 var svtName = "";
                 var svtNameDisplay = "unknown";
                 var ClassName = new string[1500];
@@ -582,10 +581,12 @@ namespace FGOSBIAReloaded
                         magicData = int.Parse(svtmagic);
                         luckData = int.Parse(svtluck);
                         TreasureData = int.Parse(svttreasureDevice);
-                        sixwei.Content = "筋力: " + PPK[powerData] + "        耐久: " + PPK[defenseData] + "\n敏捷: " +
-                                         PPK[agilityData] +
-                                         "        魔力: " + PPK[magicData] + "\n幸运: " + PPK[luckData] + "        宝具: " +
-                                         PPK[TreasureData];
+                        sixwei.Content = "筋力: " + RankString[powerData] + "        耐久: " + RankString[defenseData] +
+                                         "\n敏捷: " +
+                                         RankString[agilityData] +
+                                         "        魔力: " + RankString[magicData] + "\n幸运: " + RankString[luckData] +
+                                         "        宝具: " +
+                                         RankString[TreasureData];
                         break;
                     }
 
@@ -784,9 +785,7 @@ namespace FGOSBIAReloaded
                     var mstSvtCardobjtmp = JObject.Parse(svtCardtmp.ToString());
                     svtArtsCardhitDamage = mstSvtCardobjtmp["normalDamage"].ToString().Replace("\n", "")
                         .Replace("\t", "").Replace("\r", "").Replace(" ", "");
-                    foreach (var c in svtArtsCardhitDamage)
-                        if (c == ',')
-                            svtArtsCardhit++;
+                    svtArtsCardhit += svtArtsCardhitDamage.Count(c => c == ',');
                     GlobalPathsAndDatas.svtArtsCardhit = svtArtsCardhit;
                     artscard.Dispatcher.Invoke(() =>
                     {
@@ -800,9 +799,7 @@ namespace FGOSBIAReloaded
                     var mstSvtCardobjtmp = JObject.Parse(svtCardtmp.ToString());
                     svtBustersCardhitDamage = mstSvtCardobjtmp["normalDamage"].ToString().Replace("\n", "")
                         .Replace("\t", "").Replace("\r", "").Replace(" ", "");
-                    foreach (var c in svtBustersCardhitDamage)
-                        if (c == ',')
-                            svtBustersCardhit++;
+                    svtBustersCardhit += svtBustersCardhitDamage.Count(c => c == ',');
                     bustercard.Dispatcher.Invoke(() =>
                     {
                         bustercard.Text = svtBustersCardhit + " hit " + svtBustersCardhitDamage;
@@ -815,9 +812,7 @@ namespace FGOSBIAReloaded
                     var mstSvtCardobjtmp = JObject.Parse(svtCardtmp.ToString());
                     svtQuicksCardhitDamage = mstSvtCardobjtmp["normalDamage"].ToString().Replace("\n", "")
                         .Replace("\t", "").Replace("\r", "").Replace(" ", "");
-                    foreach (var c in svtQuicksCardhitDamage)
-                        if (c == ',')
-                            svtQuicksCardhit++;
+                    svtQuicksCardhit += svtQuicksCardhitDamage.Count(c => c == ',');
                     quickcard.Dispatcher.Invoke(() =>
                     {
                         quickcard.Text = svtQuicksCardhit + " hit " + svtQuicksCardhitDamage;
@@ -830,9 +825,7 @@ namespace FGOSBIAReloaded
                     var mstSvtCardobjtmp = JObject.Parse(svtCardtmp.ToString());
                     svtExtraCardhitDamage = mstSvtCardobjtmp["normalDamage"].ToString().Replace("\n", "")
                         .Replace("\t", "").Replace("\r", "").Replace(" ", "");
-                    foreach (var c in svtExtraCardhitDamage)
-                        if (c == ',')
-                            svtExtraCardhit++;
+                    svtExtraCardhit += svtExtraCardhitDamage.Count(c => c == ',');
                     extracard.Dispatcher.Invoke(() =>
                     {
                         extracard.Text = svtExtraCardhit + " hit " + svtExtraCardhitDamage;
@@ -1273,11 +1266,7 @@ namespace FGOSBIAReloaded
         private void Hyperlink_Click(object sender, RoutedEventArgs e)
 
         {
-            // open URL
-
-            var source = sender as Hyperlink;
-
-            if (source != null) Process.Start(source.NavigateUri.ToString());
+            if (sender is Hyperlink source) Process.Start(source.NavigateUri.ToString());
         }
 
         private void HttpRequestData()
@@ -1348,6 +1337,7 @@ namespace FGOSBIAReloaded
                             progressbar.Visibility = Visibility.Hidden;
                             updatedatabutton.IsEnabled = true;
                         });
+                        Button1.Dispatcher.Invoke(() => { Button1.IsEnabled = true; });
                         return;
                     }
                 }
@@ -1356,6 +1346,21 @@ namespace FGOSBIAReloaded
                 File.Exists(gamedata.FullName + "assetbundle") || File.Exists(gamedata.FullName + "webview") ||
                 File.Exists(gamedata.FullName + "master"))
             {
+                var oldRaw = File.ReadAllText(gamedata.FullName + "raw");
+                if (string.CompareOrdinal(oldRaw, result) == 0)
+                {
+                    MessageBox.Show("当前的MasterData已是最新版本.", "无需更新", MessageBoxButton.OK, MessageBoxImage.Information);
+                    updatestatus.Dispatcher.Invoke(() => { updatestatus.Content = ""; });
+                    updatestatus.Dispatcher.Invoke(() => { updatesign.Content = ""; });
+                    progressbar.Dispatcher.Invoke(() =>
+                    {
+                        progressbar.Visibility = Visibility.Hidden;
+                        updatedatabutton.IsEnabled = true;
+                    });
+                    Button1.Dispatcher.Invoke(() => { Button1.IsEnabled = true; });
+                    return;
+                }
+
                 var fileinfo = gamedata.GetFileSystemInfos(); //返回目录中所有文件和子目录
                 foreach (var i in fileinfo)
                 {
@@ -1411,7 +1416,7 @@ namespace FGOSBIAReloaded
                 updatestatus.Dispatcher.Invoke(() =>
                 {
                     updatestatus.Content = "Writing file to: " + gamedata.FullName +
-                                           "decrypted_masterdata\\" + item.Key;
+                                           "decrypted__masterdata\\" + item.Key;
                 });
                 progressbar.Dispatcher.Invoke(() => { progressbar.Value = progressbar.Value + 40; });
             }
@@ -1502,11 +1507,7 @@ namespace FGOSBIAReloaded
 
         private void Hyperlink_Click_1(object sender, RoutedEventArgs e)
         {
-            // open URL
-
-            var source = sender as Hyperlink;
-
-            if (source != null) Process.Start(source.NavigateUri.ToString());
+            if (sender is Hyperlink source) Process.Start(source.NavigateUri.ToString());
         }
 
         private void Npvaluelv1_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -1579,7 +1580,6 @@ namespace FGOSBIAReloaded
         {
             var path = Directory.GetCurrentDirectory();
             var gamedata = new DirectoryInfo(path + @"\Android\masterdata\");
-            var folder = new DirectoryInfo(path + @"\Android\");
             VersionLabel.Content = CommonStrings.Version;
             if (!Directory.Exists(gamedata.FullName))
             {

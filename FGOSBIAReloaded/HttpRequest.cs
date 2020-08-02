@@ -10,7 +10,7 @@ namespace FGOSBIAReloaded
         public static string PhttpReq(string url, string parameters)
         {
 
-            HttpWebRequest hRequest = (HttpWebRequest)HttpWebRequest.Create(url);
+            var hRequest = (HttpWebRequest)WebRequest.Create(url);
             hRequest.CookieContainer = new CookieContainer();
 
             hRequest.Accept = "gzip, identity";
@@ -21,21 +21,19 @@ namespace FGOSBIAReloaded
 
             hRequest.ContentType = "application/x-www-form-urlencoded";
 
-            bool first = true;
-
             hRequest.ContentLength = parameters.Length;
 
-            byte[] dataParsed = Encoding.UTF8.GetBytes(parameters);
+            var dataParsed = Encoding.UTF8.GetBytes(parameters);
             hRequest.GetRequestStream().Write(dataParsed, 0, dataParsed.Length);
 
 
             hRequest.Timeout = 5 * 1000;
 
-            HttpWebResponse response = (HttpWebResponse)hRequest.GetResponse();
+            var response = (HttpWebResponse)hRequest.GetResponse();
 
-            Stream myResponseStream = response.GetResponseStream();
-            StreamReader myStreamReader = new StreamReader(myResponseStream, Encoding.UTF8);
-            string retString = myStreamReader.ReadToEnd();
+            var myResponseStream = response.GetResponseStream();
+            var myStreamReader = new StreamReader(myResponseStream, Encoding.UTF8);
+            var retString = myStreamReader.ReadToEnd();
             myStreamReader.Close();
             myResponseStream.Close();
             return retString;

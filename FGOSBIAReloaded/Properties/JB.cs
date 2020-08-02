@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace FGOSBIAReloaded.Properties
+﻿namespace FGOSBIAReloaded.Properties
 {
-    class JB
+    internal class JB
     {
         public static string JB1;
         public static string JB2;

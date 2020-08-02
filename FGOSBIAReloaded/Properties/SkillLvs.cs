@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace FGOSBIAReloaded.Properties
+﻿namespace FGOSBIAReloaded.Properties
 {
-    class SkillLvs
+    internal class SkillLvs
     {
         public static string skilllv1sval;
         public static string skilllv6sval;
