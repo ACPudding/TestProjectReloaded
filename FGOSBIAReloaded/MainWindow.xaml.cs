@@ -13,6 +13,7 @@ using FGOSBIAReloaded.Properties;
 using MahApps.Metro.Controls;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using OfficeOpenXml;
 
 namespace FGOSBIAReloaded
 {
@@ -606,11 +607,36 @@ namespace FGOSBIAReloaded
 
                 switch (classData)
                 {
+                    case 1:
+                    case 4:
+                    case 8:
+                    case 10:
+                    case 23:
+                    case 25:
+                    case 17:
+                        Dispatcher.Invoke(() =>
+                        {
+                            atkbalance1.Content = "( x 1.0 -)";
+                            atkbalance2.Content = "( x 1.0 -)";
+                            if (ToggleMsgboxOutputCheck.IsChecked == true)
+                                if (MessageBox.Show(
+                                        "是否需要以xlsx的形式导出该从者的基础数据?",
+                                        "导出?", MessageBoxButton.OKCancel, MessageBoxImage.Information) ==
+                                    MessageBoxResult.OK)
+                                    ExcelFileOutput();
+                        });
+                        break;
                     case 3:
                         Dispatcher.Invoke(() =>
                         {
                             atkbalance1.Content = "( x 1.05 △)";
                             atkbalance2.Content = "( x 1.05 △)";
+                            if (ToggleMsgboxOutputCheck.IsChecked == true)
+                                if (MessageBox.Show(
+                                        "是否需要以xlsx的形式导出该从者的基础数据?",
+                                        "导出?", MessageBoxButton.OKCancel, MessageBoxImage.Information) ==
+                                    MessageBoxResult.OK)
+                                    ExcelFileOutput();
                         });
                         break;
                     case 5:
@@ -619,6 +645,12 @@ namespace FGOSBIAReloaded
                         {
                             atkbalance1.Content = "( x 0.9 ▽)";
                             atkbalance2.Content = "( x 0.9 ▽)";
+                            if (ToggleMsgboxOutputCheck.IsChecked == true)
+                                if (MessageBox.Show(
+                                        "是否需要以xlsx的形式导出该从者的基础数据?",
+                                        "导出?", MessageBoxButton.OKCancel, MessageBoxImage.Information) ==
+                                    MessageBoxResult.OK)
+                                    ExcelFileOutput();
                         });
                         break;
                     case 2:
@@ -626,6 +658,12 @@ namespace FGOSBIAReloaded
                         {
                             atkbalance1.Content = "( x 0.95 ▽)";
                             atkbalance2.Content = "( x 0.95 ▽)";
+                            if (ToggleMsgboxOutputCheck.IsChecked == true)
+                                if (MessageBox.Show(
+                                        "是否需要以xlsx的形式导出该从者的基础数据?",
+                                        "导出?", MessageBoxButton.OKCancel, MessageBoxImage.Information) ==
+                                    MessageBoxResult.OK)
+                                    ExcelFileOutput();
                         });
                         break;
                     case 7:
@@ -635,6 +673,12 @@ namespace FGOSBIAReloaded
                         {
                             atkbalance1.Content = "( x 1.1 △)";
                             atkbalance2.Content = "( x 1.1 △)";
+                            if (ToggleMsgboxOutputCheck.IsChecked == true)
+                                if (MessageBox.Show(
+                                        "是否需要以xlsx的形式导出该从者的基础数据?",
+                                        "导出?", MessageBoxButton.OKCancel, MessageBoxImage.Information) ==
+                                    MessageBoxResult.OK)
+                                    ExcelFileOutput();
                         });
                         break;
                     case 1001:
@@ -1274,7 +1318,10 @@ namespace FGOSBIAReloaded
             var path = Directory.GetCurrentDirectory();
             var gamedata = new DirectoryInfo(path + @"\Android\masterdata\");
             var folder = new DirectoryInfo(path + @"\Android\");
+            string result;
+            JObject res;
             Button1.Dispatcher.Invoke(() => { Button1.IsEnabled = false; });
+            OutputIDs.Dispatcher.Invoke(() => { OutputIDs.IsEnabled = false; });
             updatedatabutton.Dispatcher.Invoke(() => { updatedatabutton.IsEnabled = false; });
             updatestatus.Dispatcher.Invoke(() => { updatestatus.Content = ""; });
             updatestatus.Dispatcher.Invoke(() => { updatesign.Content = "数据下载进行中,请勿退出!"; });
@@ -1295,52 +1342,70 @@ namespace FGOSBIAReloaded
             updatestatus.Dispatcher.Invoke(() => { updatestatus.Content = "开始下载/更新游戏数据......"; });
             progressbar.Dispatcher.Invoke(() => { progressbar.Value = progressbar.Value + 250; });
 
-            var result = HttpRequest.PhttpReq("https://game.fate-go.jp/gamedata/top", "appVer=2.14.0");
-            var res = JObject.Parse(result);
-            if (res["response"][0]["fail"]["action"] != null)
-                switch (res["response"][0]["fail"]["action"].ToString())
-                {
-                    case "app_version_up":
+            try
+            {
+                result = HttpRequest.PhttpReq("https://game.fate-go.jp/gamedata/top", "appVer=2.14.0");
+                res = JObject.Parse(result);
+                if (res["response"][0]["fail"]["action"] != null)
+                    switch (res["response"][0]["fail"]["action"].ToString())
                     {
-                        var tmp = res["response"][0]["fail"]["detail"].ToString();
-                        tmp = Regex.Replace(tmp, @".*新ver.：(.*)、現.*", "$1", RegexOptions.Singleline);
-                        updatestatus.Dispatcher.Invoke(() => { updatestatus.Content = "当前游戏版本: " + tmp; });
-
-                        result = HttpRequest.PhttpReq("https://game.fate-go.jp/gamedata/top",
-                            "appVer=" + tmp);
-                        res = JObject.Parse(result);
-                        break;
-                    }
-                    case "maint":
-                    {
-                        var tmp = res["response"][0]["fail"]["detail"].ToString();
-                        if (MessageBox.Show(
-                                "游戏服务器正在维护，请在维护后下载/更新数据. \r\n以下为服务器公告内容:\r\n\r\n『" +
-                                tmp.Replace("[00FFFF]", "").Replace("[url=", "")
-                                    .Replace("][u]公式サイト お知らせ[/u][/url][-]", "") + "』\r\n\r\n点击\"确定\"可打开公告页面.",
-                                "维护中", MessageBoxButton.OKCancel, MessageBoxImage.Information) ==
-                            MessageBoxResult.OK)
+                        case "app_version_up":
                         {
-                            var re = new Regex(@"(?<url>http(s)?://([\w-]+\.)+[\w-]+(/[\w- ./?%&=]*)?)");
-                            var mc = re.Matches(tmp);
-                            foreach (Match m in mc)
-                            {
-                                var url = m.Result("${url}");
-                                Process.Start(url);
-                            }
+                            var tmp = res["response"][0]["fail"]["detail"].ToString();
+                            tmp = Regex.Replace(tmp, @".*新ver.：(.*)、現.*", "$1", RegexOptions.Singleline);
+                            updatestatus.Dispatcher.Invoke(() => { updatestatus.Content = "当前游戏版本: " + tmp; });
+
+                            result = HttpRequest.PhttpReq("https://game.fate-go.jp/gamedata/top",
+                                "appVer=" + tmp);
+                            res = JObject.Parse(result);
+                            break;
                         }
-
-                        updatestatus.Dispatcher.Invoke(() => { updatestatus.Content = ""; });
-                        updatestatus.Dispatcher.Invoke(() => { updatesign.Content = ""; });
-                        progressbar.Dispatcher.Invoke(() =>
+                        case "maint":
                         {
-                            progressbar.Visibility = Visibility.Hidden;
-                            updatedatabutton.IsEnabled = true;
-                        });
-                        Button1.Dispatcher.Invoke(() => { Button1.IsEnabled = true; });
-                        return;
+                            var tmp = res["response"][0]["fail"]["detail"].ToString();
+                            if (MessageBox.Show(
+                                    "游戏服务器正在维护，请在维护后下载/更新数据. \r\n以下为服务器公告内容:\r\n\r\n『" +
+                                    tmp.Replace("[00FFFF]", "").Replace("[url=", "")
+                                        .Replace("][u]公式サイト お知らせ[/u][/url][-]", "") + "』\r\n\r\n点击\"确定\"可打开公告页面.",
+                                    "维护中", MessageBoxButton.OKCancel, MessageBoxImage.Information) ==
+                                MessageBoxResult.OK)
+                            {
+                                var re = new Regex(@"(?<url>http(s)?://([\w-]+\.)+[\w-]+(/[\w- ./?%&=]*)?)");
+                                var mc = re.Matches(tmp);
+                                foreach (Match m in mc)
+                                {
+                                    var url = m.Result("${url}");
+                                    Process.Start(url);
+                                }
+                            }
+
+                            updatestatus.Dispatcher.Invoke(() => { updatestatus.Content = ""; });
+                            updatestatus.Dispatcher.Invoke(() => { updatesign.Content = ""; });
+                            progressbar.Dispatcher.Invoke(() =>
+                            {
+                                progressbar.Visibility = Visibility.Hidden;
+                                updatedatabutton.IsEnabled = true;
+                            });
+                            Button1.Dispatcher.Invoke(() => { Button1.IsEnabled = true; });
+                            OutputIDs.Dispatcher.Invoke(() => { OutputIDs.IsEnabled = true; });
+                            return;
+                        }
                     }
-                }
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("网络连接异常,请检查网络连接并重试.\r\n" + e, "网络连接异常", MessageBoxButton.OK, MessageBoxImage.Error);
+                updatestatus.Dispatcher.Invoke(() => { updatestatus.Content = ""; });
+                updatestatus.Dispatcher.Invoke(() => { updatesign.Content = ""; });
+                progressbar.Dispatcher.Invoke(() =>
+                {
+                    progressbar.Visibility = Visibility.Hidden;
+                    updatedatabutton.IsEnabled = true;
+                });
+                Button1.Dispatcher.Invoke(() => { Button1.IsEnabled = true; });
+                OutputIDs.Dispatcher.Invoke(() => { OutputIDs.IsEnabled = true; });
+                return;
+            }
 
             if (File.Exists(gamedata.FullName + "webview") || File.Exists(gamedata.FullName + "raw") ||
                 File.Exists(gamedata.FullName + "assetbundle") || File.Exists(gamedata.FullName + "webview") ||
@@ -1461,6 +1526,7 @@ namespace FGOSBIAReloaded
                 updatedatabutton.IsEnabled = true;
             });
             Button1.Dispatcher.Invoke(() => { Button1.IsEnabled = true; });
+            OutputIDs.Dispatcher.Invoke(() => { OutputIDs.IsEnabled = true; });
             GC.Collect();
         }
 
@@ -1608,6 +1674,73 @@ namespace FGOSBIAReloaded
                     MessageBoxImage.Error);
                 Button1.IsEnabled = false;
             }
+        }
+
+        private void ExcelFileOutput()
+        {
+            var path = Directory.GetCurrentDirectory();
+            var svtData = new DirectoryInfo(path + @"\ServantData\");
+            if (!Directory.Exists(svtData.FullName))
+                Directory.CreateDirectory(svtData.FullName);
+            var streamget = HttpRequest.GetXlsx();
+            var xlsx =
+                new ExcelPackage(streamget);
+            var worksheet = xlsx.Workbook.Worksheets[0];
+            worksheet.Cells["L1"].Value = JB.svtid;
+            worksheet.Cells["A1"].Value += "(" + JB.svtnme + ")";
+            worksheet.Cells["C2"].Value = Svtname.Text;
+            worksheet.Cells["J2"].Value = SvtBattlename.Text;
+            worksheet.Cells["B3"].Value = svtclass.Text;
+            worksheet.Cells["E3"].Value = rarity.Text;
+            worksheet.Cells["G3"].Value = gendle.Text;
+            worksheet.Cells["J3"].Value = hiddenattri.Text;
+            worksheet.Cells["M3"].Value = collection.Text;
+            worksheet.Cells["B4"].Value = cv.Text;
+            worksheet.Cells["H4"].Value = illust.Text;
+            worksheet.Cells["B5"].Value = ssvtstarrate.Text;
+            worksheet.Cells["F5"].Value = ssvtdeathrate.Text;
+            worksheet.Cells["J5"].Value = jixing.Text;
+            worksheet.Cells["M5"].Value = notrealnprate.Text;
+            worksheet.Cells["C6"].Value = nprate.Text;
+            worksheet.Cells["C8"].Value = classskill.Text;
+            worksheet.Cells["C10"].Value = basichp.Text;
+            worksheet.Cells["F10"].Value = basicatk.Text;
+            worksheet.Cells["I10"].Value = maxhp.Text;
+            worksheet.Cells["L10"].Value = maxatk.Text;
+            worksheet.Cells["C11"].Value = cards.Text;
+            worksheet.Cells["B14"].Value = bustercard.Text;
+            worksheet.Cells["I14"].Value = artscard.Text;
+            worksheet.Cells["B15"].Value = quickcard.Text;
+            worksheet.Cells["I15"].Value = extracard.Text;
+            worksheet.Cells["B16"].Value = treasuredevicescard.Text;
+            worksheet.Cells["C18"].Value = npcardtype.Text;
+            worksheet.Cells["G18"].Value = nptype.Text;
+            worksheet.Cells["J18"].Value = nprank.Text;
+            worksheet.Cells["C19"].Value = npruby.Text;
+            worksheet.Cells["C20"].Value = npname.Text;
+            worksheet.Cells["C21"].Value = npdetail.Text;
+            worksheet.Cells["D24"].Value = skill1name.Text;
+            worksheet.Cells["H24"].Value = skill1cdlv1.Text;
+            worksheet.Cells["J24"].Value = skill1cdlv6.Text;
+            worksheet.Cells["L24"].Value = skill1cdlv10.Text;
+            worksheet.Cells["D25"].Value = skill1details.Text;
+            worksheet.Cells["D26"].Value = skill2name.Text;
+            worksheet.Cells["H26"].Value = skill2cdlv1.Text;
+            worksheet.Cells["J26"].Value = skill2cdlv6.Text;
+            worksheet.Cells["L26"].Value = skill2cdlv10.Text;
+            worksheet.Cells["D27"].Value = skill2details.Text;
+            worksheet.Cells["D28"].Value = skill3name.Text;
+            worksheet.Cells["H28"].Value = skill3cdlv1.Text;
+            worksheet.Cells["J28"].Value = skill3cdlv6.Text;
+            worksheet.Cells["L28"].Value = skill3cdlv10.Text;
+            worksheet.Cells["D29"].Value = skill3details.Text;
+            xlsx.SaveAs(new FileInfo(svtData.FullName + JB.svtnme + "_" + JB.svtid + ".xlsx"));
+            streamget.Close();
+            MessageBox.Show("导出成功,文件名为: " + svtData.FullName + JB.svtnme + "_" + JB.svtid + ".xlsx", "导出完成",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
+            Process.Start(svtData.FullName + JB.svtnme + "_" + JB.svtid + ".xlsx");
+            GC.Collect();
         }
     }
 }

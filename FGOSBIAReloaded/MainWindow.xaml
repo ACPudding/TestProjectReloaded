@@ -14,7 +14,7 @@
         <Button x:Name="Button1" Content="解析" HorizontalAlignment="Left" Height="26" Margin="235,27,0,0"
                 VerticalAlignment="Top" Width="81" Click="Button_Click" FontFamily="Microsoft JhengHei UI"
                 FontWeight="Bold" />
-        <Button Content="导出ID列表" HorizontalAlignment="Left" Height="26" Margin="321,27,0,0" VerticalAlignment="Top"
+        <Button x:Name="OutputIDs" Content="导出ID列表" HorizontalAlignment="Left" Height="26" Margin="321,27,0,0" VerticalAlignment="Top"
                 Width="81" Click="Button_Click_1" FontFamily="Microsoft JhengHei UI" />
         <Button Content="清空" HorizontalAlignment="Left" Height="26" Margin="407,27,0,0" VerticalAlignment="Top"
                 Width="81" Click="Button_Click_2" FontFamily="Microsoft JhengHei UI" />
@@ -588,6 +588,8 @@
                     <Button x:Name="updatedatabutton" Content="下载/更新游戏数据" HorizontalAlignment="Left" Height="26"
                             Margin="195,295,0,-0.4" VerticalAlignment="Top" Width="105"
                             FontFamily="Microsoft JhengHei UI" FontWeight="Bold" Click="Button_Click_3" />
+                    <CheckBox x:Name="ToggleMsgboxOutputCheck" Content="" HorizontalAlignment="Left" Height="17" Margin="376,304,0,0" VerticalAlignment="Top" Width="116" Foreground="LightGray" FontFamily="Microsoft JhengHei UI" FontSize="9" ToolTip="勾选此项时,每次解析从者后都会询问是否导出相应的xlsx文件."/>
+                    <Label Content="询问是否导出xlsx文件" HorizontalAlignment="Left" Height="26" Margin="397,302,-4,0" VerticalAlignment="Top" Width="99" Foreground="LightGray" FontSize="9" FontFamily="Microsoft JhengHei UI"/>
 
                 </Grid>
             </TabItem>
