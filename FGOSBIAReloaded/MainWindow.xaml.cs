@@ -1423,6 +1423,7 @@ namespace FGOSBIAReloaded
                         updatedatabutton.IsEnabled = true;
                     });
                     Button1.Dispatcher.Invoke(() => { Button1.IsEnabled = true; });
+                    OutputIDs.Dispatcher.Invoke(() => { OutputIDs.IsEnabled = true; });
                     return;
                 }
 
