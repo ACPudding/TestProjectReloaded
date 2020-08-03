@@ -41,9 +41,11 @@ namespace FGOSBIAReloaded
 
         public static Stream GetXlsx()
         {
+            var xlsxurl1 = "https://acpudding.github.io/fileserv/SvtInfoBasicxlsx.xlsx";
+            var xlsxurl2 =
+                "https://raw.githubusercontent.com/ACPudding/ACPudding.github.io/master/fileserv/SvtInfoBasicxlsx.xlsx";
             var httpWebRequest =
-                (HttpWebRequest) WebRequest.Create(
-                    "https://raw.githubusercontent.com/ACPudding/ACPudding.github.io/master/fileserv/SvtInfoBasicxlsx.xlsx");
+                (HttpWebRequest) WebRequest.Create(xlsxurl2);
             httpWebRequest.Method = "GET";
             try
             {
@@ -51,10 +53,23 @@ namespace FGOSBIAReloaded
                 var stream = response.GetResponseStream();
                 return stream;
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                MessageBox.Show("网络连接异常,请检查网络连接并重试.\r\n" + e, "网络连接异常", MessageBoxButton.OK, MessageBoxImage.Error);
-                throw;
+                httpWebRequest =
+                    (HttpWebRequest) WebRequest.Create(xlsxurl1);
+                httpWebRequest.Method = "GET";
+                try
+                {
+                    var response2 = httpWebRequest.GetResponse();
+                    var stream2 = response2.GetResponseStream();
+                    return stream2;
+                }
+                catch (Exception exception)
+                {
+                    MessageBox.Show("网络连接异常,请检查网络连接并重试.\r\n" + exception, "网络连接异常", MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+                    throw;
+                }
             }
         }
     }
