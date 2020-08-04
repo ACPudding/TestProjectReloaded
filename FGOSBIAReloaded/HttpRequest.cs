@@ -72,5 +72,77 @@ namespace FGOSBIAReloaded
                 }
             }
         }
+
+        public static string GetApplicationUpdateJson()
+        {
+            var api = "https://api.github.com/repos/ACPudding/TestProjectReloaded/releases/latest";
+            //定义安全传输协议（TLS1.2=3702, TLS1.1=765, TLS1.0=192, SSL3=48）
+            ServicePointManager.SecurityProtocol = (SecurityProtocolType) 3072; //TLS1.2=3702
+
+            var result = "";
+            var req = WebRequest.Create(api) as HttpWebRequest;
+            HttpWebResponse res = null;
+            if (req == null) return result;
+            req.Method = "GET";
+            req.ContentType = @"application/octet-stream";
+            req.UserAgent =
+                @"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36";
+            var postData = Encoding.GetEncoding("UTF-8").GetBytes("");
+            if (postData.Length > 0)
+            {
+                req.ContentLength = postData.Length;
+                req.Timeout = 15000;
+                var outputStream = req.GetRequestStream();
+                outputStream.Write(postData, 0, postData.Length);
+                outputStream.Flush();
+                outputStream.Close();
+                try
+                {
+                    res = (HttpWebResponse) req.GetResponse();
+                    var InputStream = res.GetResponseStream();
+                    var encoding = Encoding.GetEncoding("UTF-8");
+                    var sr = new StreamReader(InputStream, encoding);
+                    result = sr.ReadToEnd();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    return result;
+                }
+            }
+            else
+            {
+                try
+                {
+                    res = (HttpWebResponse) req.GetResponse();
+                    var InputStream = res.GetResponseStream();
+                    var encoding = Encoding.GetEncoding("UTF-8");
+                    var sr = new StreamReader(InputStream, encoding);
+                    result = sr.ReadToEnd();
+                    sr.Close();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    return result;
+                }
+            }
+
+            return result;
+        }
+
+        public static string ReadableFilesize(double size)
+        {
+            string[] units = {"B", "KB", "MB", "GB", "TB", "PB"};
+            var mod = 1024.0;
+            var i = 0;
+            while (size >= mod)
+            {
+                size /= mod;
+                i++;
+            }
+
+            return Math.Round(size) + units[i];
+        }
     }
 }

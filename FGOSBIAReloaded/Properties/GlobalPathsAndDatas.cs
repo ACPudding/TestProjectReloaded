@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -68,5 +69,8 @@ namespace FGOSBIAReloaded.Properties
         public static JArray mstTreasureDeviceLvArray = (JArray) JsonConvert.DeserializeObject(mstTreasureDeviceLv);
         public static int svtArtsCardhit;
         public static bool askxlsx = true;
+        public static string ExeUpdateUrl;
+        public static DateTime StartTime;
+        public static string NewerVersion;
     }
 }

@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows;
@@ -1667,7 +1669,7 @@ namespace FGOSBIAReloaded
             VersionLabel.Content = CommonStrings.Version;
             if (!Directory.Exists(gamedata.FullName))
             {
-                MessageBox.Show("没有游戏数据,请先下载游戏数据(位于\"关于\"选项卡).", "温馨提示:", MessageBoxButton.OK,
+                MessageBox.Show("没有游戏数据,请先下载游戏数据(位于\"设置\"选项卡).", "温馨提示:", MessageBoxButton.OK,
                     MessageBoxImage.Information);
                 Button1.IsEnabled = false;
             }
@@ -1688,7 +1690,7 @@ namespace FGOSBIAReloaded
                     File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstSvtComment") &&
                     File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstTreasureDeviceLv") &&
                     File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstSkillLv")) return;
-                MessageBox.Show("游戏数据损坏,请重新下载游戏数据(位于\"关于\"选项卡).", "温馨提示:", MessageBoxButton.OK,
+                MessageBox.Show("游戏数据损坏,请重新下载游戏数据(位于\"设置\"选项卡).", "温馨提示:", MessageBoxButton.OK,
                     MessageBoxImage.Error);
                 Button1.IsEnabled = false;
             }
@@ -1759,6 +1761,130 @@ namespace FGOSBIAReloaded
                 MessageBoxImage.Information);
             Process.Start(svtData.FullName + JB.svtnme + "_" + JB.svtid + ".xlsx");
             GC.Collect();
+        }
+
+        private void VersionCheckEvent()
+        {
+            string VerChkRaw;
+            JObject VerChk;
+            JArray VerAssetsJArray;
+            GlobalPathsAndDatas.ExeUpdateUrl = "";
+            GlobalPathsAndDatas.NewerVersion = "";
+            var Sub = new Thread(DownloadFilesSub);
+            try
+            {
+                VerChkRaw = HttpRequest.GetApplicationUpdateJson();
+                VerChk = JObject.Parse(VerChkRaw);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("网络连接异常,请检查网络连接并重试.\r\n" + e, "网络连接异常", MessageBoxButton.OK, MessageBoxImage.Error);
+                CheckUpdate.Dispatcher.Invoke(() => { CheckUpdate.IsEnabled = true; });
+                return;
+            }
+
+            if (CommonStrings.VersionTag != VerChk["tag_name"].ToString())
+            {
+                if (MessageBox.Show(
+                    "检测到软件更新\r\n\r\n新版本为:  " + VerChk["tag_name"] + "    当前版本为:  " + CommonStrings.VersionTag +
+                    "\r\n\r\nChangeLog:\r\n" + VerChk["body"] + "\r\n\r\n点击\"确认\"按钮可选择更新.", "检查更新",
+                    MessageBoxButton.OKCancel,
+                    MessageBoxImage.Information) == MessageBoxResult.OK)
+                {
+                    VerAssetsJArray = (JArray) JsonConvert.DeserializeObject(VerChk["assets"].ToString());
+                    for (var i = 0; i <= VerAssetsJArray.Count - 1; i++)
+                        if (VerAssetsJArray[i]["name"].ToString() == "FGOSBIAReloaded.exe")
+                            GlobalPathsAndDatas.ExeUpdateUrl = VerAssetsJArray[i]["browser_download_url"].ToString();
+                    if (GlobalPathsAndDatas.ExeUpdateUrl == "")
+                    {
+                        MessageBox.Show("确认到新版本更新,但是获取下载Url失败.\r\n", "获取Url失败", MessageBoxButton.OK,
+                            MessageBoxImage.Error);
+                        CheckUpdate.Dispatcher.Invoke(() => { CheckUpdate.IsEnabled = true; });
+                        return;
+                    }
+
+                    Sub.Start(VerChk["tag_name"].ToString());
+                }
+                else
+                {
+                    CheckUpdate.Dispatcher.Invoke(() => { CheckUpdate.IsEnabled = true; });
+                }
+            }
+            else
+            {
+                MessageBox.Show("当前版本为:  " + CommonStrings.VersionTag + "\r\n\r\n无需更新.", "检查更新", MessageBoxButton.OK,
+                    MessageBoxImage.Information);
+                CheckUpdate.Dispatcher.Invoke(() => { CheckUpdate.IsEnabled = true; });
+            }
+        }
+
+        private void DownloadFilesSub(object VerChk)
+        {
+            var path = Directory.GetCurrentDirectory();
+            try
+            {
+                DownloadFile(GlobalPathsAndDatas.ExeUpdateUrl, path + "/FGOSBIAReloaded(Update " + VerChk + ").exe");
+                GlobalPathsAndDatas.NewerVersion = VerChk.ToString();
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("写入文件异常.\r\n" + e, "异常", MessageBoxButton.OK, MessageBoxImage.Error);
+                CheckUpdate.Dispatcher.Invoke(() => { CheckUpdate.IsEnabled = true; });
+                throw;
+            }
+        }
+
+        public void DownloadFile(string url, string filePath)
+        {
+            var Downloads = new WebClient();
+            GlobalPathsAndDatas.StartTime = DateTime.Now;
+            progressbar1.Dispatcher.Invoke(() =>
+            {
+                progressbar1.Visibility = Visibility.Visible;
+                progressbar1.Value = 0;
+            });
+            updatestatusring2.Dispatcher.Invoke(() => { updatestatusring2.IsActive = true; });
+            updatestatus2.Dispatcher.Invoke(() => { updatestatus2.Content = ""; });
+            Downloads.DownloadProgressChanged += OnDownloadProgressChanged;
+            Downloads.DownloadFileCompleted += OnDownloadFileCompleted;
+            Downloads.DownloadFileAsync(new Uri(url), filePath);
+        }
+
+        private void OnDownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
+        {
+            var path = Directory.GetCurrentDirectory();
+            MessageBox.Show(
+                "下载完成.下载目录为: \r\n" + path + "\\FGOSBIAReloaded(Update " + GlobalPathsAndDatas.NewerVersion +
+                ").exe\r\n\r\n请自行替换文件.", "检查更新", MessageBoxButton.OK, MessageBoxImage.Information);
+            CheckUpdate.Dispatcher.Invoke(() => { CheckUpdate.IsEnabled = true; });
+            progressbar1.Dispatcher.Invoke(() =>
+            {
+                progressbar1.Visibility = Visibility.Hidden;
+                progressbar1.Value = 0;
+            });
+            updatestatusring2.Dispatcher.Invoke(() => { updatestatusring2.IsActive = false; });
+            updatestatus2.Dispatcher.Invoke(() => { updatestatus2.Content = ""; });
+        }
+
+        private void OnDownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
+        {
+            progressbar1.Dispatcher.Invoke(() => { progressbar1.Value = e.ProgressPercentage; });
+            var s = (DateTime.Now - GlobalPathsAndDatas.StartTime).TotalSeconds;
+            var sd = HttpRequest.ReadableFilesize(e.BytesReceived / s);
+            updatestatus2.Dispatcher.Invoke(() =>
+            {
+                updatestatus2.Content = "下载速度: " + sd + "/s" + ", 已下载: " +
+                                        HttpRequest.ReadableFilesize(e.BytesReceived) + " / 总计: " +
+                                        HttpRequest.ReadableFilesize(e.TotalBytesToReceive);
+            });
+        }
+
+
+        private void Button_Click_5(object sender, RoutedEventArgs e)
+        {
+            CheckUpdate.IsEnabled = false;
+            var VCE = new Thread(VersionCheckEvent);
+            VCE.Start();
         }
     }
 }

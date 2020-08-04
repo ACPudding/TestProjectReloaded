@@ -28,12 +28,12 @@
                Width="97" FontFamily="Microsoft JhengHei UI" FontSize="14" Foreground="#FF333333" FontWeight="Bold" />
         <Button x:Name="Button1" Content="解析" HorizontalAlignment="Left" Height="26" Margin="305,28,0,0"
                 VerticalAlignment="Top" Width="81" Click="Button_Click" FontFamily="Microsoft JhengHei UI"
-                FontWeight="Bold" />
+                FontWeight="Bold" Foreground="#FF333333" />
         <Button x:Name="OutputIDs" Content="导出ID列表" HorizontalAlignment="Left" Height="26" Margin="391,28,0,0"
                 VerticalAlignment="Top"
-                Width="81" Click="Button_Click_1" FontFamily="Microsoft JhengHei UI" />
+                Width="81" Click="Button_Click_1" FontFamily="Microsoft JhengHei UI" Foreground="#FF333333" />
         <Button Content="清空" HorizontalAlignment="Left" Height="26" Margin="477,28,0,0" VerticalAlignment="Top"
-                Width="81" Click="Button_Click_2" FontFamily="Microsoft JhengHei UI" />
+                Width="81" Click="Button_Click_2" FontFamily="Microsoft JhengHei UI" Foreground="#FF333333" />
         <Grid Margin="0,59,0,0">
             <Grid.Background>
                 <SolidColorBrush Color="#FFDDDDDD" Opacity="0.4" />
@@ -378,7 +378,8 @@
                         </TextBox>
                         <Button x:Name="JBOutput" Content="导出文本" HorizontalAlignment="Left" Height="26"
                                 Margin="210,320,0,-0.4" VerticalAlignment="Top" Width="81"
-                                FontFamily="Microsoft JhengHei UI" IsEnabled="False" Click="JBOutput_Click" />
+                                FontFamily="Microsoft JhengHei UI" IsEnabled="False" Click="JBOutput_Click"
+                                Foreground="#FF333333" />
                         <Label Content="注:&#xD;&#xA;若文本7为空,则该从者的羁绊文本暂未实装&#xD;&#xA;（游戏内提示的为&quot;???&quot;）"
                                HorizontalAlignment="Left" Height="65" VerticalAlignment="Top" Width="238"
                                FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
@@ -1069,6 +1070,30 @@
                         <Label Content="更新MasterData时删除上次内容而不提醒" HorizontalAlignment="Left" Height="26"
                                Margin="35,78,0,0" VerticalAlignment="Top" Width="203" Foreground="#FF333333"
                                FontFamily="Microsoft JhengHei UI" FontSize="10" />
+                        <Label
+                            Content="------------------------------------------------------------------------------------------"
+                            HorizontalAlignment="Left" Height="27" Margin="0,213,0,0" VerticalAlignment="Top"
+                            Width="492"
+                            FontFamily="Microsoft JhengHei UI" FontSize="14" Foreground="LightGray" />
+                        <Label Content="下载/更新游戏数据" HorizontalAlignment="Left" Height="27" Margin="10,232,0,0"
+                               VerticalAlignment="Top" Width="259" FontFamily="Microsoft JhengHei UI" FontSize="14"
+                               Foreground="#FF333333" FontWeight="Bold" />
+                        <mah:ProgressRing x:Name="updatestatusring" Foreground="DarkSlateGray"
+                                          IsActive="False" Height="26" Margin="450,233,10.2,97" Width="27" />
+                        <ProgressBar x:Name="progressbar" HorizontalAlignment="Left" Height="19" Margin="10,266,0,0"
+                                     VerticalAlignment="Top" Width="472" Maximum="10000" Foreground="#FF8BFFC7"
+                                     Background="#FFB9B9B9" Visibility="Hidden" />
+                        <Label x:Name="updatestatus" Content="" HorizontalAlignment="Left" Height="30"
+                               Margin="9,285,0,0"
+                               VerticalAlignment="Top" Width="472" FontFamily="Microsoft JhengHei UI" FontSize="9"
+                               Foreground="#FF333333" VerticalContentAlignment="Center" />
+                        <Label x:Name="updatesign" Content="" HorizontalAlignment="Left" Height="27" Margin="9,320,0,0"
+                               VerticalAlignment="Top" Width="178" FontFamily="Microsoft JhengHei UI" FontSize="9"
+                               Foreground="#FF333333" VerticalContentAlignment="Center" />
+                        <Button x:Name="updatedatabutton" Content="下载/更新游戏数据" HorizontalAlignment="Left" Height="26"
+                                Margin="195,320,0,0" VerticalAlignment="Top" Width="105"
+                                FontFamily="Microsoft JhengHei UI" FontWeight="Bold" Click="Button_Click_3"
+                                Foreground="#FF333333" />
                     </Grid>
                 </TabItem>
                 <TabItem Header="关于/更新" FontFamily="Microsoft JhengHei UI">
@@ -1125,25 +1150,22 @@
                                    VerticalAlignment="Top" Width="248" Foreground="#FF333333">
                             <Hyperlink Click="Hyperlink_Click_1" NavigateUri="https://www.fate-go.jp">https://www.fate-go.jp</Hyperlink>
                         </TextBlock>
-
-                        <Label Content="下载/更新游戏数据" HorizontalAlignment="Left" Height="27" Margin="10,232,0,0"
+                        <Label Content="检查软件更新:" HorizontalAlignment="Left" Height="27" Margin="10,232,0,0"
                                VerticalAlignment="Top" Width="259" FontFamily="Microsoft JhengHei UI" FontSize="14"
                                Foreground="#FF333333" FontWeight="Bold" />
-                        <mah:ProgressRing x:Name="updatestatusring" Foreground="DarkSlateGray"
-                                          IsActive="False" Height="26" Margin="450,233,10.2,97" Width="27" />
-                        <ProgressBar x:Name="progressbar" HorizontalAlignment="Left" Height="19" Margin="10,266,0,0"
-                                     VerticalAlignment="Top" Width="472" Maximum="10000" Foreground="#FF8BFFC7"
+                        <Button x:Name="CheckUpdate" Content="检查更新" HorizontalAlignment="Left" Margin="195,320,0,0"
+                                VerticalAlignment="Top" Width="75" FontFamily="Microsoft JhengHei UI" FontWeight="Bold"
+                                Foreground="#FF333333" Click="Button_Click_5" />
+                        <mah:ProgressRing x:Name="updatestatusring2" Foreground="DarkSlateGray"
+                                          IsActive="False" Height="26" Margin="10,290,450.2,40" Width="27"
+                                          RenderTransformOrigin="-5.459,-0.346" />
+                        <ProgressBar x:Name="progressbar1" HorizontalAlignment="Left" Height="19" Margin="10,266,0,0"
+                                     VerticalAlignment="Top" Width="472" Maximum="100" Foreground="#FF8BFFC7"
                                      Background="#FFB9B9B9" Visibility="Hidden" />
-                        <Label x:Name="updatestatus" Content="" HorizontalAlignment="Left" Height="30"
-                               Margin="9,285,0,0"
-                               VerticalAlignment="Top" Width="472" FontFamily="Microsoft JhengHei UI" FontSize="9"
+                        <Label x:Name="updatestatus2" Content="" Height="30"
+                               Margin="41,286,6.2,0"
+                               VerticalAlignment="Top" FontFamily="Microsoft JhengHei UI" FontSize="12"
                                Foreground="#FF333333" VerticalContentAlignment="Center" />
-                        <Label x:Name="updatesign" Content="" HorizontalAlignment="Left" Height="27" Margin="9,320,0,0"
-                               VerticalAlignment="Top" Width="178" FontFamily="Microsoft JhengHei UI" FontSize="9"
-                               Foreground="#FF333333" VerticalContentAlignment="Center" />
-                        <Button x:Name="updatedatabutton" Content="下载/更新游戏数据" HorizontalAlignment="Left" Height="26"
-                                Margin="195,320,0,0" VerticalAlignment="Top" Width="105"
-                                FontFamily="Microsoft JhengHei UI" FontWeight="Bold" Click="Button_Click_3" />
                     </Grid>
                 </TabItem>
             </TabControl>
