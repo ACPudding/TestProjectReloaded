@@ -67,5 +67,6 @@ namespace FGOSBIAReloaded.Properties
         public static JArray mstFuncArray = (JArray) JsonConvert.DeserializeObject(mstFunc);
         public static JArray mstTreasureDeviceLvArray = (JArray) JsonConvert.DeserializeObject(mstTreasureDeviceLv);
         public static int svtArtsCardhit;
+        public static bool askxlsx = true;
     }
 }

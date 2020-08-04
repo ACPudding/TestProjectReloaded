@@ -47,6 +47,12 @@ namespace FGOSBIAReloaded
             textbox1.Dispatcher.Invoke(() => { textbox1.Text = Regex.Replace(textbox1.Text, @"\s", ""); });
             var svtID = "";
             var svtTDID = "";
+            var SCAC = new Thread(ServantCardsArrangementCheck);
+            var SBIC = new Thread(ServantBasicInformationCheck);
+            var SCIC = new Thread(ServantCVandIllustCheck);
+            var SJTC = new Thread(ServantJibanTextCheck);
+            var STDI = new Thread(ServantTreasureDeviceInformationCheck);
+            var SSIC = new Thread(ServantSkillInformationCheck);
             textbox1.Dispatcher.Invoke(() => { svtID = Convert.ToString(textbox1.Text); });
             JB.svtid = svtID;
             JB.JB1 = "";
@@ -97,18 +103,12 @@ namespace FGOSBIAReloaded
                 }
             }
 
-            var SCAC = new Thread(ServantCardsArrangementCheck);
             SCAC.Start();
-            var SBIC = new Thread(ServantBasicInformationCheck);
             SBIC.Start();
-            var SCIC = new Thread(ServantCVandIllustCheck);
             SCIC.Start();
-            var SJTC = new Thread(ServantJibanTextCheck);
             SJTC.Start();
-            var STDI = new Thread(ServantTreasureDeviceInformationCheck);
             STDI.Start(svtTDID);
             ServantTreasureDeviceSvalCheck(svtTDID);
-            var SSIC = new Thread(ServantSkillInformationCheck);
             SSIC.Start();
             Button1.Dispatcher.Invoke(() => { Button1.IsEnabled = true; });
             Dispatcher.Invoke(() =>
@@ -517,6 +517,7 @@ namespace FGOSBIAReloaded
                 var TreasureData = 0;
                 var genderData = 0;
                 var CardArrange = "[A,B,C,D,E]";
+                GlobalPathsAndDatas.askxlsx = true;
                 foreach (var svtIDtmp in GlobalPathsAndDatas.mstSvtArray) //查找某个字段与值
                     if (((JObject) svtIDtmp)["id"].ToString() == JB.svtid)
                     {
@@ -536,6 +537,8 @@ namespace FGOSBIAReloaded
                             .Replace("3", "地").Replace("4", "星").Replace("5", "兽");
                         CardArrange = mstSvtobjtmp["cardIds"].ToString().Replace("\n", "").Replace("\t", "")
                             .Replace("\r", "").Replace(" ", "").Replace("2", "B").Replace("1", "A").Replace("3", "Q");
+                        if (CardArrange == "[Q,Q,Q,Q,Q]")
+                            GlobalPathsAndDatas.askxlsx = false;
                         cards.Text = CardArrange;
                         svtClassPassiveID = mstSvtobjtmp["classPassive"].ToString().Replace("\n", "").Replace("\t", "")
                             .Replace("\r", "").Replace(" ", "").Replace("[", "").Replace("]", "");
@@ -611,6 +614,10 @@ namespace FGOSBIAReloaded
                     case 4:
                     case 8:
                     case 10:
+                    case 20:
+                    case 22:
+                    case 24:
+                    case 26:
                     case 23:
                     case 25:
                     case 17:
@@ -618,7 +625,7 @@ namespace FGOSBIAReloaded
                         {
                             atkbalance1.Content = "( x 1.0 -)";
                             atkbalance2.Content = "( x 1.0 -)";
-                            if (ToggleMsgboxOutputCheck.IsChecked == true)
+                            if (ToggleMsgboxOutputCheck.IsChecked == true && GlobalPathsAndDatas.askxlsx)
                                 if (MessageBox.Show(
                                         "是否需要以xlsx的形式导出该从者的基础数据?",
                                         "导出?", MessageBoxButton.OKCancel, MessageBoxImage.Information) ==
@@ -631,7 +638,7 @@ namespace FGOSBIAReloaded
                         {
                             atkbalance1.Content = "( x 1.05 △)";
                             atkbalance2.Content = "( x 1.05 △)";
-                            if (ToggleMsgboxOutputCheck.IsChecked == true)
+                            if (ToggleMsgboxOutputCheck.IsChecked == true && GlobalPathsAndDatas.askxlsx)
                                 if (MessageBox.Show(
                                         "是否需要以xlsx的形式导出该从者的基础数据?",
                                         "导出?", MessageBoxButton.OKCancel, MessageBoxImage.Information) ==
@@ -645,7 +652,7 @@ namespace FGOSBIAReloaded
                         {
                             atkbalance1.Content = "( x 0.9 ▽)";
                             atkbalance2.Content = "( x 0.9 ▽)";
-                            if (ToggleMsgboxOutputCheck.IsChecked == true)
+                            if (ToggleMsgboxOutputCheck.IsChecked == true && GlobalPathsAndDatas.askxlsx)
                                 if (MessageBox.Show(
                                         "是否需要以xlsx的形式导出该从者的基础数据?",
                                         "导出?", MessageBoxButton.OKCancel, MessageBoxImage.Information) ==
@@ -658,7 +665,7 @@ namespace FGOSBIAReloaded
                         {
                             atkbalance1.Content = "( x 0.95 ▽)";
                             atkbalance2.Content = "( x 0.95 ▽)";
-                            if (ToggleMsgboxOutputCheck.IsChecked == true)
+                            if (ToggleMsgboxOutputCheck.IsChecked == true && GlobalPathsAndDatas.askxlsx)
                                 if (MessageBox.Show(
                                         "是否需要以xlsx的形式导出该从者的基础数据?",
                                         "导出?", MessageBoxButton.OKCancel, MessageBoxImage.Information) ==
@@ -673,7 +680,7 @@ namespace FGOSBIAReloaded
                         {
                             atkbalance1.Content = "( x 1.1 △)";
                             atkbalance2.Content = "( x 1.1 △)";
-                            if (ToggleMsgboxOutputCheck.IsChecked == true)
+                            if (ToggleMsgboxOutputCheck.IsChecked == true && GlobalPathsAndDatas.askxlsx)
                                 if (MessageBox.Show(
                                         "是否需要以xlsx的形式导出该从者的基础数据?",
                                         "导出?", MessageBoxButton.OKCancel, MessageBoxImage.Information) ==
@@ -1320,10 +1327,16 @@ namespace FGOSBIAReloaded
             var folder = new DirectoryInfo(path + @"\Android\");
             string result;
             JObject res;
+            var Check = true;
+            ToggleDeleteLastData.Dispatcher.Invoke(() =>
+            {
+                if (ToggleDeleteLastData.IsChecked == true) Check = !Check;
+            });
             Button1.Dispatcher.Invoke(() => { Button1.IsEnabled = false; });
             OutputIDs.Dispatcher.Invoke(() => { OutputIDs.IsEnabled = false; });
             updatedatabutton.Dispatcher.Invoke(() => { updatedatabutton.IsEnabled = false; });
             updatestatus.Dispatcher.Invoke(() => { updatestatus.Content = ""; });
+            updatestatusring.Dispatcher.Invoke(() => { updatestatusring.IsActive = true; });
             updatestatus.Dispatcher.Invoke(() => { updatesign.Content = "数据下载进行中,请勿退出!"; });
             progressbar.Dispatcher.Invoke(() =>
             {
@@ -1388,6 +1401,7 @@ namespace FGOSBIAReloaded
                             });
                             Button1.Dispatcher.Invoke(() => { Button1.IsEnabled = true; });
                             OutputIDs.Dispatcher.Invoke(() => { OutputIDs.IsEnabled = true; });
+                            updatestatusring.Dispatcher.Invoke(() => { updatestatusring.IsActive = false; });
                             return;
                         }
                     }
@@ -1404,6 +1418,7 @@ namespace FGOSBIAReloaded
                 });
                 Button1.Dispatcher.Invoke(() => { Button1.IsEnabled = true; });
                 OutputIDs.Dispatcher.Invoke(() => { OutputIDs.IsEnabled = true; });
+                updatestatusring.Dispatcher.Invoke(() => { updatestatusring.IsActive = false; });
                 return;
             }
 
@@ -1412,7 +1427,7 @@ namespace FGOSBIAReloaded
                 File.Exists(gamedata.FullName + "master"))
             {
                 var oldRaw = File.ReadAllText(gamedata.FullName + "raw");
-                if (string.CompareOrdinal(oldRaw, result) == 0)
+                if (string.CompareOrdinal(oldRaw, result) == 0 && Check)
                 {
                     MessageBox.Show("当前的MasterData已是最新版本.", "无需更新", MessageBoxButton.OK, MessageBoxImage.Information);
                     updatestatus.Dispatcher.Invoke(() => { updatestatus.Content = ""; });
@@ -1424,6 +1439,7 @@ namespace FGOSBIAReloaded
                     });
                     Button1.Dispatcher.Invoke(() => { Button1.IsEnabled = true; });
                     OutputIDs.Dispatcher.Invoke(() => { OutputIDs.IsEnabled = true; });
+                    updatestatusring.Dispatcher.Invoke(() => { updatestatusring.IsActive = false; });
                     return;
                 }
 
@@ -1528,6 +1544,7 @@ namespace FGOSBIAReloaded
             });
             Button1.Dispatcher.Invoke(() => { Button1.IsEnabled = true; });
             OutputIDs.Dispatcher.Invoke(() => { OutputIDs.IsEnabled = true; });
+            updatestatusring.Dispatcher.Invoke(() => { updatestatusring.IsActive = false; });
             GC.Collect();
         }
 
