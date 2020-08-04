@@ -231,7 +231,7 @@
                                Width="97"
                                FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
                                Margin="0,261,0,0" FontWeight="Bold" />
-                        <TextBox x:Name="basichp" HorizontalAlignment="Left" Height="17" Margin="51,262,0,0"
+                        <TextBox x:Name="basichp" HorizontalAlignment="Left" Height="17" Margin="54,262,0,0"
                                  TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="60"
                                  IsReadOnly="True" HorizontalContentAlignment="Center"
                                  VerticalContentAlignment="Center"
@@ -243,9 +243,9 @@
                         <Label Content="基础ATK:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top"
                                Width="97"
                                FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
-                               Margin="110,261,0,0"
+                               Margin="119,261,0,0"
                                ToolTip="无芙芙的ATK,某些职介需要乘以后面的系数." Cursor="Help" FontWeight="Bold" />
-                        <TextBox x:Name="basicatk" HorizontalAlignment="Left" Height="17" Margin="171,262,0,0"
+                        <TextBox x:Name="basicatk" HorizontalAlignment="Left" Height="17" Margin="180,262,0,0"
                                  TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="60"
                                  IsReadOnly="True" HorizontalContentAlignment="Center"
                                  VerticalContentAlignment="Center"
@@ -258,7 +258,7 @@
                                Width="97"
                                FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
                                Margin="0,292,0,0" FontWeight="Bold" />
-                        <TextBox x:Name="maxhp" HorizontalAlignment="Left" Height="17" Margin="51,293,0,0"
+                        <TextBox x:Name="maxhp" HorizontalAlignment="Left" Height="17" Margin="54,293,0,0"
                                  TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="60"
                                  IsReadOnly="True" HorizontalContentAlignment="Center"
                                  VerticalContentAlignment="Center"
@@ -270,9 +270,9 @@
                         <Label Content="最大ATK:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top"
                                Width="97"
                                FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
-                               Margin="110,292,0,0"
+                               Margin="119,292,0,0"
                                ToolTip="无芙芙的ATK,某些职介需要乘以后面的系数." Cursor="Help" FontWeight="Bold" />
-                        <TextBox x:Name="maxatk" HorizontalAlignment="Left" Height="17" Margin="171,293,0,0"
+                        <TextBox x:Name="maxatk" HorizontalAlignment="Left" Height="17" Margin="180,293,0,0"
                                  TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="60"
                                  IsReadOnly="True" HorizontalContentAlignment="Center"
                                  VerticalContentAlignment="Center"
@@ -283,10 +283,10 @@
                         </TextBox>
                         <Label x:Name="atkbalance1" Content="( x 1.0 -)" HorizontalAlignment="Left" Height="27"
                                VerticalAlignment="Top" Width="97" FontFamily="Microsoft JhengHei UI" FontSize="12"
-                               Foreground="#FF333333" Margin="231,261,0,0" FontWeight="Bold" />
+                               Foreground="#FF333333" Margin="240,261,0,0" FontWeight="Bold" />
                         <Label x:Name="atkbalance2" Content="( x 1.0 -)" HorizontalAlignment="Left" Height="27"
                                VerticalAlignment="Top" Width="97" FontFamily="Microsoft JhengHei UI" FontSize="12"
-                               Foreground="#FF333333" Margin="231,292,0,0" FontWeight="Bold" />
+                               Foreground="#FF333333" Margin="240,292,0,0" FontWeight="Bold" />
                         <Label x:Name="sixwei" Content="" HorizontalAlignment="Left" Height="96"
                                VerticalAlignment="Top"
                                Width="202" FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
@@ -464,6 +464,11 @@
                                 <SolidColorBrush Color="#FF484848" Opacity="0.15" />
                             </TextBox.Background>
                         </TextBox>
+                        <Label
+                            Content="注:&#xD;&#xA;除开&quot;配卡&quot;文本框以外的所有文本框中, &quot;Hits&quot;之前的表示该类型的指令卡的攻击次数&#xD;&#xA;(跳伤害几次), &quot;Hits&quot;之后的表示每次攻击所造成的伤害百分比.&#xD;&#xA;例如:&#xD;&#xA;&quot;5 hit [6,13,20,26,35]&quot; 表示该类型指令卡攻击次数 5 次,&#xD;&#xA;且每次伤害分别为6% 13% 20% 26% 35%"
+                            HorizontalAlignment="Left" Width="487"
+                            FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
+                            Margin="0,245,0,0" FontWeight="Bold" />
                     </Grid>
                 </TabItem>
                 <TabItem Header="宝具信息" FontFamily="Microsoft JhengHei UI">
@@ -751,7 +756,7 @@
                                 <SolidColorBrush Color="#FF484848" Opacity="0.15" />
                             </TextBox.Background>
                         </TextBox>
-                        <Button Content="?" HorizontalAlignment="Left" Height="25" Margin="0,331,0,0"
+                        <Button Content="?" HorizontalAlignment="Left" Height="25" Margin="0,325,0,0"
                                 VerticalAlignment="Top" Width="27" FontFamily="Microsoft JhengHei UI"
                                 Click="Button_Click_4" />
                         <Label Content="函数列表:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top"
@@ -887,7 +892,7 @@
                                 <SolidColorBrush Color="#FF484848" Opacity="0.15" />
                             </TextBox.Background>
                         </TextBox>
-                        <Button Content="?" HorizontalAlignment="Left" Height="25" Margin="0,331,0,0"
+                        <Button Content="?" HorizontalAlignment="Left" Height="25" Margin="0,325,0,0"
                                 VerticalAlignment="Top" Width="27" FontFamily="Microsoft JhengHei UI"
                                 Click="Button_Click_4" />
                         <Label Content="函数列表:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top"
@@ -1023,7 +1028,7 @@
                                 <SolidColorBrush Color="#FF484848" Opacity="0.15" />
                             </TextBox.Background>
                         </TextBox>
-                        <Button Content="?" HorizontalAlignment="Left" Height="25" Margin="0,331,0,0"
+                        <Button Content="?" HorizontalAlignment="Left" Height="25" Margin="0,325,0,0"
                                 VerticalAlignment="Top" Width="27" FontFamily="Microsoft JhengHei UI"
                                 Click="Button_Click_4" />
                         <Label Content="函数列表:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top"
