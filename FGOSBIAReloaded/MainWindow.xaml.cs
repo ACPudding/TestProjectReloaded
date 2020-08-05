@@ -32,6 +32,7 @@ namespace FGOSBIAReloaded
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             Button1.IsEnabled = false;
+            textbox1.Text = Regex.Replace(textbox1.Text, @"\s", "");
             if (!Regex.IsMatch(textbox1.Text, "^\\d+$"))
             {
                 MessageBox.Show("从者ID输入错误,请检查.", "温馨提示:", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -46,7 +47,6 @@ namespace FGOSBIAReloaded
 
         private void StartAnalyze()
         {
-            textbox1.Dispatcher.Invoke(() => { textbox1.Text = Regex.Replace(textbox1.Text, @"\s", ""); });
             var svtID = "";
             var svtTDID = "";
             var SCAC = new Thread(ServantCardsArrangementCheck);
@@ -96,8 +96,8 @@ namespace FGOSBIAReloaded
                     svtTDID = mstsvtTDobjtmp["treasureDeviceId"].ToString();
                 }
 
-                if (((JObject) svtTreasureDevicestmp)["svtId"].ToString() == svtID &&
-                    ((JObject) svtTreasureDevicestmp)["priority"].ToString() == "105")
+                if (((JObject) svtTreasureDevicestmp)["svtId"].ToString() != svtID ||
+                    ((JObject) svtTreasureDevicestmp)["priority"].ToString() != "105") continue;
                 {
                     var mstsvtTDobjtmp = JObject.Parse(svtTreasureDevicestmp.ToString());
                     svtTDID = mstsvtTDobjtmp["treasureDeviceId"].ToString();
@@ -627,12 +627,12 @@ namespace FGOSBIAReloaded
                         {
                             atkbalance1.Content = "( x 1.0 -)";
                             atkbalance2.Content = "( x 1.0 -)";
-                            if (ToggleMsgboxOutputCheck.IsChecked == true && GlobalPathsAndDatas.askxlsx)
-                                if (MessageBox.Show(
-                                        "是否需要以xlsx的形式导出该从者的基础数据?",
-                                        "导出?", MessageBoxButton.OKCancel, MessageBoxImage.Information) ==
-                                    MessageBoxResult.OK)
-                                    ExcelFileOutput();
+                            if (ToggleMsgboxOutputCheck.IsChecked != true || !GlobalPathsAndDatas.askxlsx) return;
+                            if (MessageBox.Show(
+                                    "是否需要以xlsx的形式导出该从者的基础数据?",
+                                    "导出?", MessageBoxButton.OKCancel, MessageBoxImage.Information) ==
+                                MessageBoxResult.OK)
+                                ExcelFileOutput();
                         });
                         break;
                     case 3:
@@ -640,12 +640,12 @@ namespace FGOSBIAReloaded
                         {
                             atkbalance1.Content = "( x 1.05 △)";
                             atkbalance2.Content = "( x 1.05 △)";
-                            if (ToggleMsgboxOutputCheck.IsChecked == true && GlobalPathsAndDatas.askxlsx)
-                                if (MessageBox.Show(
-                                        "是否需要以xlsx的形式导出该从者的基础数据?",
-                                        "导出?", MessageBoxButton.OKCancel, MessageBoxImage.Information) ==
-                                    MessageBoxResult.OK)
-                                    ExcelFileOutput();
+                            if (ToggleMsgboxOutputCheck.IsChecked != true || !GlobalPathsAndDatas.askxlsx) return;
+                            if (MessageBox.Show(
+                                    "是否需要以xlsx的形式导出该从者的基础数据?",
+                                    "导出?", MessageBoxButton.OKCancel, MessageBoxImage.Information) ==
+                                MessageBoxResult.OK)
+                                ExcelFileOutput();
                         });
                         break;
                     case 5:
@@ -654,12 +654,12 @@ namespace FGOSBIAReloaded
                         {
                             atkbalance1.Content = "( x 0.9 ▽)";
                             atkbalance2.Content = "( x 0.9 ▽)";
-                            if (ToggleMsgboxOutputCheck.IsChecked == true && GlobalPathsAndDatas.askxlsx)
-                                if (MessageBox.Show(
-                                        "是否需要以xlsx的形式导出该从者的基础数据?",
-                                        "导出?", MessageBoxButton.OKCancel, MessageBoxImage.Information) ==
-                                    MessageBoxResult.OK)
-                                    ExcelFileOutput();
+                            if (ToggleMsgboxOutputCheck.IsChecked != true || !GlobalPathsAndDatas.askxlsx) return;
+                            if (MessageBox.Show(
+                                    "是否需要以xlsx的形式导出该从者的基础数据?",
+                                    "导出?", MessageBoxButton.OKCancel, MessageBoxImage.Information) ==
+                                MessageBoxResult.OK)
+                                ExcelFileOutput();
                         });
                         break;
                     case 2:
@@ -667,12 +667,12 @@ namespace FGOSBIAReloaded
                         {
                             atkbalance1.Content = "( x 0.95 ▽)";
                             atkbalance2.Content = "( x 0.95 ▽)";
-                            if (ToggleMsgboxOutputCheck.IsChecked == true && GlobalPathsAndDatas.askxlsx)
-                                if (MessageBox.Show(
-                                        "是否需要以xlsx的形式导出该从者的基础数据?",
-                                        "导出?", MessageBoxButton.OKCancel, MessageBoxImage.Information) ==
-                                    MessageBoxResult.OK)
-                                    ExcelFileOutput();
+                            if (ToggleMsgboxOutputCheck.IsChecked != true || !GlobalPathsAndDatas.askxlsx) return;
+                            if (MessageBox.Show(
+                                    "是否需要以xlsx的形式导出该从者的基础数据?",
+                                    "导出?", MessageBoxButton.OKCancel, MessageBoxImage.Information) ==
+                                MessageBoxResult.OK)
+                                ExcelFileOutput();
                         });
                         break;
                     case 7:
@@ -682,12 +682,12 @@ namespace FGOSBIAReloaded
                         {
                             atkbalance1.Content = "( x 1.1 △)";
                             atkbalance2.Content = "( x 1.1 △)";
-                            if (ToggleMsgboxOutputCheck.IsChecked == true && GlobalPathsAndDatas.askxlsx)
-                                if (MessageBox.Show(
-                                        "是否需要以xlsx的形式导出该从者的基础数据?",
-                                        "导出?", MessageBoxButton.OKCancel, MessageBoxImage.Information) ==
-                                    MessageBoxResult.OK)
-                                    ExcelFileOutput();
+                            if (ToggleMsgboxOutputCheck.IsChecked != true || !GlobalPathsAndDatas.askxlsx) return;
+                            if (MessageBox.Show(
+                                    "是否需要以xlsx的形式导出该从者的基础数据?",
+                                    "导出?", MessageBoxButton.OKCancel, MessageBoxImage.Information) ==
+                                MessageBoxResult.OK)
+                                ExcelFileOutput();
                         });
                         break;
                     case 1001:
@@ -772,7 +772,8 @@ namespace FGOSBIAReloaded
                     JB.JB6 = SCobjtmp["comment"].ToString().Replace("\n", "\r\n");
                 }
 
-                if (((JObject) SCTMP)["svtId"].ToString() == JB.svtid && ((JObject) SCTMP)["id"].ToString() == "7")
+                if (((JObject) SCTMP)["svtId"].ToString() != JB.svtid ||
+                    ((JObject) SCTMP)["id"].ToString() != "7") continue;
                 {
                     var SCobjtmp = JObject.Parse(SCTMP.ToString());
                     jibantext7.Dispatcher.Invoke(() =>
@@ -872,8 +873,8 @@ namespace FGOSBIAReloaded
                     });
                 }
 
-                if (((JObject) svtCardtmp)["svtId"].ToString() == JB.svtid &&
-                    ((JObject) svtCardtmp)["cardId"].ToString() == "4")
+                if (((JObject) svtCardtmp)["svtId"].ToString() != JB.svtid ||
+                    ((JObject) svtCardtmp)["cardId"].ToString() != "4") continue;
                 {
                     var mstSvtCardobjtmp = JObject.Parse(svtCardtmp.ToString());
                     svtExtraCardhitDamage = mstSvtCardobjtmp["normalDamage"].ToString().Replace("\n", "")
@@ -996,8 +997,8 @@ namespace FGOSBIAReloaded
                     });
                 }
 
-                if (((JObject) TDLVtmp)["treaureDeviceId"].ToString() == svtTDID &&
-                    ((JObject) TDLVtmp)["lv"].ToString() == "5")
+                if (((JObject) TDLVtmp)["treaureDeviceId"].ToString() != svtTDID ||
+                    ((JObject) TDLVtmp)["lv"].ToString() != "5") continue;
                 {
                     var TDLVobjtmp = JObject.Parse(TDLVtmp.ToString());
                     npvaluelv5.Dispatcher.Invoke(() =>
@@ -1057,9 +1058,6 @@ namespace FGOSBIAReloaded
 
         private void ServantSkillInformationCheck()
         {
-            var skill1ID = "";
-            var skill2ID = "";
-            var skill3ID = "";
             var skill1Name = "";
             var skill2Name = "";
             var skill3Name = "";
@@ -1073,7 +1071,7 @@ namespace FGOSBIAReloaded
                     ((JObject) svtskill)["priority"].ToString() == "1")
                 {
                     var mstsvtskillobjtmp = JObject.Parse(svtskill.ToString());
-                    skill1ID = mstsvtskillobjtmp["skillId"].ToString();
+                    SkillLvs.skillID1 = mstsvtskillobjtmp["skillId"].ToString();
                 }
 
                 if (((JObject) svtskill)["svtId"].ToString() == JB.svtid &&
@@ -1081,7 +1079,7 @@ namespace FGOSBIAReloaded
                     ((JObject) svtskill)["priority"].ToString() == "2")
                 {
                     var mstsvtskillobjtmp = JObject.Parse(svtskill.ToString());
-                    skill1ID = mstsvtskillobjtmp["skillId"].ToString();
+                    SkillLvs.skillID1 = mstsvtskillobjtmp["skillId"].ToString();
                 }
 
                 if (((JObject) svtskill)["svtId"].ToString() == JB.svtid &&
@@ -1089,7 +1087,7 @@ namespace FGOSBIAReloaded
                     ((JObject) svtskill)["priority"].ToString() == "1")
                 {
                     var mstsvtskillobjtmp = JObject.Parse(svtskill.ToString());
-                    skill2ID = mstsvtskillobjtmp["skillId"].ToString();
+                    SkillLvs.skillID2 = mstsvtskillobjtmp["skillId"].ToString();
                 }
 
                 if (((JObject) svtskill)["svtId"].ToString() == JB.svtid &&
@@ -1097,7 +1095,7 @@ namespace FGOSBIAReloaded
                     ((JObject) svtskill)["priority"].ToString() == "2")
                 {
                     var mstsvtskillobjtmp = JObject.Parse(svtskill.ToString());
-                    skill2ID = mstsvtskillobjtmp["skillId"].ToString();
+                    SkillLvs.skillID2 = mstsvtskillobjtmp["skillId"].ToString();
                 }
 
                 if (((JObject) svtskill)["svtId"].ToString() == JB.svtid &&
@@ -1105,21 +1103,18 @@ namespace FGOSBIAReloaded
                     ((JObject) svtskill)["priority"].ToString() == "1")
                 {
                     var mstsvtskillobjtmp = JObject.Parse(svtskill.ToString());
-                    skill3ID = mstsvtskillobjtmp["skillId"].ToString();
+                    SkillLvs.skillID3 = mstsvtskillobjtmp["skillId"].ToString();
                 }
 
-                if (((JObject) svtskill)["svtId"].ToString() == JB.svtid &&
-                    ((JObject) svtskill)["num"].ToString() == "3" &&
-                    ((JObject) svtskill)["priority"].ToString() == "2")
+                if (((JObject) svtskill)["svtId"].ToString() != JB.svtid ||
+                    ((JObject) svtskill)["num"].ToString() != "3" ||
+                    ((JObject) svtskill)["priority"].ToString() != "2") continue;
                 {
                     var mstsvtskillobjtmp = JObject.Parse(svtskill.ToString());
-                    skill3ID = mstsvtskillobjtmp["skillId"].ToString();
+                    SkillLvs.skillID3 = mstsvtskillobjtmp["skillId"].ToString();
                 }
             }
 
-            SkillLvs.skillID1 = skill1ID;
-            SkillLvs.skillID2 = skill2ID;
-            SkillLvs.skillID3 = skill3ID;
             var SSLC = new Thread(ServantSkillLevelCheck);
             SSLC.Start();
 
@@ -1127,21 +1122,21 @@ namespace FGOSBIAReloaded
             {
                 foreach (var skilltmp in GlobalPathsAndDatas.mstSkillArray) //查找某个字段与值
                 {
-                    if (((JObject) skilltmp)["id"].ToString() == skill1ID)
+                    if (((JObject) skilltmp)["id"].ToString() == SkillLvs.skillID1)
                     {
                         var skillobjtmp = JObject.Parse(skilltmp.ToString());
                         skill1Name = skillobjtmp["name"].ToString();
                         skill1name.Text = skill1Name;
                     }
 
-                    if (((JObject) skilltmp)["id"].ToString() == skill2ID)
+                    if (((JObject) skilltmp)["id"].ToString() == SkillLvs.skillID2)
                     {
                         var skillobjtmp = JObject.Parse(skilltmp.ToString());
                         skill2Name = skillobjtmp["name"].ToString();
                         skill2name.Text = skill2Name;
                     }
 
-                    if (((JObject) skilltmp)["id"].ToString() == skill3ID)
+                    if (((JObject) skilltmp)["id"].ToString() != SkillLvs.skillID3) continue;
                     {
                         var skillobjtmp = JObject.Parse(skilltmp.ToString());
                         skill3Name = skillobjtmp["name"].ToString();
@@ -1151,7 +1146,7 @@ namespace FGOSBIAReloaded
 
                 foreach (var skillDetailtmp in GlobalPathsAndDatas.mstSkillDetailArray) //查找某个字段与值
                 {
-                    if (((JObject) skillDetailtmp)["id"].ToString() == skill1ID)
+                    if (((JObject) skillDetailtmp)["id"].ToString() == SkillLvs.skillID1)
                     {
                         var skillDetailobjtmp = JObject.Parse(skillDetailtmp.ToString());
                         skill1detail = skillDetailobjtmp["detail"].ToString().Replace("[{0}]", " [Lv.1 - Lv.10] ")
@@ -1160,7 +1155,7 @@ namespace FGOSBIAReloaded
                         skill1details.Text = skill1detail;
                     }
 
-                    if (((JObject) skillDetailtmp)["id"].ToString() == skill2ID)
+                    if (((JObject) skillDetailtmp)["id"].ToString() == SkillLvs.skillID2)
                     {
                         var skillDetailobjtmp = JObject.Parse(skillDetailtmp.ToString());
                         skill2detail = skillDetailobjtmp["detail"].ToString().Replace("[{0}]", " [Lv.1 - Lv.10] ")
@@ -1169,7 +1164,7 @@ namespace FGOSBIAReloaded
                         skill2details.Text = skill2detail;
                     }
 
-                    if (((JObject) skillDetailtmp)["id"].ToString() == skill3ID)
+                    if (((JObject) skillDetailtmp)["id"].ToString() != SkillLvs.skillID3) continue;
                     {
                         var skillDetailobjtmp = JObject.Parse(skillDetailtmp.ToString());
                         skill3detail = skillDetailobjtmp["detail"].ToString().Replace("[{0}]", " [Lv.1 - Lv.10] ")
@@ -1284,8 +1279,8 @@ namespace FGOSBIAReloaded
                         SkillLvs.skilllv6chargetime = SKLobjtmp["chargeTurn"].ToString();
                     }
 
-                    if (((JObject) SKLTMP)["skillId"].ToString() == sklid &&
-                        ((JObject) SKLTMP)["lv"].ToString() == "10")
+                    if (((JObject) SKLTMP)["skillId"].ToString() != sklid ||
+                        ((JObject) SKLTMP)["lv"].ToString() != "10") continue;
                     {
                         var SKLobjtmp = JObject.Parse(SKLTMP.ToString());
                         SkillLvs.skilllv10sval = SKLobjtmp["svals"].ToString().Replace("\n", "").Replace("\r", "")
