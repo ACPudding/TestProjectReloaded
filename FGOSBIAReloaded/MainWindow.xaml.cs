@@ -26,6 +26,7 @@ namespace FGOSBIAReloaded
     {
         public MainWindow()
         {
+            WindowStartupLocation = WindowStartupLocation.CenterScreen;
             InitializeComponent();
         }
 
@@ -55,6 +56,10 @@ namespace FGOSBIAReloaded
             var SJTC = new Thread(ServantJibanTextCheck);
             var STDI = new Thread(ServantTreasureDeviceInformationCheck);
             var SSIC = new Thread(ServantSkillInformationCheck);
+            SkillLvs.skillID1 = "";
+            SkillLvs.skillID2 = "";
+            SkillLvs.skillID3 = "";
+            IsNPStrengthened.Dispatcher.Invoke(() => { IsNPStrengthened.Text = "×"; });
             textbox1.Dispatcher.Invoke(() => { svtID = Convert.ToString(textbox1.Text); });
             JB.svtid = svtID;
             JB.JB1 = "";
@@ -80,6 +85,7 @@ namespace FGOSBIAReloaded
                 {
                     var mstsvtTDobjtmp = JObject.Parse(svtTreasureDevicestmp.ToString());
                     svtTDID = mstsvtTDobjtmp["treasureDeviceId"].ToString();
+                    IsNPStrengthened.Dispatcher.Invoke(() => { IsNPStrengthened.Text = "√"; });
                 }
 
                 if (((JObject) svtTreasureDevicestmp)["svtId"].ToString() == svtID &&
@@ -1058,12 +1064,18 @@ namespace FGOSBIAReloaded
 
         private void ServantSkillInformationCheck()
         {
-            var skill1Name = "";
-            var skill2Name = "";
-            var skill3Name = "";
-            var skill1detail = "";
-            var skill2detail = "";
-            var skill3detail = "";
+            var skill1Name = string.Empty;
+            var skill2Name = string.Empty;
+            var skill3Name = string.Empty;
+            var skill1detail = string.Empty;
+            var skill2detail = string.Empty;
+            var skill3detail = string.Empty;
+            var sk1IsStrengthened = false;
+            var sk2IsStrengthened = false;
+            var sk3IsStrengthened = false;
+            IsSk1Strengthened.Dispatcher.Invoke(() => { IsSk1Strengthened.Text = "×"; });
+            IsSk2Strengthened.Dispatcher.Invoke(() => { IsSk2Strengthened.Text = "×"; });
+            IsSk3Strengthened.Dispatcher.Invoke(() => { IsSk3Strengthened.Text = "×"; });
             foreach (var svtskill in GlobalPathsAndDatas.mstSvtSkillArray) //查找某个字段与值
             {
                 if (((JObject) svtskill)["svtId"].ToString() == JB.svtid &&
@@ -1080,6 +1092,8 @@ namespace FGOSBIAReloaded
                 {
                     var mstsvtskillobjtmp = JObject.Parse(svtskill.ToString());
                     SkillLvs.skillID1 = mstsvtskillobjtmp["skillId"].ToString();
+                    IsSk1Strengthened.Dispatcher.Invoke(() => { IsSk1Strengthened.Text = "√"; });
+                    sk1IsStrengthened = true;
                 }
 
                 if (((JObject) svtskill)["svtId"].ToString() == JB.svtid &&
@@ -1096,6 +1110,8 @@ namespace FGOSBIAReloaded
                 {
                     var mstsvtskillobjtmp = JObject.Parse(svtskill.ToString());
                     SkillLvs.skillID2 = mstsvtskillobjtmp["skillId"].ToString();
+                    IsSk2Strengthened.Dispatcher.Invoke(() => { IsSk2Strengthened.Text = "√"; });
+                    sk2IsStrengthened = true;
                 }
 
                 if (((JObject) svtskill)["svtId"].ToString() == JB.svtid &&
@@ -1112,6 +1128,8 @@ namespace FGOSBIAReloaded
                 {
                     var mstsvtskillobjtmp = JObject.Parse(svtskill.ToString());
                     SkillLvs.skillID3 = mstsvtskillobjtmp["skillId"].ToString();
+                    IsSk3Strengthened.Dispatcher.Invoke(() => { IsSk3Strengthened.Text = "√"; });
+                    sk3IsStrengthened = true;
                 }
             }
 
@@ -1127,6 +1145,10 @@ namespace FGOSBIAReloaded
                         var skillobjtmp = JObject.Parse(skilltmp.ToString());
                         skill1Name = skillobjtmp["name"].ToString();
                         skill1name.Text = skill1Name;
+                        if (sk1IsStrengthened)
+                        {
+                            skill1name.Text += " ▲";
+                        }
                     }
 
                     if (((JObject) skilltmp)["id"].ToString() == SkillLvs.skillID2)
@@ -1134,6 +1156,10 @@ namespace FGOSBIAReloaded
                         var skillobjtmp = JObject.Parse(skilltmp.ToString());
                         skill2Name = skillobjtmp["name"].ToString();
                         skill2name.Text = skill2Name;
+                        if (sk2IsStrengthened)
+                        {
+                            skill2name.Text += " ▲";
+                        }
                     }
 
                     if (((JObject) skilltmp)["id"].ToString() != SkillLvs.skillID3) continue;
@@ -1141,6 +1167,10 @@ namespace FGOSBIAReloaded
                         var skillobjtmp = JObject.Parse(skilltmp.ToString());
                         skill3Name = skillobjtmp["name"].ToString();
                         skill3name.Text = skill3Name;
+                        if (sk3IsStrengthened)
+                        {
+                            skill3name.Text += " ▲";
+                        }
                     }
                 }
 
@@ -1204,41 +1234,45 @@ namespace FGOSBIAReloaded
                 var g = Content as Grid;
                 var childrens = g.Children;
                 foreach (UIElement ui in childrens)
-                    if (ui is TextBox)
-                        (ui as TextBox).Text = "";
+                    if (ui is TextBox box)
+                        box.Text = "";
                 var childrens1 = svtdetail.Children;
                 foreach (UIElement ui2 in childrens1)
-                    if (ui2 is TextBox)
-                        (ui2 as TextBox).Text = "";
+                    if (ui2 is TextBox box)
+                        box.Text = "";
                 var childrens2 = svttexts.Children;
                 foreach (UIElement ui2 in childrens2)
-                    if (ui2 is TextBox)
-                        (ui2 as TextBox).Text = "";
+                    if (ui2 is TextBox box)
+                        box.Text = "";
                 var childrens3 = svtcards.Children;
                 foreach (UIElement ui2 in childrens3)
-                    if (ui2 is TextBox)
-                        (ui2 as TextBox).Text = "";
+                    if (ui2 is TextBox box)
+                        box.Text = "";
                 var childrens4 = svtTDs.Children;
                 foreach (UIElement ui2 in childrens4)
-                    if (ui2 is TextBox)
-                        (ui2 as TextBox).Text = "";
+                    if (ui2 is TextBox box)
+                        box.Text = "";
                 var childrens5 = svtskill1.Children;
                 foreach (UIElement ui2 in childrens5)
-                    if (ui2 is TextBox)
-                        (ui2 as TextBox).Text = "";
+                    if (ui2 is TextBox box)
+                        box.Text = "";
                 var childrens6 = svtskill2.Children;
                 foreach (UIElement ui2 in childrens6)
-                    if (ui2 is TextBox)
-                        (ui2 as TextBox).Text = "";
+                    if (ui2 is TextBox box)
+                        box.Text = "";
                 var childrens7 = svtskill3.Children;
                 foreach (UIElement ui2 in childrens7)
-                    if (ui2 is TextBox)
-                        (ui2 as TextBox).Text = "";
+                    if (ui2 is TextBox box)
+                        box.Text = "";
                 atkbalance1.Content = "( x 1.0 -)";
                 atkbalance2.Content = "( x 1.0 -)";
                 JBOutput.IsEnabled = false;
                 sixwei.Content = "";
             });
+            IsSk1Strengthened.Dispatcher.Invoke(() => { IsSk1Strengthened.Text = "×"; });
+            IsSk2Strengthened.Dispatcher.Invoke(() => { IsSk2Strengthened.Text = "×"; });
+            IsSk3Strengthened.Dispatcher.Invoke(() => { IsSk3Strengthened.Text = "×"; });
+            IsNPStrengthened.Dispatcher.Invoke(() => { IsNPStrengthened.Text = "×"; });
             GC.Collect();
         }
 
@@ -1308,7 +1342,8 @@ namespace FGOSBIAReloaded
 
         private void Button_Click_2(object sender, RoutedEventArgs e)
         {
-            ClearTexts();
+            var clean = new Thread(ClearTexts);
+            clean.Start();
         }
 
         private void Hyperlink_Click(object sender, RoutedEventArgs e)
@@ -1881,5 +1916,6 @@ namespace FGOSBIAReloaded
             var VCE = new Thread(VersionCheckEvent);
             VCE.Start();
         }
+
     }
 }

@@ -465,7 +465,7 @@
                             </TextBox.Background>
                         </TextBox>
                         <Label
-                            Content="注:&#xD;&#xA;除开&quot;配卡&quot;文本框以外的所有文本框中, &quot;Hits&quot;之前的表示该类型的指令卡的攻击次数&#xD;&#xA;(跳伤害几次), &quot;Hits&quot;之后的表示每次攻击所造成的伤害百分比.&#xD;&#xA;例如:&#xD;&#xA;&quot;5 hit [6,13,20,26,35]&quot; 表示该类型指令卡攻击次数 5 次,&#xD;&#xA;且每次伤害分别为6% 13% 20% 26% 35%"
+                            Content="注:&#xD;&#xA;除开&quot;配卡&quot;文本框以外的所有文本框中, &quot;Hits&quot;之前的表示该类型的指令卡的攻击次数&#xD;&#xA;(跳伤害几次), &quot;Hits&quot;之后的表示每次攻击所造成的伤害百分比.&#xD;&#xA;例如:&#xD;&#xA;&quot;5 hit [6,13,20,26,35]&quot; 表示该类型指令卡攻击次数 5 次,&#xD;&#xA;且每次伤害分别为 6% 13% 20% 26% 35%."
                             HorizontalAlignment="Left" Width="487"
                             FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
                             Margin="0,245,0,0" FontWeight="Bold" />
@@ -637,6 +637,11 @@
                         <Button Content="?" HorizontalAlignment="Left" Height="13" Margin="19,77,0,0"
                                 VerticalAlignment="Top" Width="27" FontFamily="Microsoft JhengHei UI"
                                 Click="Button_Click_4" />
+                        <TextBlock x:Name="IsNPStrengthened" HorizontalAlignment="Center" Height="18" Margin="431,172,21.2,166" TextWrapping="Wrap" Text="×" Block.TextAlignment="Center" VerticalAlignment="Center" Width="35" FontFamily="Microsoft JhengHei UI" FontSize="16" Foreground="#FF333333"/>
+                        <Label Content="是否有强化本:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top"
+                               Width="97"
+                               FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
+                               Margin="351,171,0,0" FontWeight="Bold" />
                     </Grid>
                 </TabItem>
                 <TabItem Header="技能1" FontFamily="Microsoft JhengHei UI">
@@ -774,6 +779,11 @@
                                 <SolidColorBrush Color="#FF484848" Opacity="0.15" />
                             </TextBox.Background>
                         </TextBox>
+                        <TextBlock x:Name="IsSk1Strengthened" HorizontalAlignment="Center" Height="18" Margin="436,165,16.2,173" TextWrapping="Wrap" Text="×" Block.TextAlignment="Center" VerticalAlignment="Center" Width="35" FontFamily="Microsoft JhengHei UI" FontSize="16" Foreground="#FF333333"/>
+                        <Label Content="是否有强化本:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top"
+                               Width="97"
+                               FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
+                               Margin="356,164,0,0" FontWeight="Bold" />
                     </Grid>
                 </TabItem>
                 <TabItem Header="技能2" FontFamily="Microsoft JhengHei UI">
@@ -910,6 +920,11 @@
                                 <SolidColorBrush Color="#FF484848" Opacity="0.15" />
                             </TextBox.Background>
                         </TextBox>
+                        <TextBlock x:Name="IsSk2Strengthened" HorizontalAlignment="Center" Height="18" Margin="436,165,16.2,173" TextWrapping="Wrap" Text="×" Block.TextAlignment="Center" VerticalAlignment="Center" Width="35" FontFamily="Microsoft JhengHei UI" FontSize="16" Foreground="#FF333333"/>
+                        <Label Content="是否有强化本:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top"
+                               Width="97"
+                               FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
+                               Margin="356,164,0,0" FontWeight="Bold" />
                     </Grid>
                 </TabItem>
                 <TabItem Header="技能3" FontFamily="Microsoft JhengHei UI">
@@ -1046,6 +1061,11 @@
                                 <SolidColorBrush Color="#FF484848" Opacity="0.15" />
                             </TextBox.Background>
                         </TextBox>
+                        <TextBlock x:Name="IsSk3Strengthened" HorizontalAlignment="Center" Height="18" Margin="436,165,16.2,173" TextWrapping="Wrap" Text="×" Block.TextAlignment="Center" VerticalAlignment="Center" Width="35" FontFamily="Microsoft JhengHei UI" FontSize="16" Foreground="#FF333333"/>
+                        <Label Content="是否有强化本:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top"
+                               Width="97"
+                               FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
+                               Margin="356,164,0,0" FontWeight="Bold" />
                     </Grid>
                 </TabItem>
                 <TabItem Header="设置" FontFamily="Microsoft JhengHei UI">
@@ -1176,7 +1196,7 @@
             </TabControl>
         </Grid>
         <Label Content="图鉴编号:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top" Width="97"
-               FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333" Margin="444,0,0,0"
+               FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333" Margin="443,1,0,0"
                FontWeight="Bold" />
         <TextBox x:Name="collection" HorizontalAlignment="Left" Height="17" Margin="506,1,0,0" TextWrapping="Wrap"
                  Text="" VerticalAlignment="Top" Width="52" Background="{x:Null}" IsReadOnly="True"
