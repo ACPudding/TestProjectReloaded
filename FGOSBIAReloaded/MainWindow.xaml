@@ -26,13 +26,13 @@
                  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
         <Label Content="请输入从者ID:" HorizontalAlignment="Left" Height="27" Margin="10,0,0,0" VerticalAlignment="Top"
                Width="97" FontFamily="Microsoft JhengHei UI" FontSize="14" Foreground="#FF333333" FontWeight="Bold" />
-        <Button x:Name="Button1" Content="解析" HorizontalAlignment="Left" Height="26" Margin="305,28,0,0"
+        <Button x:Name="Button1" Content="解析" HorizontalAlignment="Left" Height="26" Margin="301,28,0,0"
                 VerticalAlignment="Top" Width="81" Click="Button_Click" FontFamily="Microsoft JhengHei UI"
                 FontWeight="Bold" Foreground="#FF333333" />
-        <Button x:Name="OutputIDs" Content="导出ID列表" HorizontalAlignment="Left" Height="26" Margin="391,28,0,0"
+        <Button x:Name="OutputIDs" Content="导出ID列表" HorizontalAlignment="Left" Height="26" Margin="387,28,0,0"
                 VerticalAlignment="Top"
                 Width="81" Click="Button_Click_1" FontFamily="Microsoft JhengHei UI" Foreground="#FF333333" />
-        <Button Content="清空" HorizontalAlignment="Left" Height="26" Margin="477,28,0,0" VerticalAlignment="Top"
+        <Button Content="清空" HorizontalAlignment="Left" Height="26" Margin="473,28,0,0" VerticalAlignment="Top"
                 Width="81" Click="Button_Click_2" FontFamily="Microsoft JhengHei UI" Foreground="#FF333333" />
         <Grid Margin="0,59,0,0">
             <Grid.Background>
