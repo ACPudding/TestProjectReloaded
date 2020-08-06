@@ -637,7 +637,10 @@
                         <Button Content="?" HorizontalAlignment="Left" Height="13" Margin="19,77,0,0"
                                 VerticalAlignment="Top" Width="27" FontFamily="Microsoft JhengHei UI"
                                 Click="Button_Click_4" />
-                        <TextBlock x:Name="IsNPStrengthened" HorizontalAlignment="Center" Height="18" Margin="431,172,21.2,166" TextWrapping="Wrap" Text="×" Block.TextAlignment="Center" VerticalAlignment="Center" Width="35" FontFamily="Microsoft JhengHei UI" FontSize="16" Foreground="#FF333333"/>
+                        <TextBlock x:Name="IsNPStrengthened" HorizontalAlignment="Center" Height="18"
+                                   Margin="431,172,21.2,166" TextWrapping="Wrap" Text="×" Block.TextAlignment="Center"
+                                   VerticalAlignment="Center" Width="35" FontFamily="Microsoft JhengHei UI"
+                                   FontSize="16" Foreground="#FF333333" />
                         <Label Content="是否有强化本:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top"
                                Width="97"
                                FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
@@ -678,8 +681,8 @@
                         <Label Content="冷却时间:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top"
                                Width="97"
                                FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
-                               Margin="2,127,0,0" FontWeight="Bold" />
-                        <TextBox x:Name="skill1cdlv1" HorizontalAlignment="Left" Height="26" Margin="66,128,0,0"
+                               Margin="2,96,0,0" FontWeight="Bold" />
+                        <TextBox x:Name="skill1cdlv1" HorizontalAlignment="Left" Height="26" Margin="66,96,0,0"
                                  TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="52"
                                  IsReadOnly="True" HorizontalContentAlignment="Center"
                                  VerticalContentAlignment="Center"
@@ -690,8 +693,8 @@
                         </TextBox>
                         <Label Content="→" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top" Width="97"
                                FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
-                               Margin="120,128,0,0" FontWeight="Bold" />
-                        <TextBox x:Name="skill1cdlv6" HorizontalAlignment="Left" Height="26" Margin="143,128,0,0"
+                               Margin="119,96,0,0" FontWeight="Bold" />
+                        <TextBox x:Name="skill1cdlv6" HorizontalAlignment="Left" Height="26" Margin="142,96,0,0"
                                  TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="52"
                                  IsReadOnly="True" HorizontalContentAlignment="Center"
                                  VerticalContentAlignment="Center"
@@ -702,88 +705,49 @@
                         </TextBox>
                         <Label Content="→" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top" Width="97"
                                FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
-                               Margin="197,128,0,0"
-                               Grid.ColumnSpan="2" FontWeight="Bold" />
-                        <TextBox x:Name="skill1cdlv10" HorizontalAlignment="Left" Height="26" Margin="220,128,0,0"
+                               Margin="196,96,0,0" FontWeight="Bold" />
+                        <TextBox x:Name="skill1cdlv10" HorizontalAlignment="Left" Height="26" Margin="219,96,0,0"
                                  TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="52"
                                  IsReadOnly="True" HorizontalContentAlignment="Center"
                                  VerticalContentAlignment="Center"
-                                 Foreground="#FF333333" FontFamily="Meiryo" Grid.ColumnSpan="2">
+                                 Foreground="#FF333333" FontFamily="Meiryo">
                             <TextBox.Background>
                                 <SolidColorBrush Color="#FF484848" Opacity="0.15" />
                             </TextBox.Background>
                         </TextBox>
                         <Label
                             Content="---------------------------------------------------------------------------------------------"
-                            HorizontalAlignment="Left" Height="27" Margin="2,143,0,0" VerticalAlignment="Top"
+                            HorizontalAlignment="Left" Height="27" Margin="2,112,0,0" VerticalAlignment="Top"
                             Width="480"
-                            FontFamily="Microsoft JhengHei UI" FontSize="14" Foreground="LightGray" Grid.ColumnSpan="2" />
+                            FontFamily="Microsoft JhengHei UI" FontSize="14" Foreground="LightGray" />
                         <Label Content="具体数值:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top"
                                Width="97"
                                FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
-                               Margin="2,164,0,0" FontWeight="Bold" />
-                        <Label Content="lv.1:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top"
-                               Width="97"
-                               FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
-                               Margin="28,186,0,0" FontWeight="Bold" />
-                        <TextBox x:Name="skill1valuelv1" HorizontalAlignment="Left" Height="45" Margin="66,186,0,0"
-                                 TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="416"
-                                 IsReadOnly="True" HorizontalContentAlignment="Center"
-                                 VerticalContentAlignment="Center"
-                                 Foreground="#FF333333" FontFamily="Meiryo">
-                            <TextBox.Background>
-                                <SolidColorBrush Color="#FF484848" Opacity="0.15" />
-                            </TextBox.Background>
-                        </TextBox>
-                        <Label Content="lv.6:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top"
-                               Width="97"
-                               FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
-                               Margin="28,237,0,0" FontWeight="Bold" />
-                        <TextBox x:Name="skill1valuelv6" HorizontalAlignment="Left" Height="45" Margin="66,236,0,0"
-                                 TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="416"
-                                 IsReadOnly="True" HorizontalContentAlignment="Center"
-                                 VerticalContentAlignment="Center"
-                                 Foreground="#FF333333" FontFamily="Meiryo">
-                            <TextBox.Background>
-                                <SolidColorBrush Color="#FF484848" Opacity="0.15" />
-                            </TextBox.Background>
-                        </TextBox>
-                        <Label Content="lv.10:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top"
-                               Width="97"
-                               FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
-                               Margin="28,286,0,0" FontWeight="Bold" />
-                        <TextBox x:Name="skill1valuelv10" HorizontalAlignment="Left" Height="45" Margin="66,286,0,0"
-                                 TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="416"
-                                 IsReadOnly="True" HorizontalContentAlignment="Center"
-                                 VerticalContentAlignment="Center"
-                                 Foreground="#FF333333" FontFamily="Meiryo">
-                            <TextBox.Background>
-                                <SolidColorBrush Color="#FF484848" Opacity="0.15" />
-                            </TextBox.Background>
-                        </TextBox>
-                        <Button Content="?" HorizontalAlignment="Left" Height="25" Margin="0,325,0,0"
-                                VerticalAlignment="Top" Width="27" FontFamily="Microsoft JhengHei UI"
-                                Click="Button_Click_4" />
-                        <Label Content="函数列表:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top"
-                               Width="97"
-                               FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
-                               Margin="2,96,0,0"
-                               MouseDoubleClick="skl1Func_Clicked_Mission" Cursor="Help" ToolTip="双击可查看详情."
-                               FontWeight="Bold" />
-                        <TextBox x:Name="skill1Funcs" HorizontalAlignment="Left" Height="26" Margin="66,97,0,0"
-                                 TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="416"
-                                 IsReadOnly="True" HorizontalContentAlignment="Center"
-                                 VerticalContentAlignment="Center"
-                                 Foreground="#FF333333" FontFamily="Meiryo" Grid.ColumnSpan="2">
-                            <TextBox.Background>
-                                <SolidColorBrush Color="#FF484848" Opacity="0.15" />
-                            </TextBox.Background>
-                        </TextBox>
-                        <TextBlock x:Name="IsSk1Strengthened" HorizontalAlignment="Center" Height="18" Margin="436,165,16.2,173" TextWrapping="Wrap" Text="×" Block.TextAlignment="Center" VerticalAlignment="Center" Width="35" FontFamily="Microsoft JhengHei UI" FontSize="16" Foreground="#FF333333"/>
+                               Margin="2,128,0,0" FontWeight="Bold" />
+                        <TextBlock x:Name="IsSk1Strengthened" HorizontalAlignment="Center" Height="18"
+                                   Margin="435,129,17.2,209" TextWrapping="Wrap" Text="×" Block.TextAlignment="Center"
+                                   VerticalAlignment="Center" Width="35" FontFamily="Microsoft JhengHei UI"
+                                   FontSize="16" Foreground="#FF333333" />
                         <Label Content="是否有强化本:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top"
                                Width="97"
                                FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
-                               Margin="356,164,0,0" FontWeight="Bold" />
+                               Margin="355,128,0,0" FontWeight="Bold" />
+                        <ListView x:Name="Skill1FuncList" Margin="5,152,5,5" Foreground="#FF737373">
+                            <ListView.Background>
+                                <SolidColorBrush Color="White" Opacity="0.4" />
+                            </ListView.Background>
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Header="效果" Width="100" DisplayMemberBinding="{Binding Skill1Name}" />
+                                    <GridViewColumn Header="lv.1数值" Width="125"
+                                                    DisplayMemberBinding="{Binding Skill1Svallv1}" />
+                                    <GridViewColumn Header="lv.6数值" Width="125"
+                                                    DisplayMemberBinding="{Binding Skill1Svallv6}" />
+                                    <GridViewColumn Header="lv.10数值" Width="125"
+                                                    DisplayMemberBinding="{Binding Skill1Svallv10}" />
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
                     </Grid>
                 </TabItem>
                 <TabItem Header="技能2" FontFamily="Microsoft JhengHei UI">
@@ -820,8 +784,8 @@
                         <Label Content="冷却时间:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top"
                                Width="97"
                                FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
-                               Margin="2,127,0,0" FontWeight="Bold" />
-                        <TextBox x:Name="skill2cdlv1" HorizontalAlignment="Left" Height="17" Margin="66,128,0,0"
+                               Margin="2,96,0,0" FontWeight="Bold" />
+                        <TextBox x:Name="skill2cdlv1" HorizontalAlignment="Left" Height="26" Margin="66,96,0,0"
                                  TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="52"
                                  IsReadOnly="True" HorizontalContentAlignment="Center"
                                  VerticalContentAlignment="Center"
@@ -832,8 +796,8 @@
                         </TextBox>
                         <Label Content="→" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top" Width="97"
                                FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
-                               Margin="120,128,0,0" FontWeight="Bold" />
-                        <TextBox x:Name="skill2cdlv6" HorizontalAlignment="Left" Height="17" Margin="143,128,0,0"
+                               Margin="119,96,0,0" FontWeight="Bold" />
+                        <TextBox x:Name="skill2cdlv6" HorizontalAlignment="Left" Height="26" Margin="142,96,0,0"
                                  TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="52"
                                  IsReadOnly="True" HorizontalContentAlignment="Center"
                                  VerticalContentAlignment="Center"
@@ -844,8 +808,8 @@
                         </TextBox>
                         <Label Content="→" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top" Width="97"
                                FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
-                               Margin="197,128,0,0" FontWeight="Bold" />
-                        <TextBox x:Name="skill2cdlv10" HorizontalAlignment="Left" Height="17" Margin="220,128,0,0"
+                               Margin="196,96,0,0" FontWeight="Bold" />
+                        <TextBox x:Name="skill2cdlv10" HorizontalAlignment="Left" Height="26" Margin="219,96,0,0"
                                  TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="52"
                                  IsReadOnly="True" HorizontalContentAlignment="Center"
                                  VerticalContentAlignment="Center"
@@ -856,75 +820,37 @@
                         </TextBox>
                         <Label
                             Content="---------------------------------------------------------------------------------------------"
-                            HorizontalAlignment="Left" Height="27" Margin="2,143,0,0" VerticalAlignment="Top"
+                            HorizontalAlignment="Left" Height="27" Margin="2,112,0,0" VerticalAlignment="Top"
                             Width="480"
-                            FontFamily="Microsoft JhengHei UI" FontSize="14" Foreground="LightGray" Grid.ColumnSpan="2" />
+                            FontFamily="Microsoft JhengHei UI" FontSize="14" Foreground="LightGray" />
                         <Label Content="具体数值:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top"
                                Width="97"
                                FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
-                               Margin="2,164,0,0" FontWeight="Bold" />
-                        <Label Content="lv.1:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top"
-                               Width="97"
-                               FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
-                               Margin="28,186,0,0" FontWeight="Bold" />
-                        <TextBox x:Name="skill2valuelv1" HorizontalAlignment="Left" Height="45" Margin="66,186,0,0"
-                                 TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="416"
-                                 IsReadOnly="True" HorizontalContentAlignment="Center"
-                                 VerticalContentAlignment="Center"
-                                 Foreground="#FF333333" FontFamily="Meiryo">
-                            <TextBox.Background>
-                                <SolidColorBrush Color="#FF484848" Opacity="0.15" />
-                            </TextBox.Background>
-                        </TextBox>
-                        <Label Content="lv.6:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top"
-                               Width="97"
-                               FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
-                               Margin="28,237,0,0" FontWeight="Bold" />
-                        <TextBox x:Name="skill2valuelv6" HorizontalAlignment="Left" Height="45" Margin="66,236,0,0"
-                                 TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="416"
-                                 IsReadOnly="True" HorizontalContentAlignment="Center"
-                                 VerticalContentAlignment="Center"
-                                 Foreground="#FF333333" FontFamily="Meiryo">
-                            <TextBox.Background>
-                                <SolidColorBrush Color="#FF484848" Opacity="0.15" />
-                            </TextBox.Background>
-                        </TextBox>
-                        <Label Content="lv.10:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top"
-                               Width="97"
-                               FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
-                               Margin="28,286,0,0" FontWeight="Bold" />
-                        <TextBox x:Name="skill2valuelv10" HorizontalAlignment="Left" Height="45" Margin="66,286,0,0"
-                                 TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="416"
-                                 IsReadOnly="True" HorizontalContentAlignment="Center"
-                                 VerticalContentAlignment="Center"
-                                 Foreground="#FF333333" FontFamily="Meiryo">
-                            <TextBox.Background>
-                                <SolidColorBrush Color="#FF484848" Opacity="0.15" />
-                            </TextBox.Background>
-                        </TextBox>
-                        <Button Content="?" HorizontalAlignment="Left" Height="25" Margin="0,325,0,0"
-                                VerticalAlignment="Top" Width="27" FontFamily="Microsoft JhengHei UI"
-                                Click="Button_Click_4" />
-                        <Label Content="函数列表:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top"
-                               Width="97"
-                               FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
-                               Margin="2,96,0,0"
-                               MouseDoubleClick="skl2Func_Clicked_Mission" Cursor="Help" ToolTip="双击可查看详情."
-                               FontWeight="Bold" />
-                        <TextBox x:Name="skill2Funcs" HorizontalAlignment="Left" Height="17" Margin="66,97,0,0"
-                                 TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="416"
-                                 IsReadOnly="True" HorizontalContentAlignment="Center"
-                                 VerticalContentAlignment="Center"
-                                 Foreground="#FF333333" FontFamily="Meiryo" Grid.ColumnSpan="2">
-                            <TextBox.Background>
-                                <SolidColorBrush Color="#FF484848" Opacity="0.15" />
-                            </TextBox.Background>
-                        </TextBox>
-                        <TextBlock x:Name="IsSk2Strengthened" HorizontalAlignment="Center" Height="18" Margin="436,165,16.2,173" TextWrapping="Wrap" Text="×" Block.TextAlignment="Center" VerticalAlignment="Center" Width="35" FontFamily="Microsoft JhengHei UI" FontSize="16" Foreground="#FF333333"/>
+                               Margin="2,128,0,0" FontWeight="Bold" />
+                        <TextBlock x:Name="IsSk2Strengthened" HorizontalAlignment="Center" Height="18"
+                                   Margin="435,129,17.2,209" TextWrapping="Wrap" Text="×" Block.TextAlignment="Center"
+                                   VerticalAlignment="Center" Width="35" FontFamily="Microsoft JhengHei UI"
+                                   FontSize="16" Foreground="#FF333333" />
                         <Label Content="是否有强化本:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top"
                                Width="97"
                                FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
-                               Margin="356,164,0,0" FontWeight="Bold" />
+                               Margin="355,128,0,0" FontWeight="Bold" />
+                        <ListView x:Name="Skill2FuncList" Margin="5,152,5,5" Foreground="#FF737373">
+                            <ListView.Background>
+                                <SolidColorBrush Color="White" Opacity="0.4" />
+                            </ListView.Background>
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Header="效果" Width="100" DisplayMemberBinding="{Binding Skill2Name}" />
+                                    <GridViewColumn Header="lv.1数值" Width="125"
+                                                    DisplayMemberBinding="{Binding Skill2Svallv1}" />
+                                    <GridViewColumn Header="lv.6数值" Width="125"
+                                                    DisplayMemberBinding="{Binding Skill2Svallv6}" />
+                                    <GridViewColumn Header="lv.10数值" Width="125"
+                                                    DisplayMemberBinding="{Binding Skill2Svallv10}" />
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
                     </Grid>
                 </TabItem>
                 <TabItem Header="技能3" FontFamily="Microsoft JhengHei UI">
@@ -961,8 +887,8 @@
                         <Label Content="冷却时间:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top"
                                Width="97"
                                FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
-                               Margin="2,127,0,0" FontWeight="Bold" />
-                        <TextBox x:Name="skill3cdlv1" HorizontalAlignment="Left" Height="17" Margin="66,128,0,0"
+                               Margin="2,96,0,0" FontWeight="Bold" />
+                        <TextBox x:Name="skill3cdlv1" HorizontalAlignment="Left" Height="26" Margin="66,96,0,0"
                                  TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="52"
                                  IsReadOnly="True" HorizontalContentAlignment="Center"
                                  VerticalContentAlignment="Center"
@@ -973,8 +899,8 @@
                         </TextBox>
                         <Label Content="→" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top" Width="97"
                                FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
-                               Margin="120,128,0,0" FontWeight="Bold" />
-                        <TextBox x:Name="skill3cdlv6" HorizontalAlignment="Left" Height="17" Margin="143,128,0,0"
+                               Margin="119,96,0,0" FontWeight="Bold" />
+                        <TextBox x:Name="skill3cdlv6" HorizontalAlignment="Left" Height="26" Margin="142,96,0,0"
                                  TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="52"
                                  IsReadOnly="True" HorizontalContentAlignment="Center"
                                  VerticalContentAlignment="Center"
@@ -985,8 +911,8 @@
                         </TextBox>
                         <Label Content="→" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top" Width="97"
                                FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
-                               Margin="197,128,0,0" FontWeight="Bold" />
-                        <TextBox x:Name="skill3cdlv10" HorizontalAlignment="Left" Height="17" Margin="220,128,0,0"
+                               Margin="196,96,0,0" FontWeight="Bold" />
+                        <TextBox x:Name="skill3cdlv10" HorizontalAlignment="Left" Height="26" Margin="219,96,0,0"
                                  TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="52"
                                  IsReadOnly="True" HorizontalContentAlignment="Center"
                                  VerticalContentAlignment="Center"
@@ -997,75 +923,37 @@
                         </TextBox>
                         <Label
                             Content="---------------------------------------------------------------------------------------------"
-                            HorizontalAlignment="Left" Height="27" Margin="2,143,0,0" VerticalAlignment="Top"
+                            HorizontalAlignment="Left" Height="27" Margin="2,112,0,0" VerticalAlignment="Top"
                             Width="480"
-                            FontFamily="Microsoft JhengHei UI" FontSize="14" Foreground="LightGray" Grid.ColumnSpan="2" />
+                            FontFamily="Microsoft JhengHei UI" FontSize="14" Foreground="LightGray" />
                         <Label Content="具体数值:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top"
                                Width="97"
                                FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
-                               Margin="2,164,0,0" FontWeight="Bold" />
-                        <Label Content="lv.1:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top"
-                               Width="97"
-                               FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
-                               Margin="28,186,0,0" FontWeight="Bold" />
-                        <TextBox x:Name="skill3valuelv1" HorizontalAlignment="Left" Height="45" Margin="66,186,0,0"
-                                 TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="416"
-                                 IsReadOnly="True" HorizontalContentAlignment="Center"
-                                 VerticalContentAlignment="Center"
-                                 Foreground="#FF333333" FontFamily="Meiryo">
-                            <TextBox.Background>
-                                <SolidColorBrush Color="#FF484848" Opacity="0.15" />
-                            </TextBox.Background>
-                        </TextBox>
-                        <Label Content="lv.6:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top"
-                               Width="97"
-                               FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
-                               Margin="28,237,0,0" FontWeight="Bold" />
-                        <TextBox x:Name="skill3valuelv6" HorizontalAlignment="Left" Height="45" Margin="66,236,0,0"
-                                 TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="416"
-                                 IsReadOnly="True" HorizontalContentAlignment="Center"
-                                 VerticalContentAlignment="Center"
-                                 Foreground="#FF333333" FontFamily="Meiryo">
-                            <TextBox.Background>
-                                <SolidColorBrush Color="#FF484848" Opacity="0.15" />
-                            </TextBox.Background>
-                        </TextBox>
-                        <Label Content="lv.10:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top"
-                               Width="97"
-                               FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
-                               Margin="28,286,0,0" FontWeight="Bold" />
-                        <TextBox x:Name="skill3valuelv10" HorizontalAlignment="Left" Height="45" Margin="66,286,0,0"
-                                 TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="416"
-                                 IsReadOnly="True" HorizontalContentAlignment="Center"
-                                 VerticalContentAlignment="Center"
-                                 Foreground="#FF333333" FontFamily="Meiryo">
-                            <TextBox.Background>
-                                <SolidColorBrush Color="#FF484848" Opacity="0.15" />
-                            </TextBox.Background>
-                        </TextBox>
-                        <Button Content="?" HorizontalAlignment="Left" Height="25" Margin="0,325,0,0"
-                                VerticalAlignment="Top" Width="27" FontFamily="Microsoft JhengHei UI"
-                                Click="Button_Click_4" />
-                        <Label Content="函数列表:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top"
-                               Width="97"
-                               FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
-                               Margin="2,96,0,0"
-                               MouseDoubleClick="skl3Func_Clicked_Mission" Cursor="Help" ToolTip="双击可查看详情."
-                               FontWeight="Bold" />
-                        <TextBox x:Name="skill3Funcs" HorizontalAlignment="Left" Height="17" Margin="66,97,0,0"
-                                 TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="416"
-                                 IsReadOnly="True" HorizontalContentAlignment="Center"
-                                 VerticalContentAlignment="Center"
-                                 Foreground="#FF333333" FontFamily="Meiryo" Grid.ColumnSpan="2">
-                            <TextBox.Background>
-                                <SolidColorBrush Color="#FF484848" Opacity="0.15" />
-                            </TextBox.Background>
-                        </TextBox>
-                        <TextBlock x:Name="IsSk3Strengthened" HorizontalAlignment="Center" Height="18" Margin="436,165,16.2,173" TextWrapping="Wrap" Text="×" Block.TextAlignment="Center" VerticalAlignment="Center" Width="35" FontFamily="Microsoft JhengHei UI" FontSize="16" Foreground="#FF333333"/>
+                               Margin="2,128,0,0" FontWeight="Bold" />
+                        <TextBlock x:Name="IsSk3Strengthened" HorizontalAlignment="Center" Height="18"
+                                   Margin="435,129,17.2,209" TextWrapping="Wrap" Text="×" Block.TextAlignment="Center"
+                                   VerticalAlignment="Center" Width="35" FontFamily="Microsoft JhengHei UI"
+                                   FontSize="16" Foreground="#FF333333" />
                         <Label Content="是否有强化本:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top"
                                Width="97"
                                FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
-                               Margin="356,164,0,0" FontWeight="Bold" />
+                               Margin="355,128,0,0" FontWeight="Bold" />
+                        <ListView x:Name="Skill3FuncList" Margin="5,152,5,5" Foreground="#FF737373">
+                            <ListView.Background>
+                                <SolidColorBrush Color="White" Opacity="0.4" />
+                            </ListView.Background>
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Header="效果" Width="100" DisplayMemberBinding="{Binding Skill3Name}" />
+                                    <GridViewColumn Header="lv.1数值" Width="125"
+                                                    DisplayMemberBinding="{Binding Skill3Svallv1}" />
+                                    <GridViewColumn Header="lv.6数值" Width="125"
+                                                    DisplayMemberBinding="{Binding Skill3Svallv6}" />
+                                    <GridViewColumn Header="lv.10数值" Width="125"
+                                                    DisplayMemberBinding="{Binding Skill3Svallv10}" />
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
                     </Grid>
                 </TabItem>
                 <TabItem Header="设置" FontFamily="Microsoft JhengHei UI">
@@ -1193,6 +1081,7 @@
                                Foreground="#FF333333" VerticalContentAlignment="Center" />
                     </Grid>
                 </TabItem>
+
             </TabControl>
         </Grid>
         <Label Content="图鉴编号:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top" Width="97"

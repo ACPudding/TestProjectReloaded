@@ -330,26 +330,34 @@ namespace FGOSBIAReloaded
                 skill1cdlv1.Text = SkillLvs.skilllv1chargetime;
                 skill1cdlv6.Text = SkillLvs.skilllv6chargetime;
                 skill1cdlv10.Text = SkillLvs.skilllv10chargetime;
-                skill1valuelv1.Text = SkillLvs.skilllv1sval;
-                skill1valuelv6.Text = SkillLvs.skilllv6sval;
-                skill1valuelv10.Text = SkillLvs.skilllv10sval;
-                skill1Funcs.Text = SkillLvs.SKLFuncstr;
+                for (var i = 0; i <= SkillLvs.SKLFuncstrArray.Length - 1; i++)
+                {
+                    if (SkillLvs.SKLFuncstrArray[i] == "") SkillLvs.SKLFuncstrArray[i] = "HP回復";
+                    Skill1FuncList.Items.Add(new Skill1ListSval(SkillLvs.SKLFuncstrArray[i],
+                        SkillLvs.skilllv1svalArray[i], SkillLvs.skilllv6svalArray[i], SkillLvs.skilllv10svalArray[i]));
+                }
+
                 SkillDetailCheck(SkillLvs.skillID2);
                 skill2cdlv1.Text = SkillLvs.skilllv1chargetime;
                 skill2cdlv6.Text = SkillLvs.skilllv6chargetime;
                 skill2cdlv10.Text = SkillLvs.skilllv10chargetime;
-                skill2valuelv1.Text = SkillLvs.skilllv1sval;
-                skill2valuelv6.Text = SkillLvs.skilllv6sval;
-                skill2valuelv10.Text = SkillLvs.skilllv10sval;
-                skill2Funcs.Text = SkillLvs.SKLFuncstr;
+                for (var i = 0; i <= SkillLvs.SKLFuncstrArray.Length - 1; i++)
+                {
+                    if (SkillLvs.SKLFuncstrArray[i] == "") SkillLvs.SKLFuncstrArray[i] = "HP回復";
+                    Skill2FuncList.Items.Add(new Skill2ListSval(SkillLvs.SKLFuncstrArray[i],
+                        SkillLvs.skilllv1svalArray[i], SkillLvs.skilllv6svalArray[i], SkillLvs.skilllv10svalArray[i]));
+                }
+
                 SkillDetailCheck(SkillLvs.skillID3);
                 skill3cdlv1.Text = SkillLvs.skilllv1chargetime;
                 skill3cdlv6.Text = SkillLvs.skilllv6chargetime;
                 skill3cdlv10.Text = SkillLvs.skilllv10chargetime;
-                skill3valuelv1.Text = SkillLvs.skilllv1sval;
-                skill3valuelv6.Text = SkillLvs.skilllv6sval;
-                skill3valuelv10.Text = SkillLvs.skilllv10sval;
-                skill3Funcs.Text = SkillLvs.SKLFuncstr;
+                for (var i = 0; i <= SkillLvs.SKLFuncstrArray.Length - 1; i++)
+                {
+                    if (SkillLvs.SKLFuncstrArray[i] == "") SkillLvs.SKLFuncstrArray[i] = "HP回復";
+                    Skill3FuncList.Items.Add(new Skill3ListSval(SkillLvs.SKLFuncstrArray[i],
+                        SkillLvs.skilllv1svalArray[i], SkillLvs.skilllv6svalArray[i], SkillLvs.skilllv10svalArray[i]));
+                }
             });
         }
 
@@ -1145,10 +1153,7 @@ namespace FGOSBIAReloaded
                         var skillobjtmp = JObject.Parse(skilltmp.ToString());
                         skill1Name = skillobjtmp["name"].ToString();
                         skill1name.Text = skill1Name;
-                        if (sk1IsStrengthened)
-                        {
-                            skill1name.Text += " ▲";
-                        }
+                        if (sk1IsStrengthened) skill1name.Text += " ▲";
                     }
 
                     if (((JObject) skilltmp)["id"].ToString() == SkillLvs.skillID2)
@@ -1156,10 +1161,7 @@ namespace FGOSBIAReloaded
                         var skillobjtmp = JObject.Parse(skilltmp.ToString());
                         skill2Name = skillobjtmp["name"].ToString();
                         skill2name.Text = skill2Name;
-                        if (sk2IsStrengthened)
-                        {
-                            skill2name.Text += " ▲";
-                        }
+                        if (sk2IsStrengthened) skill2name.Text += " ▲";
                     }
 
                     if (((JObject) skilltmp)["id"].ToString() != SkillLvs.skillID3) continue;
@@ -1167,10 +1169,7 @@ namespace FGOSBIAReloaded
                         var skillobjtmp = JObject.Parse(skilltmp.ToString());
                         skill3Name = skillobjtmp["name"].ToString();
                         skill3name.Text = skill3Name;
-                        if (sk3IsStrengthened)
-                        {
-                            skill3name.Text += " ▲";
-                        }
+                        if (sk3IsStrengthened) skill3name.Text += " ▲";
                     }
                 }
 
@@ -1268,6 +1267,9 @@ namespace FGOSBIAReloaded
                 atkbalance2.Content = "( x 1.0 -)";
                 JBOutput.IsEnabled = false;
                 sixwei.Content = "";
+                Skill1FuncList.Items.Clear();
+                Skill2FuncList.Items.Clear();
+                Skill3FuncList.Items.Clear();
             });
             IsSk1Strengthened.Dispatcher.Invoke(() => { IsSk1Strengthened.Text = "×"; });
             IsSk2Strengthened.Dispatcher.Invoke(() => { IsSk2Strengthened.Text = "×"; });
@@ -1283,10 +1285,14 @@ namespace FGOSBIAReloaded
                 SkillLvs.skilllv1sval = "";
                 SkillLvs.skilllv6sval = "";
                 SkillLvs.skilllv10sval = "";
+                SkillLvs.skilllv1svalArray = null;
+                SkillLvs.skilllv6svalArray = null;
+                SkillLvs.skilllv10svalArray = null;
                 SkillLvs.skilllv1chargetime = "";
                 SkillLvs.skilllv6chargetime = "";
                 SkillLvs.skilllv10chargetime = "";
                 SkillLvs.SKLFuncstr = "";
+                SkillLvs.SKLFuncstrArray = null;
                 string svtSKFuncID;
                 string[] svtSKFuncIDArray;
                 List<string> svtSKFuncIDList;
@@ -1302,6 +1308,7 @@ namespace FGOSBIAReloaded
                             .Replace("[", "").Replace("]", "*").Replace("\"", "").Replace(" ", "").Replace("*,", "/");
                         SkillLvs.skilllv1sval = SkillLvs.skilllv1sval.Substring(0, SkillLvs.skilllv1sval.Length - 2);
                         SkillLvs.skilllv1chargetime = SKLobjtmp["chargeTurn"].ToString();
+                        SkillLvs.skilllv1svalArray = SkillLvs.skilllv1sval.Split('/');
                     }
 
                     if (((JObject) SKLTMP)["skillId"].ToString() == sklid && ((JObject) SKLTMP)["lv"].ToString() == "6")
@@ -1311,6 +1318,7 @@ namespace FGOSBIAReloaded
                             .Replace("[", "").Replace("]", "*").Replace("\"", "").Replace(" ", "").Replace("*,", "/");
                         SkillLvs.skilllv6sval = SkillLvs.skilllv6sval.Substring(0, SkillLvs.skilllv6sval.Length - 2);
                         SkillLvs.skilllv6chargetime = SKLobjtmp["chargeTurn"].ToString();
+                        SkillLvs.skilllv6svalArray = SkillLvs.skilllv6sval.Split('/');
                     }
 
                     if (((JObject) SKLTMP)["skillId"].ToString() != sklid ||
@@ -1321,6 +1329,7 @@ namespace FGOSBIAReloaded
                             .Replace("[", "").Replace("]", "*").Replace("\"", "").Replace(" ", "").Replace("*,", "/");
                         SkillLvs.skilllv10sval = SkillLvs.skilllv10sval.Substring(0, SkillLvs.skilllv10sval.Length - 2);
                         SkillLvs.skilllv10chargetime = SKLobjtmp["chargeTurn"].ToString();
+                        SkillLvs.skilllv10svalArray = SkillLvs.skilllv10sval.Split('/');
                         svtSKFuncID = SKLobjtmp["funcId"].ToString().Replace("\n", "").Replace("\t", "")
                             .Replace("\r", "").Replace(" ", "").Replace("[", "").Replace("]", "");
                         svtSKFuncIDList = new List<string>(svtSKFuncID.Split(','));
@@ -1335,6 +1344,7 @@ namespace FGOSBIAReloaded
                 }
 
                 svtSKFuncArray = svtSKFuncList.ToArray();
+                SkillLvs.SKLFuncstrArray = svtSKFuncArray;
                 svtSKFunc = string.Join(", ", svtSKFuncArray);
                 SkillLvs.SKLFuncstr = svtSKFunc;
             });
@@ -1617,7 +1627,7 @@ namespace FGOSBIAReloaded
         private void Button_Click_4(object sender, RoutedEventArgs e)
         {
             MessageBox.Show(
-                "具体数值显示的为文件中的原始数据，水平有限，无法进行有效解析。\r\n\r\n注:由于文本框高度过窄,\"宝具信息\"选项卡内具体数值前的等级Label(lv.x)双击后即可显示详细数据对话框.\r\n\"技能\"选项卡的函数列表为具体数值中每个/间对应的函数名称(双击Label\"函数列表\"也可查看详情.)\r\n\r\n【以下内容均为理论推测，仅适用于大部分结果。】\r\n/ 之间的为一个Buff的幅度\r\n1、如果为[a,b]则a为成功率(除以10就是百分比，如1000就是100%),b需要看技能描述，如果为出星或者生命值则b的大小即为幅度，若为NP，则将该数值除以100即为NP值。若b为1，则该组段可以忽略不看。\r\n2、如果为[a,b,c]或者[a,b,c,d]则在一般情况下a表示成功率(同1),b表示持续回合数即Turn,c表示次数(-1即为没有次数限制),d在大多数情况下除以10即为Buff幅度(%)，有时会有例外(可能也是没有意义).\r\n3、如果为[a,b,c,d,e]则a,b,c同2,d和e需要通过源文件进行详细手动分析。",
+                "具体数值显示的为文件中的原始数据，水平有限，无法进行有效解析。\r\n\r\n注:由于文本框高度过窄,\"宝具信息\"选项卡内具体数值前的等级Label(lv.x)双击后即可显示详细数据对话框.\r\n\r\n【以下内容均为理论推测，仅适用于大部分结果。】\r\n/ 之间的为一个Buff的幅度\r\n1、如果为[a,b]则a为成功率(除以10就是百分比，如1000就是100%),b需要看技能描述，如果为出星或者生命值则b的大小即为幅度，若为NP，则将该数值除以100即为NP值。若b为1，则该组段可以忽略不看(或为对敌方技能比如减一格充能之类的)。\r\n2、如果为[a,b,c]或者[a,b,c,d]则在一般情况下a表示成功率(同1),b表示持续回合数即Turn,c表示次数(-1即为没有次数限制),d在大多数情况下除以10即为Buff幅度(%)，有时会有例外(可能也是没有意义).\r\n3、如果为[a,b,c,d,e]则a,b,c同2,d和e需要通过源文件进行详细手动分析。",
                 "温馨提示:", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
@@ -1668,27 +1678,6 @@ namespace FGOSBIAReloaded
             MessageBox.Show(
                 "宝具所有函数有(对应/之间的内容):\r\n" + SkillLvs.TDFuncstr + "\r\n\r\n以下列出五宝时所有Over Charge情况下的数据:\r\n" +
                 npvaluelv5.Text, "宝具等级lv5详细数据", MessageBoxButton.OK,
-                MessageBoxImage.Information);
-        }
-
-        private void skl1Func_Clicked_Mission(object sender, MouseButtonEventArgs e)
-        {
-            if (skill1Funcs.Text == "") return;
-            MessageBox.Show("以下列出1技能所有函数名称:\r\n" + skill1Funcs.Text, "1技能所有函数名称", MessageBoxButton.OK,
-                MessageBoxImage.Information);
-        }
-
-        private void skl2Func_Clicked_Mission(object sender, MouseButtonEventArgs e)
-        {
-            if (skill2Funcs.Text == "") return;
-            MessageBox.Show("以下列出2技能所有函数名称:\r\n" + skill2Funcs.Text, "2技能所有函数名称", MessageBoxButton.OK,
-                MessageBoxImage.Information);
-        }
-
-        private void skl3Func_Clicked_Mission(object sender, MouseButtonEventArgs e)
-        {
-            if (skill3Funcs.Text == "") return;
-            MessageBox.Show("以下列出3技能所有函数名称:\r\n" + skill3Funcs.Text, "3技能所有函数名称", MessageBoxButton.OK,
                 MessageBoxImage.Information);
         }
 
@@ -1917,5 +1906,52 @@ namespace FGOSBIAReloaded
             VCE.Start();
         }
 
+        private struct Skill1ListSval
+        {
+            public string Skill1Name { get; }
+            public string Skill1Svallv1 { get; }
+            public string Skill1Svallv6 { get; }
+            public string Skill1Svallv10 { get; }
+
+            public Skill1ListSval(string v1, string v2, string v3, string v4) : this()
+            {
+                Skill1Name = v1;
+                Skill1Svallv1 = v2;
+                Skill1Svallv6 = v3;
+                Skill1Svallv10 = v4;
+            }
+        }
+
+        private struct Skill2ListSval
+        {
+            public string Skill2Name { get; }
+            public string Skill2Svallv1 { get; }
+            public string Skill2Svallv6 { get; }
+            public string Skill2Svallv10 { get; }
+
+            public Skill2ListSval(string v1, string v2, string v3, string v4) : this()
+            {
+                Skill2Name = v1;
+                Skill2Svallv1 = v2;
+                Skill2Svallv6 = v3;
+                Skill2Svallv10 = v4;
+            }
+        }
+
+        private struct Skill3ListSval
+        {
+            public string Skill3Name { get; }
+            public string Skill3Svallv1 { get; }
+            public string Skill3Svallv6 { get; }
+            public string Skill3Svallv10 { get; }
+
+            public Skill3ListSval(string v1, string v2, string v3, string v4) : this()
+            {
+                Skill3Name = v1;
+                Skill3Svallv1 = v2;
+                Skill3Svallv6 = v3;
+                Skill3Svallv10 = v4;
+            }
+        }
     }
 }
