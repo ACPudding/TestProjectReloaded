@@ -8,7 +8,7 @@ namespace FGOSBIAReloaded.Properties
 {
     class CommonStrings
     {
-        public static string Version = "版本号:  v2.5.0";
-        public static string VersionTag = "v2.5.0";
+        public static string Version = "版本号:  v2.5.1";
+        public static string VersionTag = "v2.5.1";
     }
 }
