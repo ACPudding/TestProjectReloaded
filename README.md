@@ -1,9 +1,10 @@
 # FGO Servant Basic Information Analyzer (WPF.Reloaded)
 该项目使用WPF进行了重置  
 和上个工程一样垃圾  
-如遇任何兼容性问题无法保证有效修复 
+如遇任何兼容性问题无法保证有效修复  
 本身是作为初学C#的练手之作，写的非常烂  
 如果真的有人发现这里的话希望可以重构一个orz  
+所有对数据进行的解密部分代码使用了nishuoshenme的FGOAssetsModifyTool的代码   
   
 实现内容:  
 可以对FGO(JP)的所有从者的基本信息进行解析.并且可以导出为xlsx文件.  
