@@ -937,6 +937,35 @@
                         </TextBox>
                     </Grid>
                 </TabItem>
+                <TabItem Header="关卡列表" FontFamily="Microsoft JhengHei UI">
+                    <TabItem.Background>
+                        <SolidColorBrush Color="#FF333333" Opacity="0.2" />
+                    </TabItem.Background>
+                    <Grid Margin="0,0,0,0">
+                        <Label Content="注:&#13;本页暂时只作为在新发布的强化任务时查询PickUP关卡以便快速定位强化本对象."
+                               HorizontalAlignment="Left" Height="44" VerticalAlignment="Top"
+                               Width="471" FontFamily="Microsoft JhengHei UI" FontSize="11.5" Foreground="#FF333333" FontWeight="Bold" />
+                        <ListView x:Name="PickupQuestList" Margin="5,68,5,5" Foreground="#FF737373" FontSize="11">
+                            <ListView.Background>
+                                <SolidColorBrush Color="White" Opacity="0.4" />
+                            </ListView.Background>
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Header="关卡编号" Width="70" DisplayMemberBinding="{Binding QuestNumber}" />
+                                    <GridViewColumn Header="关卡名称" Width="137"
+                                                    DisplayMemberBinding="{Binding QuestName}" />
+                                    <GridViewColumn Header="Start PickUP Time" Width="137"
+                                                    DisplayMemberBinding="{Binding QuestStartTime}" />
+                                    <GridViewColumn Header="End PickUP Time" Width="137"
+                                                    DisplayMemberBinding="{Binding QuestEndTime}" />
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
+                        <Button x:Name="ButtonQuest" Content="显示" HorizontalAlignment="Left" Height="26" Margin="5,37,0,0"
+                                VerticalAlignment="Top" Width="81" Click="Button_Click_Quest" FontFamily="Microsoft JhengHei UI"
+                                FontWeight="Bold" Foreground="#FF333333" />
+                    </Grid>
+                </TabItem>
                 <TabItem Header="设置" FontFamily="Microsoft JhengHei UI">
                     <TabItem.Background>
                         <SolidColorBrush Color="#FF333333" Opacity="0.2" />

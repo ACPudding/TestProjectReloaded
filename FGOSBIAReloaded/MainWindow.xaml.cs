@@ -1214,6 +1214,7 @@ namespace FGOSBIAReloaded
                 Skill1FuncList.Items.Clear();
                 Skill2FuncList.Items.Clear();
                 Skill3FuncList.Items.Clear();
+                PickupQuestList.Items.Clear();
                 TDFuncList.Items.Clear();
             });
             IsSk1Strengthened.Dispatcher.Invoke(() => { IsSk1Strengthened.Text = "×"; });
@@ -1799,6 +1800,60 @@ namespace FGOSBIAReloaded
             VCE.Start();
         }
 
+        private void Button_Click_Quest(object sender, RoutedEventArgs e)
+        {
+            var LPQL = new Thread(LoadPickUPQuestList);
+            ButtonQuest.IsEnabled = false;
+            LPQL.Start();
+        }
+
+        private void LoadPickUPQuestList()
+        {
+            var path = Directory.GetCurrentDirectory();
+            var gamedata = new DirectoryInfo(path + @"\Android\masterdata\");
+            var dateTimeStart = TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1));
+            var QuestName = "";
+            var questid = "";
+            PickupQuestList.Dispatcher.Invoke(() => { PickupQuestList.Items.Clear(); });
+            if (File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstQuest") &&
+                File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstQuestPickup"))
+            {
+                foreach (var mstQuestPickup in GlobalPathsAndDatas.mstQuestPickupArray) //查找某个字段与值
+                {
+                    var QuestPUEndTimeStamp = Convert.ToInt32(((JObject) mstQuestPickup)["endedAt"]);
+                    var QuestPUStartTimeStamp = Convert.ToInt32(((JObject) mstQuestPickup)["startedAt"]);
+                    var TimeMinus = (DateTime.Now.Ticks - dateTimeStart.Ticks) / 10000000;
+                    if (TimeMinus > QuestPUEndTimeStamp) continue;
+                    questid = ((JObject) mstQuestPickup)["questId"].ToString();
+                    foreach (var mstQuest in GlobalPathsAndDatas.mstQuestArray) //查找某个字段与值
+                    {
+                        if (((JObject) mstQuest)["id"].ToString() != questid) continue;
+                        QuestName = ((JObject) mstQuest)["name"].ToString();
+                        break;
+                    }
+
+                    var QuestPUStartTime = new TimeSpan(long.Parse(QuestPUStartTimeStamp + "0000000"));
+                    var QuestPUEndTime = new TimeSpan(long.Parse(QuestPUEndTimeStamp + "0000000"));
+                    var StartStr = Convert.ToString(dateTimeStart + QuestPUStartTime);
+                    var EndStr = Convert.ToString(dateTimeStart + QuestPUEndTime);
+                    PickupQuestList.Dispatcher.Invoke(() =>
+                    {
+                        PickupQuestList.Items.Add(new QuestList(questid, QuestName, StartStr, EndStr));
+                    });
+                }
+
+                ButtonQuest.Dispatcher.Invoke(() => { ButtonQuest.IsEnabled = true; });
+            }
+            else
+            {
+                MessageBox.Show("游戏数据损坏,请重新下载游戏数据(位于\"设置\"选项卡).", "温馨提示:", MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+                ButtonQuest.Dispatcher.Invoke(() => { ButtonQuest.IsEnabled = true; });
+            }
+
+            GC.Collect();
+        }
+
         private struct SkillListSval
         {
             public string SkillName { get; }
@@ -1832,6 +1887,22 @@ namespace FGOSBIAReloaded
                 TDSvalOC3lv3 = v4;
                 TDSvalOC4lv4 = v5;
                 TDSvalOC5lv5 = v6;
+            }
+        }
+
+        private struct QuestList
+        {
+            public string QuestNumber { get; }
+            public string QuestName { get; }
+            public string QuestStartTime { get; }
+            public string QuestEndTime { get; }
+
+            public QuestList(string v1, string v2, string v3, string v4) : this()
+            {
+                QuestNumber = v1;
+                QuestName = v2;
+                QuestStartTime = v3;
+                QuestEndTime = v4;
             }
         }
     }
