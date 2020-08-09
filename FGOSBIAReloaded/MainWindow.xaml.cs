@@ -921,9 +921,9 @@ namespace FGOSBIAReloaded
                 {
                     var TDLVobjtmp = JObject.Parse(TDLVtmp.ToString());
                     var NPval1 = TDLVobjtmp["svals"].ToString().Replace("\n", "").Replace("\r", "")
-                        .Replace("[", "").Replace("]", "*").Replace("\"", "").Replace(" ", "").Replace("*,", "/");
+                        .Replace("[", "").Replace("]", "*").Replace("\"", "").Replace(" ", "").Replace("*,", "|");
                     NPval1 = NPval1.Substring(0, NPval1.Length - 2);
-                    SkillLvs.TDlv1OC1strArray = NPval1.Split('/');
+                    SkillLvs.TDlv1OC1strArray = NPval1.Split('|');
                 }
 
                 if (((JObject) TDLVtmp)["treaureDeviceId"].ToString() == svtTDID &&
@@ -931,9 +931,9 @@ namespace FGOSBIAReloaded
                 {
                     var TDLVobjtmp = JObject.Parse(TDLVtmp.ToString());
                     var NPval2 = TDLVobjtmp["svals2"].ToString().Replace("\n", "").Replace("\r", "")
-                        .Replace("[", "").Replace("]", "*").Replace("\"", "").Replace(" ", "").Replace("*,", "/");
+                        .Replace("[", "").Replace("]", "*").Replace("\"", "").Replace(" ", "").Replace("*,", "|");
                     NPval2 = NPval2.Substring(0, NPval2.Length - 2);
-                    SkillLvs.TDlv2OC2strArray = NPval2.Split('/');
+                    SkillLvs.TDlv2OC2strArray = NPval2.Split('|');
                 }
 
                 if (((JObject) TDLVtmp)["treaureDeviceId"].ToString() == svtTDID &&
@@ -941,9 +941,9 @@ namespace FGOSBIAReloaded
                 {
                     var TDLVobjtmp = JObject.Parse(TDLVtmp.ToString());
                     var NPval3 = TDLVobjtmp["svals3"].ToString().Replace("\n", "").Replace("\r", "")
-                        .Replace("[", "").Replace("]", "*").Replace("\"", "").Replace(" ", "").Replace("*,", "/");
+                        .Replace("[", "").Replace("]", "*").Replace("\"", "").Replace(" ", "").Replace("*,", "|");
                     NPval3 = NPval3.Substring(0, NPval3.Length - 2);
-                    SkillLvs.TDlv3OC3strArray = NPval3.Split('/');
+                    SkillLvs.TDlv3OC3strArray = NPval3.Split('|');
                 }
 
                 if (((JObject) TDLVtmp)["treaureDeviceId"].ToString() == svtTDID &&
@@ -951,9 +951,9 @@ namespace FGOSBIAReloaded
                 {
                     var TDLVobjtmp = JObject.Parse(TDLVtmp.ToString());
                     var NPval4 = TDLVobjtmp["svals4"].ToString().Replace("\n", "").Replace("\r", "")
-                        .Replace("[", "").Replace("]", "*").Replace("\"", "").Replace(" ", "").Replace("*,", "/");
+                        .Replace("[", "").Replace("]", "*").Replace("\"", "").Replace(" ", "").Replace("*,", "|");
                     NPval4 = NPval4.Substring(0, NPval4.Length - 2);
-                    SkillLvs.TDlv4OC4strArray = NPval4.Split('/');
+                    SkillLvs.TDlv4OC4strArray = NPval4.Split('|');
                 }
 
                 if (((JObject) TDLVtmp)["treaureDeviceId"].ToString() != svtTDID ||
@@ -961,9 +961,9 @@ namespace FGOSBIAReloaded
                 {
                     var TDLVobjtmp = JObject.Parse(TDLVtmp.ToString());
                     var NPval5 = TDLVobjtmp["svals5"].ToString().Replace("\n", "").Replace("\r", "")
-                        .Replace("[", "").Replace("]", "*").Replace("\"", "").Replace(" ", "").Replace("*,", "/");
+                        .Replace("[", "").Replace("]", "*").Replace("\"", "").Replace(" ", "").Replace("*,", "|");
                     NPval5 = NPval5.Substring(0, NPval5.Length - 2);
-                    SkillLvs.TDlv5OC5strArray = NPval5.Split('/');
+                    SkillLvs.TDlv5OC5strArray = NPval5.Split('|');
                     svtTreasureDeviceFuncID = TDLVobjtmp["funcId"].ToString().Replace("\n", "").Replace("\t", "")
                         .Replace("\r", "").Replace(" ", "").Replace("[", "").Replace("]", "");
                     svtTreasureDeviceFuncIDList = new List<string>(svtTreasureDeviceFuncID.Split(','));
@@ -1251,20 +1251,20 @@ namespace FGOSBIAReloaded
                     {
                         var SKLobjtmp = JObject.Parse(SKLTMP.ToString());
                         SkillLvs.skilllv1sval = SKLobjtmp["svals"].ToString().Replace("\n", "").Replace("\r", "")
-                            .Replace("[", "").Replace("]", "*").Replace("\"", "").Replace(" ", "").Replace("*,", "/");
+                            .Replace("[", "").Replace("]", "*").Replace("\"", "").Replace(" ", "").Replace("*,", "|");
                         SkillLvs.skilllv1sval = SkillLvs.skilllv1sval.Substring(0, SkillLvs.skilllv1sval.Length - 2);
                         SkillLvs.skilllv1chargetime = SKLobjtmp["chargeTurn"].ToString();
-                        SkillLvs.skilllv1svalArray = SkillLvs.skilllv1sval.Split('/');
+                        SkillLvs.skilllv1svalArray = SkillLvs.skilllv1sval.Split('|');
                     }
 
                     if (((JObject) SKLTMP)["skillId"].ToString() == sklid && ((JObject) SKLTMP)["lv"].ToString() == "6")
                     {
                         var SKLobjtmp = JObject.Parse(SKLTMP.ToString());
                         SkillLvs.skilllv6sval = SKLobjtmp["svals"].ToString().Replace("\n", "").Replace("\r", "")
-                            .Replace("[", "").Replace("]", "*").Replace("\"", "").Replace(" ", "").Replace("*,", "/");
+                            .Replace("[", "").Replace("]", "*").Replace("\"", "").Replace(" ", "").Replace("*,", "|");
                         SkillLvs.skilllv6sval = SkillLvs.skilllv6sval.Substring(0, SkillLvs.skilllv6sval.Length - 2);
                         SkillLvs.skilllv6chargetime = SKLobjtmp["chargeTurn"].ToString();
-                        SkillLvs.skilllv6svalArray = SkillLvs.skilllv6sval.Split('/');
+                        SkillLvs.skilllv6svalArray = SkillLvs.skilllv6sval.Split('|');
                     }
 
                     if (((JObject) SKLTMP)["skillId"].ToString() != sklid ||
@@ -1272,10 +1272,10 @@ namespace FGOSBIAReloaded
                     {
                         var SKLobjtmp = JObject.Parse(SKLTMP.ToString());
                         SkillLvs.skilllv10sval = SKLobjtmp["svals"].ToString().Replace("\n", "").Replace("\r", "")
-                            .Replace("[", "").Replace("]", "*").Replace("\"", "").Replace(" ", "").Replace("*,", "/");
+                            .Replace("[", "").Replace("]", "*").Replace("\"", "").Replace(" ", "").Replace("*,", "|");
                         SkillLvs.skilllv10sval = SkillLvs.skilllv10sval.Substring(0, SkillLvs.skilllv10sval.Length - 2);
                         SkillLvs.skilllv10chargetime = SKLobjtmp["chargeTurn"].ToString();
-                        SkillLvs.skilllv10svalArray = SkillLvs.skilllv10sval.Split('/');
+                        SkillLvs.skilllv10svalArray = SkillLvs.skilllv10sval.Split('|');
                         svtSKFuncID = SKLobjtmp["funcId"].ToString().Replace("\n", "").Replace("\t", "")
                             .Replace("\r", "").Replace(" ", "").Replace("[", "").Replace("]", "");
                         svtSKFuncIDList = new List<string>(svtSKFuncID.Split(','));
