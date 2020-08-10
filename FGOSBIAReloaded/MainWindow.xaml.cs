@@ -1045,6 +1045,16 @@ namespace FGOSBIAReloaded
                     sk1IsStrengthened = true;
                 }
 
+                if (((JObject)svtskill)["svtId"].ToString() == JB.svtid &&
+                    ((JObject)svtskill)["num"].ToString() == "1" &&
+                    ((JObject)svtskill)["priority"].ToString() == "3")
+                {
+                    var mstsvtskillobjtmp = JObject.Parse(svtskill.ToString());
+                    SkillLvs.skillID1 = mstsvtskillobjtmp["skillId"].ToString();
+                    IsSk1Strengthened.Dispatcher.Invoke(() => { IsSk1Strengthened.Text = "√"; });
+                    sk1IsStrengthened = true;
+                }
+
                 if (((JObject) svtskill)["svtId"].ToString() == JB.svtid &&
                     ((JObject) svtskill)["num"].ToString() == "2" &&
                     ((JObject) svtskill)["priority"].ToString() == "1")
@@ -1063,6 +1073,16 @@ namespace FGOSBIAReloaded
                     sk2IsStrengthened = true;
                 }
 
+                if (((JObject)svtskill)["svtId"].ToString() == JB.svtid &&
+                    ((JObject)svtskill)["num"].ToString() == "2" &&
+                    ((JObject)svtskill)["priority"].ToString() == "3")
+                {
+                    var mstsvtskillobjtmp = JObject.Parse(svtskill.ToString());
+                    SkillLvs.skillID2 = mstsvtskillobjtmp["skillId"].ToString();
+                    IsSk2Strengthened.Dispatcher.Invoke(() => { IsSk2Strengthened.Text = "√"; });
+                    sk2IsStrengthened = true;
+                }
+
                 if (((JObject) svtskill)["svtId"].ToString() == JB.svtid &&
                     ((JObject) svtskill)["num"].ToString() == "3" &&
                     ((JObject) svtskill)["priority"].ToString() == "1")
@@ -1071,9 +1091,19 @@ namespace FGOSBIAReloaded
                     SkillLvs.skillID3 = mstsvtskillobjtmp["skillId"].ToString();
                 }
 
-                if (((JObject) svtskill)["svtId"].ToString() != JB.svtid ||
-                    ((JObject) svtskill)["num"].ToString() != "3" ||
-                    ((JObject) svtskill)["priority"].ToString() != "2") continue;
+                if (((JObject) svtskill)["svtId"].ToString() == JB.svtid &&
+                    ((JObject) svtskill)["num"].ToString() == "3" &&
+                    ((JObject) svtskill)["priority"].ToString() == "2")
+                {
+                    var mstsvtskillobjtmp = JObject.Parse(svtskill.ToString());
+                    SkillLvs.skillID3 = mstsvtskillobjtmp["skillId"].ToString();
+                    IsSk3Strengthened.Dispatcher.Invoke(() => { IsSk3Strengthened.Text = "√"; });
+                    sk3IsStrengthened = true;
+                }
+
+                if (((JObject)svtskill)["svtId"].ToString() != JB.svtid ||
+                    ((JObject)svtskill)["num"].ToString() != "3" ||
+                    ((JObject)svtskill)["priority"].ToString() != "3") continue;
                 {
                     var mstsvtskillobjtmp = JObject.Parse(svtskill.ToString());
                     SkillLvs.skillID3 = mstsvtskillobjtmp["skillId"].ToString();
