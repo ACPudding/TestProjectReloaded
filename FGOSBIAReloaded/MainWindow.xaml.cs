@@ -266,7 +266,6 @@ namespace FGOSBIAReloaded
 
             var newtmpid = "";
             if (NPDetail == "unknown")
-            {
                 foreach (var TreasureDevicestmp2 in GlobalPathsAndDatas.mstTreasureDevicedArray) //查找某个字段与值
                     if (((JObject) TreasureDevicestmp2)["name"].ToString() == NPName)
                     {
@@ -311,11 +310,6 @@ namespace FGOSBIAReloaded
                             }
                         }
                     }
-            }
-            else
-            {
-                newtmpid = svtTDID.ToString();
-            }
 
             npdetail.Dispatcher.Invoke(() => { npdetail.Text = NPDetail; });
         }
@@ -362,6 +356,7 @@ namespace FGOSBIAReloaded
 
         private void ServantBasicInformationCheck()
         {
+            var SISI = new Thread(CheckServantIndividuality.CheckSvtIndividuality);
             Dispatcher.Invoke(() =>
             {
                 var RankString = new string[100];
@@ -499,29 +494,29 @@ namespace FGOSBIAReloaded
                 npratemagicbase[99] = 0.0;
                 npratemagicbase[98] = 0.0;
                 npratemagicbase[97] = 0.0;
-                var svtstarrate = "unknown";
+                var svtstarrate = "";
                 double NPrate = 0;
                 float starrate = 0;
                 float deathrate = 0;
-                var svtdeathrate = "unknown";
+                var svtdeathrate = "";
                 var svtillust = "unknown"; //illustID 不输出
                 var svtcv = "unknown"; //CVID 不输出
-                var svtcollectionid = "unknown";
+                var svtcollectionid = "";
                 var svtCVName = "unknown";
                 var svtILLUSTName = "unknown";
-                var svtrarity = "unknown";
-                var svthpBase = "unknown";
-                var svthpMax = "unknown";
-                var svtatkBase = "unknown";
-                var svtatkMax = "unknown";
-                var svtcriticalWeight = "unknown";
-                var svtpower = "unknown";
-                var svtdefense = "unknown";
-                var svtagility = "unknown";
-                var svtmagic = "unknown";
-                var svtluck = "unknown";
-                var svttreasureDevice = "unknown";
-                var svtHideAttri = "unknown";
+                var svtrarity = "";
+                var svthpBase = "";
+                var svthpMax = "";
+                var svtatkBase = "";
+                var svtatkMax = "";
+                var svtcriticalWeight = "";
+                var svtpower = "";
+                var svtdefense = "";
+                var svtagility = "";
+                var svtmagic = "";
+                var svtluck = "";
+                var svttreasureDevice = "";
+                var svtHideAttri = "";
                 string svtClassPassiveID;
                 var classData = 0;
                 var powerData = 0;
@@ -532,6 +527,7 @@ namespace FGOSBIAReloaded
                 var TreasureData = 0;
                 var genderData = 0;
                 var CardArrange = "[A,B,C,D,E]";
+                var svtIndividualityInput = "";
                 GlobalPathsAndDatas.askxlsx = true;
                 foreach (var svtIDtmp in GlobalPathsAndDatas.mstSvtArray) //查找某个字段与值
                     if (((JObject) svtIDtmp)["id"].ToString() == JB.svtid)
@@ -547,13 +543,23 @@ namespace FGOSBIAReloaded
                         svtstarrate = mstSvtobjtmp["starRate"].ToString();
                         svtdeathrate = mstSvtobjtmp["deathRate"].ToString();
                         svtcollectionid = mstSvtobjtmp["collectionNo"].ToString();
+                        svtIndividualityInput = mstSvtobjtmp["individuality"].ToString().Replace("\n", "")
+                            .Replace("\t", "")
+                            .Replace("\r", "").Replace(" ", "").Replace("[", "").Replace("]", "");
                         collection.Text = svtcollectionid;
                         svtHideAttri = mstSvtobjtmp["attri"].ToString().Replace("1", "人").Replace("2", "天")
                             .Replace("3", "地").Replace("4", "星").Replace("5", "兽");
                         CardArrange = mstSvtobjtmp["cardIds"].ToString().Replace("\n", "").Replace("\t", "")
                             .Replace("\r", "").Replace(" ", "").Replace("2", "B").Replace("1", "A").Replace("3", "Q");
                         if (CardArrange == "[Q,Q,Q,Q,Q]")
+                        {
                             GlobalPathsAndDatas.askxlsx = false;
+                        }
+                        else
+                        {
+                            if (ToggleDispIndi.IsChecked == true) SISI.Start(svtIndividualityInput);
+                        }
+
                         cards.Text = CardArrange;
                         svtClassPassiveID = mstSvtobjtmp["classPassive"].ToString().Replace("\n", "").Replace("\t", "")
                             .Replace("\r", "").Replace(" ", "").Replace("[", "").Replace("]", "");
@@ -622,6 +628,10 @@ namespace FGOSBIAReloaded
                     NPrate = Math.Floor(NPrate * 10000) / 10000;
                     notrealnprate.Text = NPrate.ToString("P");
                 }
+
+                svtIndividuality.Text = ToggleDispIndi.IsChecked == true
+                    ? CheckServantIndividuality.Outputs
+                    : svtIndividualityInput;
 
                 switch (classData)
                 {
@@ -1570,6 +1580,7 @@ namespace FGOSBIAReloaded
         private void Button_Click_3(object sender, RoutedEventArgs e)
         {
             var HTTPReq = new Thread(HttpRequestData);
+            HTTPReq.IsBackground = true;
             HTTPReq.Start();
         }
 
