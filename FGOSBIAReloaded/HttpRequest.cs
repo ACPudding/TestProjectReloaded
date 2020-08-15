@@ -41,7 +41,7 @@ namespace FGOSBIAReloaded
 
         public static Stream GetXlsx()
         {
-            var xlsxurl1 = "https://acpudding.github.io/fileserv/SvtInfoBasicxlsx.xlsx";
+            var xlsxurl1 = "https://gitee.com/ACPudding/ACPudding.github.io/raw/master/fileserv/SvtInfoBasicxlsx.xlsx";
             var xlsxurl2 =
                 "https://raw.githubusercontent.com/ACPudding/ACPudding.github.io/master/fileserv/SvtInfoBasicxlsx.xlsx";
             var httpWebRequest =
@@ -73,14 +73,48 @@ namespace FGOSBIAReloaded
             }
         }
 
+        public static string GetIndividualityList()
+        {
+            var Indiurl1 =
+                "https://raw.githubusercontent.com/ACPudding/ACPudding.github.io/master/fileserv/IndividualityList";
+            var Indiurl2 = "https://gitee.com/ACPudding/ACPudding.github.io/raw/master/fileserv/IndividualityList";
+            var httpWebRequest =
+                (HttpWebRequest)WebRequest.Create(Indiurl1);
+            httpWebRequest.Method = "GET";
+            try
+            {
+                var response = httpWebRequest.GetResponse();
+                var stream = response.GetResponseStream();
+                var reader = new StreamReader(stream, Encoding.UTF8);
+                return reader.ReadToEnd();
+            }
+            catch (Exception)
+            {
+                httpWebRequest =
+                    (HttpWebRequest)WebRequest.Create(Indiurl2);
+                httpWebRequest.Method = "GET";
+                try
+                {
+                    var response2 = httpWebRequest.GetResponse();
+                    var stream2 = response2.GetResponseStream();
+                    var reader2 = new StreamReader(stream2, Encoding.UTF8);
+                    return reader2.ReadToEnd();
+                }
+                catch (Exception exception)
+                {
+                    MessageBox.Show("网络连接异常,请检查网络连接并重试.\r\n" + exception, "网络连接异常", MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+                    throw;
+                }
+            }
+        }
+
         public static string GetApplicationUpdateJson()
         {
             var api = "https://api.github.com/repos/ACPudding/TestProjectReloaded/releases/latest";
-            //定义安全传输协议（TLS1.2=3702, TLS1.1=765, TLS1.0=192, SSL3=48）
             ServicePointManager.SecurityProtocol = (SecurityProtocolType) 3072; //TLS1.2=3702
-
             var result = "";
-            var req = WebRequest.Create(api) as HttpWebRequest;
+            HttpWebRequest req = WebRequest.Create(api) as HttpWebRequest;
             HttpWebResponse res = null;
             if (req == null) return result;
             req.Method = "GET";

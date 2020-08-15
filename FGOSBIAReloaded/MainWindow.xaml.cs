@@ -356,7 +356,7 @@ namespace FGOSBIAReloaded
 
         private void ServantBasicInformationCheck()
         {
-            var SISI = new Thread(CheckServantIndividuality.CheckSvtIndividuality);
+            var SISI = new Thread(CheckSvtIndividuality);
             Dispatcher.Invoke(() =>
             {
                 var RankString = new string[100];
@@ -386,7 +386,7 @@ namespace FGOSBIAReloaded
                 RankString[54] = "E-";
                 RankString[55] = "E+++";
                 RankString[61] = "EX";
-                RankString[98] = "-";
+                RankString[98] = "?";
                 RankString[0] = "-";
                 RankString[99] = "?";
                 var svtName = "";
@@ -557,7 +557,10 @@ namespace FGOSBIAReloaded
                         }
                         else
                         {
-                            if (ToggleDispIndi.IsChecked == true) SISI.Start(svtIndividualityInput);
+                            if (ToggleDispIndi.IsChecked == true)
+                                SISI.Start(svtIndividualityInput);
+                            else
+                                svtIndividuality.Text = svtIndividualityInput;
                         }
 
                         cards.Text = CardArrange;
@@ -628,10 +631,6 @@ namespace FGOSBIAReloaded
                     NPrate = Math.Floor(NPrate * 10000) / 10000;
                     notrealnprate.Text = NPrate.ToString("P");
                 }
-
-                svtIndividuality.Text = ToggleDispIndi.IsChecked == true
-                    ? CheckServantIndividuality.Outputs
-                    : svtIndividualityInput;
 
                 switch (classData)
                 {
@@ -1893,6 +1892,36 @@ namespace FGOSBIAReloaded
             }
 
             GC.Collect();
+        }
+
+        public void CheckSvtIndividuality(object Input)
+        {
+            var IndividualityStringArray = Input.ToString().Split(',');
+            var TempSplit1 = HttpRequest.GetIndividualityList().Replace("\r\n", "").Split('|');
+            var IndividualityCommons = new string[TempSplit1.Length][];
+            for (var i = 0; i < TempSplit1.Length; i++)
+            {
+                var TempSplit2 = TempSplit1[i].Split('+');
+                IndividualityCommons[i] = new string[TempSplit2.Length];
+                for (var j = 0; j < TempSplit2.Length; j++) IndividualityCommons[i][j] = TempSplit2[j];
+            }
+
+            var Outputs = "";
+            foreach (var Cases in IndividualityStringArray)
+                for (var k = 0; k < IndividualityCommons.Length; k++)
+                {
+                    if (Cases != "5000" && Cases == IndividualityCommons[k][0])
+                    {
+                        Outputs += IndividualityCommons[k][1] + ",";
+                        break;
+                    }
+
+                    if (k == IndividualityCommons.Length - 1 && Cases != IndividualityCommons[k][0] && Cases.Length <= 4
+                    ) Outputs += "未知特性(" + Cases + "),";
+                }
+
+            Outputs = Outputs.Substring(0, Outputs.Length - 1);
+            svtIndividuality.Dispatcher.Invoke(() => { svtIndividuality.Text = Outputs; });
         }
 
         private struct SkillListSval

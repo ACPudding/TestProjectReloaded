@@ -73,7 +73,7 @@
                                 <SolidColorBrush Color="#FF484848" Opacity="0.15" />
                             </TextBox.Background>
                         </TextBox>
-                        <Label Content="特性:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top"
+                        <Label Content="特性:" HorizontalAlignment="Left" Height="43" VerticalAlignment="Top"
                                Width="97"
                                FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
                                Margin="0,75,0,0" FontWeight="Bold" />
