@@ -308,6 +308,43 @@
 
                     </Grid>
                 </TabItem>
+                <TabItem Header="升级材料" FontFamily="Microsoft JhengHei UI">
+                <TabItem.Background>
+                    <SolidColorBrush Color="#FF333333" Opacity="0.2" />
+                </TabItem.Background>
+                <Grid Margin="0,0,0,0">
+                        <ListView x:Name="LimitCombineItems" Margin="5,0,5,239" Foreground="#FF737373" FontSize="11">
+                        <ListView.Background>
+                            <SolidColorBrush Color="White" Opacity="0.4" />
+                        </ListView.Background>
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="再临阶段" Width="60"
+                                                    DisplayMemberBinding="{Binding Status}" />
+                                <GridViewColumn Header="材料名称与数量" Width="340"
+                                                    DisplayMemberBinding="{Binding Items}" />
+                                <GridViewColumn Header="QP消耗" Width="81"
+                                                    DisplayMemberBinding="{Binding QP}" />
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                        <ListView x:Name="SkillCombineItems" Margin="5,138,5,2" Foreground="#FF737373" FontSize="11">
+                            <ListView.Background>
+                                <SolidColorBrush Color="White" Opacity="0.4" />
+                            </ListView.Background>
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Header="技能等级" Width="60"
+                                        DisplayMemberBinding="{Binding Status}" />
+                                    <GridViewColumn Header="材料名称与数量" Width="340"
+                                        DisplayMemberBinding="{Binding Items}" />
+                                    <GridViewColumn Header="QP消耗" Width="81"
+                                        DisplayMemberBinding="{Binding QP}" />
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
+                    </Grid>
+                </TabItem>
                 <TabItem Header="羁绊文本" FontFamily="Microsoft JhengHei UI">
                     <TabItem.Background>
                         <SolidColorBrush Color="#FF333333" Opacity="0.2" />
@@ -581,7 +618,7 @@
                                Width="97"
                                FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
                                Margin="351,171,0,0" FontWeight="Bold" />
-                        <ListView x:Name="TDFuncList" Margin="5,195,5,5" Foreground="#FF737373" FontSize="10">
+                        <ListView x:Name="TDFuncList" Margin="5,195,5,2" Foreground="#FF737373" FontSize="10">
                             <ListView.Background>
                                 <SolidColorBrush Color="White" Opacity="0.4" />
                             </ListView.Background>
@@ -688,7 +725,7 @@
                                Width="97"
                                FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
                                Margin="355,128,0,0" FontWeight="Bold" />
-                        <ListView x:Name="Skill1FuncList" Margin="5,152,5,5" Foreground="#FF737373" FontSize="11">
+                        <ListView x:Name="Skill1FuncList" Margin="5,152,5,2" Foreground="#FF737373" FontSize="11">
                             <ListView.Background>
                                 <SolidColorBrush Color="White" Opacity="0.4" />
                             </ListView.Background>
@@ -804,7 +841,7 @@
                                Width="97"
                                FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
                                Margin="355,128,0,0" FontWeight="Bold" />
-                        <ListView x:Name="Skill2FuncList" Margin="5,152,5,5" Foreground="#FF737373">
+                        <ListView x:Name="Skill2FuncList" Margin="5,152,5,2" Foreground="#FF737373">
                             <ListView.Background>
                                 <SolidColorBrush Color="White" Opacity="0.4" />
                             </ListView.Background>
@@ -920,7 +957,7 @@
                                Width="97"
                                FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
                                Margin="355,128,0,0" FontWeight="Bold" />
-                        <ListView x:Name="Skill3FuncList" Margin="5,152,5,5" Foreground="#FF737373">
+                        <ListView x:Name="Skill3FuncList" Margin="5,152,5,2" Foreground="#FF737373">
                             <ListView.Background>
                                 <SolidColorBrush Color="White" Opacity="0.4" />
                             </ListView.Background>

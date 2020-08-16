@@ -55,6 +55,8 @@ namespace FGOSBIAReloaded
             var SJTC = new Thread(ServantJibanTextCheck);
             var STDI = new Thread(ServantTreasureDeviceInformationCheck);
             var SSIC = new Thread(ServantSkillInformationCheck);
+            var SCLIC = new Thread(ServantCombineLimitItemsCheck);
+            var SCSIC = new Thread(ServantCombineSkillItemsCheck);
             SkillLvs.skillID1 = "";
             SkillLvs.skillID2 = "";
             SkillLvs.skillID3 = "";
@@ -114,6 +116,8 @@ namespace FGOSBIAReloaded
             SBIC.Start();
             SCIC.Start();
             SJTC.Start();
+            SCLIC.Start();
+            SCSIC.Start();
             STDI.Start(svtTDID);
             ServantTreasureDeviceSvalCheck(svtTDID);
             SSIC.Start();
@@ -807,6 +811,95 @@ namespace FGOSBIAReloaded
             }
         }
 
+        private void ServantCombineLimitItemsCheck()
+        {
+            foreach (var mstCombineLimittmp in GlobalPathsAndDatas.mstCombineLimitArray) //查找某个字段与值
+                if (((JObject) mstCombineLimittmp)["id"].ToString() == JB.svtid)
+                {
+                    var LimitID = ((JObject) mstCombineLimittmp)["svtLimit"].ToString();
+                    switch (Convert.ToInt64(LimitID))
+                    {
+                        case 0:
+                        case 1:
+                        case 2:
+                        case 3:
+                            var itemIds = ((JObject) mstCombineLimittmp)["itemIds"].ToString().Replace("\n", "")
+                                .Replace("\t", "")
+                                .Replace("\r", "").Replace(" ", "").Replace("[", "").Replace("]", "");
+                            var itemNums = ((JObject) mstCombineLimittmp)["itemNums"].ToString().Replace("\n", "")
+                                .Replace("\t", "")
+                                .Replace("\r", "").Replace(" ", "").Replace("[", "").Replace("]", "");
+                            var qp = ((JObject) mstCombineLimittmp)["qp"].ToString();
+                            var itemIdArray = itemIds.Split(',');
+                            var itemNumsArray = itemNums.Split(',');
+                            var itemDisplay = "";
+                            for (var i = 0; i < itemIdArray.Length; i++)
+                                itemDisplay += CheckItemName(itemIdArray[i]) + "(" + itemNumsArray[i] + "),";
+                            itemDisplay = itemDisplay.Substring(0, itemDisplay.Length - 1);
+                            LimitCombineItems.Dispatcher.Invoke(() =>
+                            {
+                                LimitCombineItems.Items.Add(
+                                    new ItemList(LimitID + " → " + (Convert.ToInt64(LimitID) + 1), itemDisplay,
+                                        qp));
+                            });
+                            break;
+                    }
+                }
+        }
+
+        private void ServantCombineSkillItemsCheck()
+        {
+            foreach (var mstCombineSkilltmp in GlobalPathsAndDatas.mstCombineSkillArray) //查找某个字段与值
+                if (((JObject) mstCombineSkilltmp)["id"].ToString() == JB.svtid)
+                {
+                    var LimitID = ((JObject) mstCombineSkilltmp)["skillLv"].ToString();
+                    switch (Convert.ToInt64(LimitID))
+                    {
+                        case 1:
+                        case 2:
+                        case 3:
+                        case 4:
+                        case 5:
+                        case 6:
+                        case 7:
+                        case 8:
+                        case 9:
+                            var itemIds = ((JObject) mstCombineSkilltmp)["itemIds"].ToString().Replace("\n", "")
+                                .Replace("\t", "")
+                                .Replace("\r", "").Replace(" ", "").Replace("[", "").Replace("]", "");
+                            var itemNums = ((JObject) mstCombineSkilltmp)["itemNums"].ToString().Replace("\n", "")
+                                .Replace("\t", "")
+                                .Replace("\r", "").Replace(" ", "").Replace("[", "").Replace("]", "");
+                            var qp = ((JObject) mstCombineSkilltmp)["qp"].ToString();
+                            var itemIdArray = itemIds.Split(',');
+                            var itemNumsArray = itemNums.Split(',');
+                            var itemDisplay = "";
+                            for (var i = 0; i < itemIdArray.Length; i++)
+                                itemDisplay += CheckItemName(itemIdArray[i]) + "(" + itemNumsArray[i] + "),";
+                            itemDisplay = itemDisplay.Substring(0, itemDisplay.Length - 1);
+                            SkillCombineItems.Dispatcher.Invoke(() =>
+                            {
+                                SkillCombineItems.Items.Add(
+                                    new ItemList(LimitID + " → " + (Convert.ToInt64(LimitID) + 1), itemDisplay,
+                                        qp));
+                            });
+                            break;
+                    }
+                }
+        }
+
+        private string CheckItemName(object ID)
+        {
+            foreach (var mstItemtmp in GlobalPathsAndDatas.mstItemArray) //查找某个字段与值
+            {
+                if (((JObject) mstItemtmp)["id"].ToString() != ID.ToString()) continue;
+                var mstItemtmpobjtmp = JObject.Parse(mstItemtmp.ToString());
+                return mstItemtmpobjtmp["name"].ToString();
+            }
+
+            return "未知材料" + ID;
+        }
+
         private void ServantCVandIllustCheck()
         {
             var svtillust = "unknown"; //illustID 不输出
@@ -1254,6 +1347,8 @@ namespace FGOSBIAReloaded
                 Skill2FuncList.Items.Clear();
                 Skill3FuncList.Items.Clear();
                 PickupQuestList.Items.Clear();
+                LimitCombineItems.Items.Clear();
+                SkillCombineItems.Items.Clear();
                 TDFuncList.Items.Clear();
             });
             IsSk1Strengthened.Dispatcher.Invoke(() => { IsSk1Strengthened.Text = "×"; });
@@ -1642,7 +1737,10 @@ namespace FGOSBIAReloaded
                     File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstFunc") &&
                     File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstSvtComment") &&
                     File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstTreasureDeviceLv") &&
-                    File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstSkillLv")) return;
+                    File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstSkillLv") &&
+                    File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstCombineSkill") &&
+                    File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstCombineLimit") &&
+                    File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstItem")) return;
                 MessageBox.Show("游戏数据损坏,请重新下载游戏数据(位于\"设置\"选项卡).", "温馨提示:", MessageBoxButton.OK,
                     MessageBoxImage.Error);
                 Button1.IsEnabled = false;
@@ -1973,6 +2071,20 @@ namespace FGOSBIAReloaded
                 QuestName = v2;
                 QuestStartTime = v3;
                 QuestEndTime = v4;
+            }
+        }
+
+        private struct ItemList
+        {
+            public string Status { get; }
+            public string Items { get; }
+            public string QP { get; }
+
+            public ItemList(string v1, string v2, string v3) : this()
+            {
+                Status = v1;
+                Items = v2;
+                QP = v3;
             }
         }
     }

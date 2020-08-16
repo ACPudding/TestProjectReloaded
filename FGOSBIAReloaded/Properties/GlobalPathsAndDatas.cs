@@ -48,11 +48,21 @@ namespace FGOSBIAReloaded.Properties
         public static string mstSvtComment =
             File.ReadAllText(gamedata.FullName + "decrypted_masterdata/" + "mstSvtComment");
 
+        public static string mstCombineLimit =
+            File.ReadAllText(gamedata.FullName + "decrypted_masterdata/" + "mstCombineLimit");
+
+        public static string mstCombineSkill =
+            File.ReadAllText(gamedata.FullName + "decrypted_masterdata/" + "mstCombineSkill");
+
         public static string mstSkillLv = File.ReadAllText(gamedata.FullName + "decrypted_masterdata/" + "mstSkillLv");
         public static string mstQuest = File.ReadAllText(gamedata.FullName + "decrypted_masterdata/" + "mstQuest");
+        public static string mstItem = File.ReadAllText(gamedata.FullName + "decrypted_masterdata/" + "mstItem");
         public static string mstQuestPickup = File.ReadAllText(gamedata.FullName + "decrypted_masterdata/" + "mstQuestPickup");
         public static JArray mstQuestArray = (JArray)JsonConvert.DeserializeObject(mstQuest);
+        public static JArray mstItemArray = (JArray)JsonConvert.DeserializeObject(mstItem);
         public static JArray mstQuestPickupArray = (JArray)JsonConvert.DeserializeObject(mstQuestPickup);
+        public static JArray mstCombineLimitArray = (JArray)JsonConvert.DeserializeObject(mstCombineLimit);
+        public static JArray mstCombineSkillArray = (JArray)JsonConvert.DeserializeObject(mstCombineSkill);
         public static JArray mstSkillLvArray = (JArray) JsonConvert.DeserializeObject(mstSkillLv);
         public static JArray mstSvtCommentArray = (JArray) JsonConvert.DeserializeObject(mstSvtComment);
         public static JArray mstSvtArray = (JArray) JsonConvert.DeserializeObject(mstSvt);
