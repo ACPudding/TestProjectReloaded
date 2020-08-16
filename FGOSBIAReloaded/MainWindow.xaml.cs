@@ -284,7 +284,8 @@ namespace FGOSBIAReloaded
                                     if (((JObject) TDDtmp2)["id"].ToString() == FinTDID_TMP)
                                     {
                                         var TDDobjtmp2 = JObject.Parse(TDDtmp2.ToString());
-                                        NPDetail = TDDobjtmp2["detail"].ToString().Replace("[{0}]", " [Lv.1 - Lv.5] ")
+                                        NPDetail = TDDobjtmp2["detail"].ToString()
+                                            .Replace("[{0}]", " [Lv.1 - Lv.5] ")
                                             .Replace("[g]", "").Replace("[o]", "").Replace("[/g]", "")
                                             .Replace("[/o]", "").Replace(@"＆", "\r\n ＋").Replace(@"＋", "\r\n ＋")
                                             .Replace("\r\n \r\n", "\r\n");
@@ -298,7 +299,8 @@ namespace FGOSBIAReloaded
                                     newtmpid.Substring(0, 2) == "23" || newtmpid.Substring(0, 2) == "25")
                                 {
                                     var FinTDID_TMP = newtmpid;
-                                    foreach (var TDDtmp2 in GlobalPathsAndDatas.mstTreasureDeviceDetailArray) //查找某个字段与值
+                                    foreach (var TDDtmp2 in GlobalPathsAndDatas.mstTreasureDeviceDetailArray
+                                    ) //查找某个字段与值
                                         if (((JObject) TDDtmp2)["id"].ToString() == FinTDID_TMP)
                                         {
                                             var TDDobjtmp2 = JObject.Parse(TDDtmp2.ToString());
@@ -316,6 +318,7 @@ namespace FGOSBIAReloaded
                     }
 
             npdetail.Dispatcher.Invoke(() => { npdetail.Text = NPDetail; });
+            if (NPName == "" && NPDetail == "") npdetail.Dispatcher.Invoke(() => { npdetail.Text = "该宝具暂时没有描述."; });
         }
 
         private void ServantSkillLevelCheck()
@@ -329,7 +332,8 @@ namespace FGOSBIAReloaded
                 skill1cdlv10.Text = SkillLvs.skilllv10chargetime;
                 for (var i = 0; i <= SkillLvs.SKLFuncstrArray.Length - 1; i++)
                 {
-                    if (SkillLvs.SKLFuncstrArray[i] == "") SkillLvs.SKLFuncstrArray[i] = "HP回復";
+                    if (SkillLvs.SKLFuncstrArray[i] == "" && SkillLvs.skilllv1svalArray[i].Count(c => c == ',') == 1 &&
+                        !SkillLvs.skilllv1svalArray[i].Contains("Hide")) SkillLvs.SKLFuncstrArray[i] = "HP回復";
                     Skill1FuncList.Items.Add(new SkillListSval(SkillLvs.SKLFuncstrArray[i],
                         SkillLvs.skilllv1svalArray[i], SkillLvs.skilllv6svalArray[i], SkillLvs.skilllv10svalArray[i]));
                 }
@@ -340,7 +344,8 @@ namespace FGOSBIAReloaded
                 skill2cdlv10.Text = SkillLvs.skilllv10chargetime;
                 for (var i = 0; i <= SkillLvs.SKLFuncstrArray.Length - 1; i++)
                 {
-                    if (SkillLvs.SKLFuncstrArray[i] == "") SkillLvs.SKLFuncstrArray[i] = "HP回復";
+                    if (SkillLvs.SKLFuncstrArray[i] == "" && SkillLvs.skilllv1svalArray[i].Count(c => c == ',') == 1 &&
+                        !SkillLvs.skilllv1svalArray[i].Contains("Hide")) SkillLvs.SKLFuncstrArray[i] = "HP回復";
                     Skill2FuncList.Items.Add(new SkillListSval(SkillLvs.SKLFuncstrArray[i],
                         SkillLvs.skilllv1svalArray[i], SkillLvs.skilllv6svalArray[i], SkillLvs.skilllv10svalArray[i]));
                 }
@@ -351,7 +356,8 @@ namespace FGOSBIAReloaded
                 skill3cdlv10.Text = SkillLvs.skilllv10chargetime;
                 for (var i = 0; i <= SkillLvs.SKLFuncstrArray.Length - 1; i++)
                 {
-                    if (SkillLvs.SKLFuncstrArray[i] == "") SkillLvs.SKLFuncstrArray[i] = "HP回復";
+                    if (SkillLvs.SKLFuncstrArray[i] == "" && SkillLvs.skilllv1svalArray[i].Count(c => c == ',') == 1 &&
+                        !SkillLvs.skilllv1svalArray[i].Contains("Hide")) SkillLvs.SKLFuncstrArray[i] = "HP回復";
                     Skill3FuncList.Items.Add(new SkillListSval(SkillLvs.SKLFuncstrArray[i],
                         SkillLvs.skilllv1svalArray[i], SkillLvs.skilllv6svalArray[i], SkillLvs.skilllv10svalArray[i]));
                 }
@@ -1024,7 +1030,7 @@ namespace FGOSBIAReloaded
                     var TDLVobjtmp = JObject.Parse(TDLVtmp.ToString());
                     var NPval1 = TDLVobjtmp["svals"].ToString().Replace("\n", "").Replace("\r", "")
                         .Replace("[", "").Replace("]", "*").Replace("\"", "").Replace(" ", "").Replace("*,", "|");
-                    NPval1 = NPval1.Substring(0, NPval1.Length - 2);
+                    if (NPval1.Length >= 2) NPval1 = NPval1.Substring(0, NPval1.Length - 2);
                     SkillLvs.TDlv1OC1strArray = NPval1.Split('|');
                 }
 
@@ -1034,7 +1040,7 @@ namespace FGOSBIAReloaded
                     var TDLVobjtmp = JObject.Parse(TDLVtmp.ToString());
                     var NPval2 = TDLVobjtmp["svals2"].ToString().Replace("\n", "").Replace("\r", "")
                         .Replace("[", "").Replace("]", "*").Replace("\"", "").Replace(" ", "").Replace("*,", "|");
-                    NPval2 = NPval2.Substring(0, NPval2.Length - 2);
+                    if (NPval2.Length >= 2) NPval2 = NPval2.Substring(0, NPval2.Length - 2);
                     SkillLvs.TDlv2OC2strArray = NPval2.Split('|');
                 }
 
@@ -1044,7 +1050,7 @@ namespace FGOSBIAReloaded
                     var TDLVobjtmp = JObject.Parse(TDLVtmp.ToString());
                     var NPval3 = TDLVobjtmp["svals3"].ToString().Replace("\n", "").Replace("\r", "")
                         .Replace("[", "").Replace("]", "*").Replace("\"", "").Replace(" ", "").Replace("*,", "|");
-                    NPval3 = NPval3.Substring(0, NPval3.Length - 2);
+                    if (NPval3.Length >= 2) NPval3 = NPval3.Substring(0, NPval3.Length - 2);
                     SkillLvs.TDlv3OC3strArray = NPval3.Split('|');
                 }
 
@@ -1054,7 +1060,7 @@ namespace FGOSBIAReloaded
                     var TDLVobjtmp = JObject.Parse(TDLVtmp.ToString());
                     var NPval4 = TDLVobjtmp["svals4"].ToString().Replace("\n", "").Replace("\r", "")
                         .Replace("[", "").Replace("]", "*").Replace("\"", "").Replace(" ", "").Replace("*,", "|");
-                    NPval4 = NPval4.Substring(0, NPval4.Length - 2);
+                    if (NPval4.Length >= 2) NPval4 = NPval4.Substring(0, NPval4.Length - 2);
                     SkillLvs.TDlv4OC4strArray = NPval4.Split('|');
                 }
 
@@ -1064,7 +1070,7 @@ namespace FGOSBIAReloaded
                     var TDLVobjtmp = JObject.Parse(TDLVtmp.ToString());
                     var NPval5 = TDLVobjtmp["svals5"].ToString().Replace("\n", "").Replace("\r", "")
                         .Replace("[", "").Replace("]", "*").Replace("\"", "").Replace(" ", "").Replace("*,", "|");
-                    NPval5 = NPval5.Substring(0, NPval5.Length - 2);
+                    if (NPval5.Length >= 2) NPval5 = NPval5.Substring(0, NPval5.Length - 2);
                     SkillLvs.TDlv5OC5strArray = NPval5.Split('|');
                     svtTreasureDeviceFuncID = TDLVobjtmp["funcId"].ToString().Replace("\n", "").Replace("\t", "")
                         .Replace("\r", "").Replace(" ", "").Replace("[", "").Replace("]", "");
@@ -1085,6 +1091,8 @@ namespace FGOSBIAReloaded
             for (var i = 0; i <= SkillLvs.TDFuncstrArray.Length - 1; i++)
             {
                 if (SkillLvs.TDFuncstrArray[i] == "なし") SkillLvs.TDFuncstrArray[i] = "攻撃";
+                if (SkillLvs.TDFuncstrArray[i] == "" && SkillLvs.TDlv1OC1strArray[i].Count(c => c == ',') == 1 &&
+                    !SkillLvs.TDlv1OC1strArray[i].Contains("Hide")) SkillLvs.TDFuncstrArray[i] = "HP回復";
                 TDFuncList.Dispatcher.Invoke(() =>
                 {
                     TDFuncList.Items.Add(new TDlistSval(SkillLvs.TDFuncstrArray[i],
