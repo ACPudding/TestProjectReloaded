@@ -58,6 +58,8 @@ namespace FGOSBIAReloaded.Properties
         public static string mstQuest = File.ReadAllText(gamedata.FullName + "decrypted_masterdata/" + "mstQuest");
         public static string mstItem = File.ReadAllText(gamedata.FullName + "decrypted_masterdata/" + "mstItem");
         public static string mstQuestPickup = File.ReadAllText(gamedata.FullName + "decrypted_masterdata/" + "mstQuestPickup");
+        public static string npcSvtFollower = File.ReadAllText(gamedata.FullName + "decrypted_masterdata/" + "npcSvtFollower");
+        public static JArray npcSvtFollowerArray = (JArray)JsonConvert.DeserializeObject(npcSvtFollower);
         public static JArray mstQuestArray = (JArray)JsonConvert.DeserializeObject(mstQuest);
         public static JArray mstItemArray = (JArray)JsonConvert.DeserializeObject(mstItem);
         public static JArray mstQuestPickupArray = (JArray)JsonConvert.DeserializeObject(mstQuestPickup);

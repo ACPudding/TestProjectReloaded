@@ -42,6 +42,7 @@ namespace FGOSBIAReloaded
             }
 
             var SA = new Thread(StartAnalyze);
+            SA.IsBackground = true;
             SA.Start();
         }
 
@@ -57,6 +58,14 @@ namespace FGOSBIAReloaded
             var SSIC = new Thread(ServantSkillInformationCheck);
             var SCLIC = new Thread(ServantCombineLimitItemsCheck);
             var SCSIC = new Thread(ServantCombineSkillItemsCheck);
+            SCAC.IsBackground = true;
+            SBIC.IsBackground = true;
+            SCIC.IsBackground = true;
+            SJTC.IsBackground = true;
+            STDI.IsBackground = true;
+            SSIC.IsBackground = true;
+            SCLIC.IsBackground = true;
+            SCSIC.IsBackground = true;
             SkillLvs.skillID1 = "";
             SkillLvs.skillID2 = "";
             SkillLvs.skillID3 = "";
@@ -367,6 +376,7 @@ namespace FGOSBIAReloaded
         private void ServantBasicInformationCheck()
         {
             var SISI = new Thread(CheckSvtIndividuality);
+            SISI.IsBackground = true;
             Dispatcher.Invoke(() =>
             {
                 var RankString = new string[100];
@@ -1222,6 +1232,13 @@ namespace FGOSBIAReloaded
                 }
             }
 
+            if (SkillLvs.skillID1 == "" || SkillLvs.skillID2 == "" || SkillLvs.skillID3 == "")
+            {
+                SkillLvs.skillID1 = FindSkillIDinNPCSvt(JB.svtid, 1);
+                SkillLvs.skillID2 = FindSkillIDinNPCSvt(JB.svtid, 2);
+                SkillLvs.skillID3 = FindSkillIDinNPCSvt(JB.svtid, 3);
+            }
+
             var SSLC = new Thread(ServantSkillLevelCheck);
             SSLC.Start();
 
@@ -1289,9 +1306,30 @@ namespace FGOSBIAReloaded
             });
         }
 
+        private string FindSkillIDinNPCSvt(string svtid, int skillnum)
+        {
+            foreach (var npcSvtFollowertmp in GlobalPathsAndDatas.npcSvtFollowerArray) //查找某个字段与值
+            {
+                if (((JObject) npcSvtFollowertmp)["svtId"].ToString() != svtid) continue;
+                var npcSvtFollowerobjtmp = JObject.Parse(npcSvtFollowertmp.ToString());
+                switch (skillnum)
+                {
+                    case 1:
+                        return npcSvtFollowerobjtmp["skillId1"].ToString();
+                    case 2:
+                        return npcSvtFollowerobjtmp["skillId2"].ToString();
+                    case 3:
+                        return npcSvtFollowerobjtmp["skillId3"].ToString();
+                }
+            }
+
+            return "";
+        }
+
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
             var OSI = new Thread(OutputSVTIDs);
+            OSI.IsBackground = true;
             OSI.Start();
         }
 
@@ -1455,6 +1493,8 @@ namespace FGOSBIAReloaded
             var path = Directory.GetCurrentDirectory();
             var gamedata = new DirectoryInfo(path + @"\Android\masterdata\");
             var folder = new DirectoryInfo(path + @"\Android\");
+            var LoadData = new Thread(LoadorRenewCommonDatas.ReloadData);
+            LoadData.IsBackground = true;
             string result;
             JObject res;
             var Check = true;
@@ -1473,7 +1513,7 @@ namespace FGOSBIAReloaded
                 progressbar.Value = 0;
                 progressbar.Visibility = Visibility.Visible;
             });
-            progressbar.Dispatcher.Invoke(() => { progressbar.Value = progressbar.Value + 250; });
+            progressbar.Dispatcher.Invoke(() => { progressbar.Value += 250; });
             if (!Directory.Exists(folder.FullName))
             {
                 updatestatus.Dispatcher.Invoke(() => { updatestatus.Content = "正在创建Android目录..."; });
@@ -1483,7 +1523,7 @@ namespace FGOSBIAReloaded
             if (!Directory.Exists(gamedata.FullName))
                 Directory.CreateDirectory(gamedata.FullName);
             updatestatus.Dispatcher.Invoke(() => { updatestatus.Content = "开始下载/更新游戏数据......"; });
-            progressbar.Dispatcher.Invoke(() => { progressbar.Value = progressbar.Value + 250; });
+            progressbar.Dispatcher.Invoke(() => { progressbar.Value += 250; });
 
             try
             {
@@ -1597,21 +1637,21 @@ namespace FGOSBIAReloaded
             {
                 updatestatus.Content = "Writing file to: " + gamedata.FullName + "assetbundle";
             });
-            progressbar.Dispatcher.Invoke(() => { progressbar.Value = progressbar.Value + 40; });
+            progressbar.Dispatcher.Invoke(() => { progressbar.Value += 40; });
             File.WriteAllText(gamedata.FullName + "master",
                 res["response"][0]["success"]["master"].ToString());
             updatestatus.Dispatcher.Invoke(() =>
             {
                 updatestatus.Content = "Writing file to: " + gamedata.FullName + "master";
             });
-            progressbar.Dispatcher.Invoke(() => { progressbar.Value = progressbar.Value + 40; });
+            progressbar.Dispatcher.Invoke(() => { progressbar.Value += 40; });
             File.WriteAllText(gamedata.FullName + "webview",
                 res["response"][0]["success"]["webview"].ToString());
             updatestatus.Dispatcher.Invoke(() =>
             {
                 updatestatus.Content = "Writing file to: " + gamedata.FullName + "webview";
             });
-            progressbar.Dispatcher.Invoke(() => { progressbar.Value = progressbar.Value + 40; });
+            progressbar.Dispatcher.Invoke(() => { progressbar.Value += 40; });
             var data = File.ReadAllText(gamedata.FullName + "master");
             if (!Directory.Exists(gamedata.FullName + "decrypted_masterdata"))
                 Directory.CreateDirectory(gamedata.FullName + "decrypted_masterdata");
@@ -1644,7 +1684,7 @@ namespace FGOSBIAReloaded
             {
                 updatestatus.Content = "folder name: " + dictionary["folderName"];
             });
-            progressbar.Dispatcher.Invoke(() => { progressbar.Value = progressbar.Value + 40; });
+            progressbar.Dispatcher.Invoke(() => { progressbar.Value += 40; });
             var data3 = File.ReadAllText(gamedata.FullName + "webview");
             var dictionary2 =
                 (Dictionary<string, object>) MasterDataUnpacker.MouseGame2MsgPack(
@@ -1652,7 +1692,7 @@ namespace FGOSBIAReloaded
             var str2 = "baseURL: " + dictionary2["baseURL"] + "\r\n contactURL: " +
                        dictionary2["contactURL"] + "\r\n";
             updatestatus.Dispatcher.Invoke(() => { updatestatus.Content = str2; });
-            progressbar.Dispatcher.Invoke(() => { progressbar.Value = progressbar.Value + 40; });
+            progressbar.Dispatcher.Invoke(() => { progressbar.Value += 40; });
             var filePassInfo = (Dictionary<string, object>) dictionary2["filePass"];
             str = filePassInfo.Aggregate(str, (current, a) => current + a.Key + ": " + a.Value + "\r\n");
             File.WriteAllText(gamedata.FullName + "webview.txt", str2);
@@ -1675,6 +1715,7 @@ namespace FGOSBIAReloaded
             Button1.Dispatcher.Invoke(() => { Button1.IsEnabled = true; });
             OutputIDs.Dispatcher.Invoke(() => { OutputIDs.IsEnabled = true; });
             updatestatusring.Dispatcher.Invoke(() => { updatestatusring.IsActive = false; });
+            LoadData.Start();
             GC.Collect();
         }
 
@@ -1710,6 +1751,7 @@ namespace FGOSBIAReloaded
         private void JBOutput_Click(object sender, RoutedEventArgs e)
         {
             var JO = new Thread(JBOut);
+            JO.IsBackground = true;
             JO.Start();
         }
 
@@ -1722,6 +1764,8 @@ namespace FGOSBIAReloaded
         {
             var path = Directory.GetCurrentDirectory();
             var gamedata = new DirectoryInfo(path + @"\Android\masterdata\");
+            var LoadData = new Thread(LoadorRenewCommonDatas.ReloadData);
+            LoadData.IsBackground = true;
             VersionLabel.Content = CommonStrings.Version;
             if (!Directory.Exists(gamedata.FullName))
             {
@@ -1748,7 +1792,13 @@ namespace FGOSBIAReloaded
                     File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstSkillLv") &&
                     File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstCombineSkill") &&
                     File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstCombineLimit") &&
-                    File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstItem")) return;
+                    File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstItem") &&
+                    File.Exists(gamedata.FullName + "decrypted_masterdata/" + "npcSvtFollower"))
+                {
+                    LoadData.Start();
+                    return;
+                }
+
                 MessageBox.Show("游戏数据损坏,请重新下载游戏数据(位于\"设置\"选项卡).", "温馨提示:", MessageBoxButton.OK,
                     MessageBoxImage.Error);
                 Button1.IsEnabled = false;
