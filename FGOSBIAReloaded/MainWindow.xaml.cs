@@ -84,6 +84,14 @@ namespace FGOSBIAReloaded
             foreach (var svtTreasureDevicestmp in GlobalPathsAndDatas.mstSvtTreasureDevicedArray) //查找某个字段与值
             {
                 if (((JObject) svtTreasureDevicestmp)["svtId"].ToString() == svtID &&
+                    ((JObject) svtTreasureDevicestmp)["num"].ToString() == "98" &&
+                    ((JObject) svtTreasureDevicestmp)["priority"].ToString() == "0")
+                {
+                    var mstsvtTDobjtmp = JObject.Parse(svtTreasureDevicestmp.ToString());
+                    svtTDID = mstsvtTDobjtmp["treasureDeviceId"].ToString();
+                }
+
+                if (((JObject) svtTreasureDevicestmp)["svtId"].ToString() == svtID &&
                     ((JObject) svtTreasureDevicestmp)["priority"].ToString() == "101")
                 {
                     var mstsvtTDobjtmp = JObject.Parse(svtTreasureDevicestmp.ToString());
@@ -1114,19 +1122,16 @@ namespace FGOSBIAReloaded
 
         private void ServantClassPassiveSkillCheck()
         {
-            var svtClassPassiveIDArray = new string[] { };
-            List<string> svtClassPassiveIDList;
+            string[] svtClassPassiveIDArray = null;
             string[] svtClassPassiveArray;
             var svtClassPassive = string.Empty;
-            svtClassPassiveIDList = new List<string>(SkillLvs.ClassPassiveID.Split(','));
-            svtClassPassiveIDArray = svtClassPassiveIDList.ToArray();
-
+            svtClassPassiveIDArray = SkillLvs.ClassPassiveID.Split(',');
             svtClassPassiveArray = (from skilltmp in GlobalPathsAndDatas.mstSkillArray
                 from classpassiveidtmp in svtClassPassiveIDArray
                 where ((JObject) skilltmp)["id"].ToString() == classpassiveidtmp
                 select JObject.Parse(skilltmp.ToString())
                 into mstsvtPskillobjtmp
-                select mstsvtPskillobjtmp["name"].ToString()).ToArray();
+                select mstsvtPskillobjtmp["name"] + " (" + mstsvtPskillobjtmp["id"] + ") ").ToArray();
             svtClassPassive = string.Join(", ", svtClassPassiveArray);
             classskill.Dispatcher.Invoke(() => { classskill.Text = svtClassPassive; });
         }
