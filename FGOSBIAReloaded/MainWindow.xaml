@@ -309,25 +309,25 @@
                     </Grid>
                 </TabItem>
                 <TabItem Header="升级材料" FontFamily="Microsoft JhengHei UI">
-                <TabItem.Background>
-                    <SolidColorBrush Color="#FF333333" Opacity="0.2" />
-                </TabItem.Background>
-                <Grid Margin="0,0,0,0">
+                    <TabItem.Background>
+                        <SolidColorBrush Color="#FF333333" Opacity="0.2" />
+                    </TabItem.Background>
+                    <Grid Margin="0,0,0,0">
                         <ListView x:Name="LimitCombineItems" Margin="5,0,5,239" Foreground="#FF737373" FontSize="11">
-                        <ListView.Background>
-                            <SolidColorBrush Color="White" Opacity="0.4" />
-                        </ListView.Background>
-                        <ListView.View>
-                            <GridView>
-                                <GridViewColumn Header="再临阶段" Width="60"
+                            <ListView.Background>
+                                <SolidColorBrush Color="White" Opacity="0.4" />
+                            </ListView.Background>
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Header="再临阶段" Width="60"
                                                     DisplayMemberBinding="{Binding Status}" />
-                                <GridViewColumn Header="材料名称与数量" Width="340"
+                                    <GridViewColumn Header="材料名称与数量" Width="340"
                                                     DisplayMemberBinding="{Binding Items}" />
-                                <GridViewColumn Header="QP消耗" Width="81"
+                                    <GridViewColumn Header="QP消耗" Width="81"
                                                     DisplayMemberBinding="{Binding QP}" />
-                            </GridView>
-                        </ListView.View>
-                    </ListView>
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
                         <ListView x:Name="SkillCombineItems" Margin="5,138,5,2" Foreground="#FF737373" FontSize="11">
                             <ListView.Background>
                                 <SolidColorBrush Color="White" Opacity="0.4" />
@@ -335,11 +335,11 @@
                             <ListView.View>
                                 <GridView>
                                     <GridViewColumn Header="技能等级" Width="60"
-                                        DisplayMemberBinding="{Binding Status}" />
+                                                    DisplayMemberBinding="{Binding Status}" />
                                     <GridViewColumn Header="材料名称与数量" Width="340"
-                                        DisplayMemberBinding="{Binding Items}" />
+                                                    DisplayMemberBinding="{Binding Items}" />
                                     <GridViewColumn Header="QP消耗" Width="81"
-                                        DisplayMemberBinding="{Binding QP}" />
+                                                    DisplayMemberBinding="{Binding QP}" />
                                 </GridView>
                             </ListView.View>
                         </ListView>
@@ -1107,31 +1107,28 @@
                         <Label Content="作者: ACPudding" HorizontalAlignment="Left" Height="27" Margin="10,54,0,0"
                                VerticalAlignment="Top" Width="259" FontFamily="Microsoft JhengHei UI" FontSize="11.5"
                                Foreground="#FF333333" VerticalContentAlignment="Center" />
-                        <Label Content="此程序部分代码使用了nishuoshenme的FGOAssetModifyTool的部分代码，且作者水平&#13;极其差劲。故不会长久更新。望见谅。"
-                               HorizontalAlignment="Left" Height="44" Margin="10,183,0,0" VerticalAlignment="Top"
-                               Width="471" FontFamily="Microsoft JhengHei UI" FontSize="11.5" Foreground="#FF333333" />
+                        <Label
+                            Content="&#13;此程序部分代码使用了nishuoshenme的FGOAssetModifyTool&#13;的部分代码，且作者水平极其差劲。故不会长久更新。望见谅。"
+                            HorizontalAlignment="Left" Height="62" Margin="10,151,0,0" VerticalAlignment="Top"
+                            Width="471" FontFamily="Microsoft JhengHei UI" FontSize="11.5" Foreground="#FF333333" />
                         <Label Content="b站ID: ACPudding      Github: ACPudding" HorizontalAlignment="Left" Height="27"
                                Margin="10,81,0,0" VerticalAlignment="Top" Width="472"
                                FontFamily="Microsoft JhengHei UI"
                                FontSize="11.5" Foreground="#FF333333" VerticalContentAlignment="Center" />
-                        <Label Content="日服ID: エイシープリン      国服ID: 爱吸吸果冻" HorizontalAlignment="Left" Height="27"
-                               Margin="10,108,0,0" VerticalAlignment="Top" Width="259"
-                               FontFamily="Microsoft JhengHei UI"
-                               FontSize="11.5" Foreground="#FF333333" VerticalContentAlignment="Center" />
                         <Image HorizontalAlignment="Left" Height="124" Margin="357,54,0,0" VerticalAlignment="Top"
                                Width="124" Source="icon.ico" />
-                        <Label Content="Github 地址: " HorizontalAlignment="Left" Height="27" Margin="10,135,0,0"
+                        <Label Content="Github 地址: " HorizontalAlignment="Left" Height="27" Margin="10,108,0,0"
                                VerticalAlignment="Top" Width="259" FontFamily="Microsoft JhengHei UI" FontSize="11.5"
                                Foreground="#FF333333" VerticalContentAlignment="Center" />
-                        <TextBlock HorizontalAlignment="Left" Height="16" Margin="94,140,0,0" TextWrapping="Wrap"
+                        <TextBlock HorizontalAlignment="Left" Height="16" Margin="94,113,0,0" TextWrapping="Wrap"
                                    Text=""
                                    VerticalAlignment="Top" Width="248" Foreground="#FF333333">
                             <Hyperlink Click="Hyperlink_Click" NavigateUri="https://github.com/ACPudding">https://github.com/ACPudding</Hyperlink>
                         </TextBlock>
-                        <Label Content="FGO日服官网: " HorizontalAlignment="Left" Height="27" Margin="10,161,0,0"
+                        <Label Content="FGO日服官网: " HorizontalAlignment="Left" Height="27" Margin="10,135,0,0"
                                VerticalAlignment="Top" Width="259" FontFamily="Microsoft JhengHei UI" FontSize="11.5"
                                Foreground="#FF333333" VerticalContentAlignment="Center" />
-                        <TextBlock HorizontalAlignment="Left" Height="16" Margin="94,166,0,0" TextWrapping="Wrap"
+                        <TextBlock HorizontalAlignment="Left" Height="16" Margin="94,140,0,0" TextWrapping="Wrap"
                                    Text=""
                                    VerticalAlignment="Top" Width="248" Foreground="#FF333333">
                             <Hyperlink Click="Hyperlink_Click_1" NavigateUri="https://www.fate-go.jp">https://www.fate-go.jp</Hyperlink>

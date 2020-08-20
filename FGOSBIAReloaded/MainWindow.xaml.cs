@@ -1108,7 +1108,7 @@ namespace FGOSBIAReloaded
             SkillLvs.TDFuncstr = svtTreasureDeviceFunc;
             for (var i = 0; i <= SkillLvs.TDFuncstrArray.Length - 1; i++)
             {
-                if (SkillLvs.TDFuncstrArray[i] == "なし") SkillLvs.TDFuncstrArray[i] = "攻撃";
+                if (SkillLvs.TDFuncstrArray[i] == "なし") SkillLvs.TDFuncstrArray[i] = "造成傷害";
                 if (SkillLvs.TDFuncstrArray[i] == "" && SkillLvs.TDlv1OC1strArray[i].Count(c => c == ',') == 1 &&
                     !SkillLvs.TDlv1OC1strArray[i].Contains("Hide")) SkillLvs.TDFuncstrArray[i] = "HP回復";
                 TDFuncList.Dispatcher.Invoke(() =>
