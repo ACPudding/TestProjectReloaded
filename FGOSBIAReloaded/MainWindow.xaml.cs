@@ -444,7 +444,7 @@ namespace FGOSBIAReloaded
                 ClassName[21] = "?";
                 ClassName[19] = "?";
                 ClassName[18] = "?";
-                ClassName[17] = "Grand Caster";
+                ClassName[17] = "GrandCaster";
                 ClassName[16] = "?";
                 ClassName[15] = "?";
                 ClassName[14] = "?";
@@ -481,7 +481,7 @@ namespace FGOSBIAReloaded
                 nprateclassbase[21] = 0.0;
                 nprateclassbase[19] = 0.0;
                 nprateclassbase[18] = 0.0;
-                nprateclassbase[17] = 0.0;
+                nprateclassbase[17] = 1.6;
                 nprateclassbase[16] = 0.0;
                 nprateclassbase[15] = 0.0;
                 nprateclassbase[14] = 0.0;
@@ -1094,46 +1094,60 @@ namespace FGOSBIAReloaded
                     svtTreasureDeviceFuncIDArray = svtTreasureDeviceFuncID.Split(',');
                 }
             }
-
-            svtTreasureDeviceFuncArray = (from skfuncidtmp in svtTreasureDeviceFuncIDArray
-                from functmp in GlobalPathsAndDatas.mstFuncArray
-                where ((JObject) functmp)["id"].ToString() == skfuncidtmp
-                select JObject.Parse(functmp.ToString())
-                into mstFuncobjtmp
-                select mstFuncobjtmp["popupText"].ToString()).ToArray();
-            SkillLvs.TDFuncstrArray = svtTreasureDeviceFuncArray;
-            svtTreasureDeviceFunc = string.Join(", ", svtTreasureDeviceFuncArray);
-            SkillLvs.TDFuncstr = svtTreasureDeviceFunc;
-            for (var i = 0; i <= SkillLvs.TDFuncstrArray.Length - 1; i++)
+            try
             {
-                if (SkillLvs.TDFuncstrArray[i] == "なし") SkillLvs.TDFuncstrArray[i] = "寶具傷害";
-                if (SkillLvs.TDFuncstrArray[i] == "" && SkillLvs.TDlv1OC1strArray[i].Count(c => c == ',') == 1 &&
-                    !SkillLvs.TDlv1OC1strArray[i].Contains("Hide")) SkillLvs.TDFuncstrArray[i] = "HP回復";
-                TDFuncList.Dispatcher.Invoke(() =>
+                svtTreasureDeviceFuncArray = (from skfuncidtmp in svtTreasureDeviceFuncIDArray
+                    from functmp in GlobalPathsAndDatas.mstFuncArray
+                    where ((JObject)functmp)["id"].ToString() == skfuncidtmp
+                    select JObject.Parse(functmp.ToString())
+                    into mstFuncobjtmp
+                    select mstFuncobjtmp["popupText"].ToString()).ToArray();
+                SkillLvs.TDFuncstrArray = svtTreasureDeviceFuncArray;
+                svtTreasureDeviceFunc = string.Join(", ", svtTreasureDeviceFuncArray);
+                SkillLvs.TDFuncstr = svtTreasureDeviceFunc;
+                for (var i = 0; i <= SkillLvs.TDFuncstrArray.Length - 1; i++)
                 {
-                    TDFuncList.Items.Add(new TDlistSval(SkillLvs.TDFuncstrArray[i],
-                        SkillLvs.TDlv1OC1strArray[i], SkillLvs.TDlv2OC2strArray[i], SkillLvs.TDlv3OC3strArray[i],
-                        SkillLvs.TDlv4OC4strArray[i], SkillLvs.TDlv5OC5strArray[i]));
-                });
+                    if (SkillLvs.TDFuncstrArray[i] == "なし" && SkillLvs.TDlv1OC1strArray[i].Count(c => c == ',') > 0) SkillLvs.TDFuncstrArray[i] = "寶具傷害";
+                    if (SkillLvs.TDFuncstrArray[i] == "" && SkillLvs.TDlv1OC1strArray[i].Count(c => c == ',') == 1 &&
+                        !SkillLvs.TDlv1OC1strArray[i].Contains("Hide")) SkillLvs.TDFuncstrArray[i] = "HP回復";
+                    TDFuncList.Dispatcher.Invoke(() =>
+                    {
+                        TDFuncList.Items.Add(new TDlistSval(SkillLvs.TDFuncstrArray[i],
+                            SkillLvs.TDlv1OC1strArray[i], SkillLvs.TDlv2OC2strArray[i], SkillLvs.TDlv3OC3strArray[i],
+                            SkillLvs.TDlv4OC4strArray[i], SkillLvs.TDlv5OC5strArray[i]));
+                    });
+                }
             }
+            catch (Exception)
+            {
+                // ignored
+            }
+
         }
 
         private void ServantClassPassiveSkillCheck()
         {
-            string[] svtClassPassiveIDArray = null;
-            string[] svtClassPassiveArray;
-            var svtClassPassive = string.Empty;
-            svtClassPassiveIDArray = SkillLvs.ClassPassiveID.Split(',');
-            svtClassPassiveArray = (from skilltmp in GlobalPathsAndDatas.mstSkillArray
-                from classpassiveidtmp in svtClassPassiveIDArray
-                where ((JObject) skilltmp)["id"].ToString() == classpassiveidtmp
-                select JObject.Parse(skilltmp.ToString())
-                into mstsvtPskillobjtmp
-                select mstsvtPskillobjtmp["name"].ToString() != ""
-                    ? mstsvtPskillobjtmp["name"] + " (" + mstsvtPskillobjtmp["id"] + ")"
-                    : "未知技能???" + " (" + mstsvtPskillobjtmp["id"] + ")").ToArray();
-            svtClassPassive = string.Join(", ", svtClassPassiveArray);
-            classskill.Dispatcher.Invoke(() => { classskill.Text = svtClassPassive; });
+            try
+            {
+                string[] svtClassPassiveIDArray = null;
+                string[] svtClassPassiveArray;
+                var svtClassPassive = string.Empty;
+                svtClassPassiveIDArray = SkillLvs.ClassPassiveID.Split(',');
+                svtClassPassiveArray = (from skilltmp in GlobalPathsAndDatas.mstSkillArray
+                    from classpassiveidtmp in svtClassPassiveIDArray
+                    where ((JObject)skilltmp)["id"].ToString() == classpassiveidtmp
+                    select JObject.Parse(skilltmp.ToString())
+                    into mstsvtPskillobjtmp
+                    select mstsvtPskillobjtmp["name"].ToString() != ""
+                        ? mstsvtPskillobjtmp["name"] + " (" + mstsvtPskillobjtmp["id"] + ")"
+                        : "未知技能???" + " (" + mstsvtPskillobjtmp["id"] + ")").ToArray();
+                svtClassPassive = string.Join(", ", svtClassPassiveArray);
+                classskill.Dispatcher.Invoke(() => { classskill.Text = svtClassPassive; });
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
         }
 
         private void ServantSkillInformationCheck()
@@ -1961,9 +1975,11 @@ namespace FGOSBIAReloaded
         private void OnDownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
         {
             var path = Directory.GetCurrentDirectory();
-            MessageBox.Show(
-                "下载完成.下载目录为: \r\n" + path + "\\FGOSBIAReloaded(Update " + GlobalPathsAndDatas.NewerVersion +
-                ").exe\r\n\r\n请自行替换文件.", "检查更新", MessageBoxButton.OK, MessageBoxImage.Information);
+            if (MessageBox.Show("下载完成.下载目录为: \r\n" + path + "\\FGOSBIAReloaded(Update " + GlobalPathsAndDatas.NewerVersion +
+                                ").exe\r\n\r\n请自行替换文件.\r\n\r\n您是否要关闭程序?", "检查更新", MessageBoxButton.YesNo, MessageBoxImage.Information) == MessageBoxResult.Yes)
+            {
+                Dispatcher.Invoke(() => { Close(); });
+            }
             CheckUpdate.Dispatcher.Invoke(() => { CheckUpdate.IsEnabled = true; });
             progressbar1.Dispatcher.Invoke(() =>
             {
