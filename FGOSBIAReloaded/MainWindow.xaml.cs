@@ -1030,8 +1030,7 @@ namespace FGOSBIAReloaded
         private void ServantTreasureDeviceSvalCheck(string svtTDID)
         {
             string svtTreasureDeviceFuncID;
-            var svtTreasureDeviceFuncIDArray = new string[] { };
-            List<string> svtTreasureDeviceFuncIDList;
+            string[] svtTreasureDeviceFuncIDArray = null;
             string[] svtTreasureDeviceFuncArray;
             var svtTreasureDeviceFunc = string.Empty;
             SkillLvs.TDFuncstrArray = null;
@@ -1092,8 +1091,7 @@ namespace FGOSBIAReloaded
                     SkillLvs.TDlv5OC5strArray = NPval5.Split('|');
                     svtTreasureDeviceFuncID = TDLVobjtmp["funcId"].ToString().Replace("\n", "").Replace("\t", "")
                         .Replace("\r", "").Replace(" ", "").Replace("[", "").Replace("]", "");
-                    svtTreasureDeviceFuncIDList = new List<string>(svtTreasureDeviceFuncID.Split(','));
-                    svtTreasureDeviceFuncIDArray = svtTreasureDeviceFuncIDList.ToArray();
+                    svtTreasureDeviceFuncIDArray = svtTreasureDeviceFuncID.Split(',');
                 }
             }
 
@@ -1108,7 +1106,7 @@ namespace FGOSBIAReloaded
             SkillLvs.TDFuncstr = svtTreasureDeviceFunc;
             for (var i = 0; i <= SkillLvs.TDFuncstrArray.Length - 1; i++)
             {
-                if (SkillLvs.TDFuncstrArray[i] == "なし") SkillLvs.TDFuncstrArray[i] = "造成傷害";
+                if (SkillLvs.TDFuncstrArray[i] == "なし") SkillLvs.TDFuncstrArray[i] = "寶具傷害";
                 if (SkillLvs.TDFuncstrArray[i] == "" && SkillLvs.TDlv1OC1strArray[i].Count(c => c == ',') == 1 &&
                     !SkillLvs.TDlv1OC1strArray[i].Contains("Hide")) SkillLvs.TDFuncstrArray[i] = "HP回復";
                 TDFuncList.Dispatcher.Invoke(() =>
@@ -1131,7 +1129,9 @@ namespace FGOSBIAReloaded
                 where ((JObject) skilltmp)["id"].ToString() == classpassiveidtmp
                 select JObject.Parse(skilltmp.ToString())
                 into mstsvtPskillobjtmp
-                select mstsvtPskillobjtmp["name"] + " (" + mstsvtPskillobjtmp["id"] + ") ").ToArray();
+                select mstsvtPskillobjtmp["name"].ToString() != ""
+                    ? mstsvtPskillobjtmp["name"] + " (" + mstsvtPskillobjtmp["id"] + ")"
+                    : "未知技能???" + " (" + mstsvtPskillobjtmp["id"] + ")").ToArray();
             svtClassPassive = string.Join(", ", svtClassPassiveArray);
             classskill.Dispatcher.Invoke(() => { classskill.Text = svtClassPassive; });
         }
@@ -1640,22 +1640,16 @@ namespace FGOSBIAReloaded
                 res["response"][0]["success"]["assetbundle"].ToString());
             updatestatus.Dispatcher.Invoke(() =>
             {
-                updatestatus.Content = "Writing file to: " + gamedata.FullName + "assetbundle";
+                updatestatus.Content = "写入: " + gamedata.FullName + "assetbundle";
             });
             progressbar.Dispatcher.Invoke(() => { progressbar.Value += 40; });
             File.WriteAllText(gamedata.FullName + "master",
                 res["response"][0]["success"]["master"].ToString());
-            updatestatus.Dispatcher.Invoke(() =>
-            {
-                updatestatus.Content = "Writing file to: " + gamedata.FullName + "master";
-            });
+            updatestatus.Dispatcher.Invoke(() => { updatestatus.Content = "写入: " + gamedata.FullName + "master"; });
             progressbar.Dispatcher.Invoke(() => { progressbar.Value += 40; });
             File.WriteAllText(gamedata.FullName + "webview",
                 res["response"][0]["success"]["webview"].ToString());
-            updatestatus.Dispatcher.Invoke(() =>
-            {
-                updatestatus.Content = "Writing file to: " + gamedata.FullName + "webview";
-            });
+            updatestatus.Dispatcher.Invoke(() => { updatestatus.Content = "写入: " + gamedata.FullName + "webview"; });
             progressbar.Dispatcher.Invoke(() => { progressbar.Value += 40; });
             var data = File.ReadAllText(gamedata.FullName + "master");
             if (!Directory.Exists(gamedata.FullName + "decrypted_masterdata"))
@@ -1672,7 +1666,7 @@ namespace FGOSBIAReloaded
                 File.WriteAllText(gamedata.FullName + "decrypted_masterdata/" + item.Key, json);
                 updatestatus.Dispatcher.Invoke(() =>
                 {
-                    updatestatus.Content = "Writing file to: " + gamedata.FullName +
+                    updatestatus.Content = "写入: " + gamedata.FullName +
                                            "decrypted__masterdata\\" + item.Key;
                 });
                 progressbar.Dispatcher.Invoke(() => { progressbar.Value = progressbar.Value + 40; });
@@ -1703,7 +1697,7 @@ namespace FGOSBIAReloaded
             File.WriteAllText(gamedata.FullName + "webview.txt", str2);
             updatestatus.Dispatcher.Invoke(() =>
             {
-                updatestatus.Content = "Writing file to: " + gamedata.FullName + "webview.txt";
+                updatestatus.Content = "写入: " + gamedata.FullName + "webview.txt";
             });
 
             updatestatus.Dispatcher.Invoke(() => { updatestatus.Content = "下载完成，可以开始解析."; });

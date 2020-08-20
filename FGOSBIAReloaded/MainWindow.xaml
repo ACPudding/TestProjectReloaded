@@ -236,7 +236,7 @@
                                  TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="415"
                                  IsReadOnly="True" HorizontalContentAlignment="Center"
                                  VerticalContentAlignment="Center"
-                                 FontFamily="Meiryo" Foreground="#FF333333">
+                                 FontFamily="Meiryo" Foreground="#FF333333" FontSize="10">
                             <TextBox.Background>
                                 <SolidColorBrush Color="#FF484848" Opacity="0.15" />
                             </TextBox.Background>
@@ -516,7 +516,7 @@
                             </TextBox.Background>
                         </TextBox>
                         <Label
-                            Content="注:&#xD;&#xA;除开&quot;配卡&quot;文本框以外的所有文本框中, &quot;Hits&quot;之前的表示该类型的指令卡的攻击次数&#xD;&#xA;(跳伤害几次), &quot;Hits&quot;之后的表示每次攻击所造成的伤害百分比.&#xD;&#xA;例如:&#xD;&#xA;&quot;5 hit [6,13,20,26,35]&quot; 表示该类型指令卡攻击次数 5 次,&#xD;&#xA;且每次伤害分别为 6% 13% 20% 26% 35%."
+                            Content="注:&#xD;&#xA;除开&quot;配卡&quot;文本框以外的所有文本框中, &quot;Hit&quot;之前的表示该类型的指令卡的攻击次数&#xD;&#xA;(跳伤害几次), &quot;Hit&quot;之后的表示每次攻击所造成的伤害百分比.&#xD;&#xA;例如:&#xD;&#xA;&quot;5 hit [6,13,20,26,35]&quot; 表示该类型指令卡攻击次数 5 次,&#xD;&#xA;且每次伤害分别为 6% 13% 20% 26% 35%."
                             HorizontalAlignment="Left" Width="487"
                             FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
                             Margin="0,252,0,0" FontWeight="Bold" />
