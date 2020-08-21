@@ -598,7 +598,7 @@
                                  TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="415"
                                  IsReadOnly="True" HorizontalContentAlignment="Center"
                                  VerticalContentAlignment="Center"
-                                 Foreground="#FF333333" FontFamily="Meiryo">
+                                 Foreground="#FF333333" FontFamily="Meiryo" FontSize="10">
                             <TextBox.Background>
                                 <SolidColorBrush Color="#FF484848" Opacity="0.15" />
                             </TextBox.Background>
@@ -620,13 +620,14 @@
                                Width="97"
                                FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
                                Margin="351,171,0,0" FontWeight="Bold" />
-                        <ListView x:Name="TDFuncList" Margin="5,195,5,2" Foreground="#FF737373" FontSize="10">
+                        <ListView x:Name="TDFuncList" Margin="5,195,5,2" Foreground="#FF737373" FontSize="9.5">
                             <ListView.Background>
                                 <SolidColorBrush Color="White" Opacity="0.4" />
                             </ListView.Background>
                             <ListView.View>
                                 <GridView>
-                                    <GridViewColumn Header="效果" Width="75" DisplayMemberBinding="{Binding TDFuncName}" />
+                                    <GridViewColumn Header="效果" Width="75"
+                                                    DisplayMemberBinding="{Binding TDFuncName}" />
                                     <GridViewColumn Header="lv.1/OC1" Width="81"
                                                     DisplayMemberBinding="{Binding TDSvalOC1lv1}" />
                                     <GridViewColumn Header="lv.2/OC2" Width="81"
@@ -668,7 +669,7 @@
                                  TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="416"
                                  IsReadOnly="True" HorizontalContentAlignment="Center"
                                  VerticalContentAlignment="Center"
-                                 Foreground="#FF333333" FontFamily="Meiryo" Grid.ColumnSpan="2">
+                                 Foreground="#FF333333" FontFamily="Meiryo" Grid.ColumnSpan="2" FontSize="10">
                             <TextBox.Background>
                                 <SolidColorBrush Color="#FF484848" Opacity="0.15" />
                             </TextBox.Background>
@@ -727,13 +728,14 @@
                                Width="97"
                                FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
                                Margin="355,128,0,0" FontWeight="Bold" />
-                        <ListView x:Name="Skill1FuncList" Margin="5,152,5,2" Foreground="#FF737373" FontSize="11">
+                        <ListView x:Name="Skill1FuncList" Margin="5,152,5,2" Foreground="#FF737373" FontSize="10.5">
                             <ListView.Background>
                                 <SolidColorBrush Color="White" Opacity="0.4" />
                             </ListView.Background>
                             <ListView.View>
                                 <GridView>
-                                    <GridViewColumn Header="效果" Width="100" DisplayMemberBinding="{Binding SkillName}" />
+                                    <GridViewColumn Header="效果" Width="100"
+                                                    DisplayMemberBinding="{Binding SkillName}" />
                                     <GridViewColumn Header="lv.1数值" Width="127"
                                                     DisplayMemberBinding="{Binding SkillSvallv1}" />
                                     <GridViewColumn Header="lv.6数值" Width="127"
@@ -784,7 +786,7 @@
                                  TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="416"
                                  IsReadOnly="True" HorizontalContentAlignment="Center"
                                  VerticalContentAlignment="Center"
-                                 Foreground="#FF333333" FontFamily="Meiryo" Grid.ColumnSpan="2">
+                                 Foreground="#FF333333" FontFamily="Meiryo" Grid.ColumnSpan="2" FontSize="10">
                             <TextBox.Background>
                                 <SolidColorBrush Color="#FF484848" Opacity="0.15" />
                             </TextBox.Background>
@@ -843,13 +845,14 @@
                                Width="97"
                                FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
                                Margin="355,128,0,0" FontWeight="Bold" />
-                        <ListView x:Name="Skill2FuncList" Margin="5,152,5,2" Foreground="#FF737373">
+                        <ListView x:Name="Skill2FuncList" Margin="5,152,5,2" Foreground="#FF737373" FontSize="10.5">
                             <ListView.Background>
                                 <SolidColorBrush Color="White" Opacity="0.4" />
                             </ListView.Background>
                             <ListView.View>
                                 <GridView>
-                                    <GridViewColumn Header="效果" Width="100" DisplayMemberBinding="{Binding SkillName}" />
+                                    <GridViewColumn Header="效果" Width="100"
+                                                    DisplayMemberBinding="{Binding SkillName}" />
                                     <GridViewColumn Header="lv.1数值" Width="127"
                                                     DisplayMemberBinding="{Binding SkillSvallv1}" />
                                     <GridViewColumn Header="lv.6数值" Width="127"
@@ -900,7 +903,7 @@
                                  TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="416"
                                  IsReadOnly="True" HorizontalContentAlignment="Center"
                                  VerticalContentAlignment="Center"
-                                 Foreground="#FF333333" FontFamily="Meiryo" Grid.ColumnSpan="2">
+                                 Foreground="#FF333333" FontFamily="Meiryo" Grid.ColumnSpan="2" FontSize="10">
                             <TextBox.Background>
                                 <SolidColorBrush Color="#FF484848" Opacity="0.15" />
                             </TextBox.Background>
@@ -959,13 +962,14 @@
                                Width="97"
                                FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
                                Margin="355,128,0,0" FontWeight="Bold" />
-                        <ListView x:Name="Skill3FuncList" Margin="5,152,5,2" Foreground="#FF737373">
+                        <ListView x:Name="Skill3FuncList" Margin="5,152,5,2" Foreground="#FF737373" FontSize="10.5">
                             <ListView.Background>
                                 <SolidColorBrush Color="White" Opacity="0.4" />
                             </ListView.Background>
                             <ListView.View>
                                 <GridView>
-                                    <GridViewColumn Header="效果" Width="100" DisplayMemberBinding="{Binding SkillName}" />
+                                    <GridViewColumn Header="效果" Width="100"
+                                                    DisplayMemberBinding="{Binding SkillName}" />
                                     <GridViewColumn Header="lv.1数值" Width="127"
                                                     DisplayMemberBinding="{Binding SkillSvallv1}" />
                                     <GridViewColumn Header="lv.6数值" Width="127"
@@ -1081,6 +1085,13 @@
                                   IsChecked="True" />
                         <Label Content="特性显示解析结果(Beta)" HorizontalAlignment="Left" Height="26"
                                Margin="35,102,0,0" VerticalAlignment="Top" Width="203" Foreground="#FF333333"
+                               FontFamily="Microsoft JhengHei UI" FontSize="10" />
+                        <CheckBox x:Name="ToggleDetailbr" Content="" HorizontalAlignment="Left" Height="17"
+                                  Margin="17,128,0,0" VerticalAlignment="Top" Width="116" Foreground="LightGray"
+                                  FontFamily="Microsoft JhengHei UI" FontSize="9"
+                                  ToolTip="勾选此项时,宝具/技能界面的&quot;描述&quot;文本框&#xA;会按照每个Buff进行换行显示&#xA;不勾选则直接不换行显示." />
+                        <Label Content="宝具/技能描述按照Buff换行" HorizontalAlignment="Left" Height="26"
+                               Margin="35,126,0,0" VerticalAlignment="Top" Width="203" Foreground="#FF333333"
                                FontFamily="Microsoft JhengHei UI" FontSize="10" />
                     </Grid>
                 </TabItem>
