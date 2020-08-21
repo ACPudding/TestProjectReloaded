@@ -34,6 +34,8 @@
                 Width="81" Click="Button_Click_1" FontFamily="Microsoft JhengHei UI" Foreground="#FF333333" />
         <Button Content="清空" HorizontalAlignment="Left" Height="26" Margin="473,28,0,0" VerticalAlignment="Top"
                 Width="81" Click="Button_Click_2" FontFamily="Microsoft JhengHei UI" Foreground="#FF333333" />
+        <TextBlock x:Name="RemindText" TextWrapping="Wrap" Text="" Margin="112,10,272,387.8" Foreground="#FF333333"
+                   FontFamily="Microsoft JhengHei UI" FontSize="11" FontWeight="Bold" />
         <Grid Margin="0,59,0,0">
             <Grid.Background>
                 <SolidColorBrush Color="#FFDDDDDD" Opacity="0.4" />
@@ -1151,7 +1153,6 @@
                                Foreground="#FF333333" VerticalContentAlignment="Center" />
                     </Grid>
                 </TabItem>
-
             </TabControl>
         </Grid>
         <Label Content="图鉴编号:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top" Width="97"

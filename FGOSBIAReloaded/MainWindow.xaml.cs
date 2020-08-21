@@ -143,15 +143,14 @@ namespace FGOSBIAReloaded
             {
                 if (rarity.Text == "")
                 {
-                    MessageBox.Show("从者ID不存在或未实装，请重试.", "温馨提示:", MessageBoxButton.OK, MessageBoxImage.Information);
+                    MessageBox.Show("从者ID不存在或未实装,请重试.", "温馨提示:", MessageBoxButton.OK, MessageBoxImage.Information);
                     ClearTexts();
                     Button1.IsEnabled = true;
                     return;
                 }
 
                 if (cards.Text == "[Q,Q,Q,Q,Q]" && svtclass.Text != "礼装")
-                    MessageBox.Show("此ID为小怪(或部分boss以及种火芙芙),配卡、技能、宝具信息解析并不准确，请知悉.", "温馨提示:", MessageBoxButton.OK,
-                        MessageBoxImage.Information);
+                    RemindText.Text = "此ID为小怪(或部分boss以及种火芙芙),配卡、技能、宝具信息解析并不准确,请知悉.";
             });
             GC.Collect();
         }
@@ -249,7 +248,7 @@ namespace FGOSBIAReloaded
                     svtNPDamageType = mstTDobjtmp2["effectFlag"].ToString().Replace("0", "辅助宝具")
                         .Replace("1", "群体宝具").Replace("2", "单体宝具");
                     nptype.Dispatcher.Invoke(() => { nptype.Text = svtNPDamageType; });
-                    if (svtNPDamageType == "-")
+                    if (svtNPDamageType == "辅助宝具")
                     {
                         svtNPCardhit = 0;
                         svtNPCardhitDamage = "[ - ]";
@@ -566,6 +565,7 @@ namespace FGOSBIAReloaded
                         JB.svtnme = svtName;
                         svtNameDisplay = mstSvtobjtmp["battleName"].ToString();
                         SvtBattlename.Text = svtNameDisplay;
+                        Title += " - " + svtNameDisplay;
                         svtClass = mstSvtobjtmp["classId"].ToString();
                         svtgender = mstSvtobjtmp["genderType"].ToString();
                         svtstarrate = mstSvtobjtmp["starRate"].ToString();
@@ -600,6 +600,8 @@ namespace FGOSBIAReloaded
                         hiddenattri.Text = svtHideAttri;
                         classData = int.Parse(svtClass);
                         svtclass.Text = ClassName[classData];
+                        var CheckShiZhuang = new Thread(CheckSvtIsFullinGame);
+                        CheckShiZhuang.Start(classData);
                         genderData = int.Parse(svtgender);
                         gendle.Text = gender[genderData];
                         starrate = float.Parse(svtstarrate) / 10;
@@ -673,77 +675,62 @@ namespace FGOSBIAReloaded
                     case 23:
                     case 25:
                     case 17:
-                        Dispatcher.Invoke(() =>
-                        {
-                            atkbalance1.Content = "( x 1.0 -)";
-                            atkbalance2.Content = "( x 1.0 -)";
-                            if (ToggleMsgboxOutputCheck.IsChecked != true || !GlobalPathsAndDatas.askxlsx) return;
-                            if (MessageBox.Show(
-                                    "是否需要以xlsx的形式导出该从者的基础数据?",
-                                    "导出?", MessageBoxButton.OKCancel, MessageBoxImage.Information) ==
-                                MessageBoxResult.OK)
-                                ExcelFileOutput();
-                        });
+                        atkbalance1.Content = "( x 1.0 -)";
+                        atkbalance2.Content = "( x 1.0 -)";
+                        if (ToggleMsgboxOutputCheck.IsChecked != true || !GlobalPathsAndDatas.askxlsx) return;
+                        if (MessageBox.Show(
+                                "是否需要以xlsx的形式导出该从者的基础数据?",
+                                "导出?", MessageBoxButton.OKCancel, MessageBoxImage.Information) ==
+                            MessageBoxResult.OK)
+                            ExcelFileOutput();
                         break;
                     case 3:
-                        Dispatcher.Invoke(() =>
-                        {
-                            atkbalance1.Content = "( x 1.05 △)";
-                            atkbalance2.Content = "( x 1.05 △)";
-                            if (ToggleMsgboxOutputCheck.IsChecked != true || !GlobalPathsAndDatas.askxlsx) return;
-                            if (MessageBox.Show(
-                                    "是否需要以xlsx的形式导出该从者的基础数据?",
-                                    "导出?", MessageBoxButton.OKCancel, MessageBoxImage.Information) ==
-                                MessageBoxResult.OK)
-                                ExcelFileOutput();
-                        });
+                        atkbalance1.Content = "( x 1.05 △)";
+                        atkbalance2.Content = "( x 1.05 △)";
+                        if (ToggleMsgboxOutputCheck.IsChecked != true || !GlobalPathsAndDatas.askxlsx) return;
+                        if (MessageBox.Show(
+                                "是否需要以xlsx的形式导出该从者的基础数据?",
+                                "导出?", MessageBoxButton.OKCancel, MessageBoxImage.Information) ==
+                            MessageBoxResult.OK)
+                            ExcelFileOutput();
+
                         break;
                     case 5:
                     case 6:
-                        Dispatcher.Invoke(() =>
-                        {
-                            atkbalance1.Content = "( x 0.9 ▽)";
-                            atkbalance2.Content = "( x 0.9 ▽)";
-                            if (ToggleMsgboxOutputCheck.IsChecked != true || !GlobalPathsAndDatas.askxlsx) return;
-                            if (MessageBox.Show(
-                                    "是否需要以xlsx的形式导出该从者的基础数据?",
-                                    "导出?", MessageBoxButton.OKCancel, MessageBoxImage.Information) ==
-                                MessageBoxResult.OK)
-                                ExcelFileOutput();
-                        });
+                        atkbalance1.Content = "( x 0.9 ▽)";
+                        atkbalance2.Content = "( x 0.9 ▽)";
+                        if (ToggleMsgboxOutputCheck.IsChecked != true || !GlobalPathsAndDatas.askxlsx) return;
+                        if (MessageBox.Show(
+                                "是否需要以xlsx的形式导出该从者的基础数据?",
+                                "导出?", MessageBoxButton.OKCancel, MessageBoxImage.Information) ==
+                            MessageBoxResult.OK)
+                            ExcelFileOutput();
+
                         break;
                     case 2:
-                        Dispatcher.Invoke(() =>
-                        {
-                            atkbalance1.Content = "( x 0.95 ▽)";
-                            atkbalance2.Content = "( x 0.95 ▽)";
-                            if (ToggleMsgboxOutputCheck.IsChecked != true || !GlobalPathsAndDatas.askxlsx) return;
-                            if (MessageBox.Show(
-                                    "是否需要以xlsx的形式导出该从者的基础数据?",
-                                    "导出?", MessageBoxButton.OKCancel, MessageBoxImage.Information) ==
-                                MessageBoxResult.OK)
-                                ExcelFileOutput();
-                        });
+                        atkbalance1.Content = "( x 0.95 ▽)";
+                        atkbalance2.Content = "( x 0.95 ▽)";
+                        if (ToggleMsgboxOutputCheck.IsChecked != true || !GlobalPathsAndDatas.askxlsx) return;
+                        if (MessageBox.Show(
+                                "是否需要以xlsx的形式导出该从者的基础数据?",
+                                "导出?", MessageBoxButton.OKCancel, MessageBoxImage.Information) ==
+                            MessageBoxResult.OK)
+                            ExcelFileOutput();
                         break;
                     case 7:
                     case 9:
                     case 11:
-                        Dispatcher.Invoke(() =>
-                        {
-                            atkbalance1.Content = "( x 1.1 △)";
-                            atkbalance2.Content = "( x 1.1 △)";
-                            if (ToggleMsgboxOutputCheck.IsChecked != true || !GlobalPathsAndDatas.askxlsx) return;
-                            if (MessageBox.Show(
-                                    "是否需要以xlsx的形式导出该从者的基础数据?",
-                                    "导出?", MessageBoxButton.OKCancel, MessageBoxImage.Information) ==
-                                MessageBoxResult.OK)
-                                ExcelFileOutput();
-                        });
+                        atkbalance1.Content = "( x 1.1 △)";
+                        atkbalance2.Content = "( x 1.1 △)";
+                        if (ToggleMsgboxOutputCheck.IsChecked != true || !GlobalPathsAndDatas.askxlsx) return;
+                        if (MessageBox.Show(
+                                "是否需要以xlsx的形式导出该从者的基础数据?",
+                                "导出?", MessageBoxButton.OKCancel, MessageBoxImage.Information) ==
+                            MessageBoxResult.OK)
+                            ExcelFileOutput();
                         break;
                     case 1001:
-                        MessageBox.Show("此ID为礼装ID,图鉴编号为礼装的图鉴编号.礼装描述在羁绊文本的文本1处,礼装效果在技能1栏中.", "温馨提示:",
-                            MessageBoxButton.OK,
-                            MessageBoxImage.Information);
+                        RemindText.Text = "此ID为礼装ID,图鉴编号为礼装的图鉴编号.礼装描述在羁绊文本的文本1处,礼装效果在技能1栏中.";
                         break;
                     default:
                         Dispatcher.Invoke(() =>
@@ -1094,11 +1081,12 @@ namespace FGOSBIAReloaded
                     svtTreasureDeviceFuncIDArray = svtTreasureDeviceFuncID.Split(',');
                 }
             }
+
             try
             {
                 svtTreasureDeviceFuncArray = (from skfuncidtmp in svtTreasureDeviceFuncIDArray
                     from functmp in GlobalPathsAndDatas.mstFuncArray
-                    where ((JObject)functmp)["id"].ToString() == skfuncidtmp
+                    where ((JObject) functmp)["id"].ToString() == skfuncidtmp
                     select JObject.Parse(functmp.ToString())
                     into mstFuncobjtmp
                     select mstFuncobjtmp["popupText"].ToString()).ToArray();
@@ -1107,7 +1095,8 @@ namespace FGOSBIAReloaded
                 SkillLvs.TDFuncstr = svtTreasureDeviceFunc;
                 for (var i = 0; i <= SkillLvs.TDFuncstrArray.Length - 1; i++)
                 {
-                    if (SkillLvs.TDFuncstrArray[i] == "なし" && SkillLvs.TDlv1OC1strArray[i].Count(c => c == ',') > 0) SkillLvs.TDFuncstrArray[i] = "寶具傷害";
+                    if (SkillLvs.TDFuncstrArray[i] == "なし" && SkillLvs.TDlv1OC1strArray[i].Count(c => c == ',') > 0)
+                        SkillLvs.TDFuncstrArray[i] = "寶具傷害";
                     if (SkillLvs.TDFuncstrArray[i] == "" && SkillLvs.TDlv1OC1strArray[i].Count(c => c == ',') == 1 &&
                         !SkillLvs.TDlv1OC1strArray[i].Contains("Hide")) SkillLvs.TDFuncstrArray[i] = "HP回復";
                     TDFuncList.Dispatcher.Invoke(() =>
@@ -1122,7 +1111,32 @@ namespace FGOSBIAReloaded
             {
                 // ignored
             }
+        }
 
+        private void CheckSvtIsFullinGame(object classid)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                if (collection.Text != "0" || cards.Text == "[Q,Q,Q,Q,Q]") return;
+                switch (Convert.ToInt64(classid))
+                {
+                    case 1:
+                    case 2:
+                    case 3:
+                    case 4:
+                    case 5:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 23:
+                    case 25:
+                        RemindText.Text = "该从者尚未实装,故最终实装的数据可能会与目前的解析结果不同,请以实装之后的数据为准!望知悉.";
+                        break;
+                }
+            });
         }
 
         private void ServantClassPassiveSkillCheck()
@@ -1135,7 +1149,7 @@ namespace FGOSBIAReloaded
                 svtClassPassiveIDArray = SkillLvs.ClassPassiveID.Split(',');
                 svtClassPassiveArray = (from skilltmp in GlobalPathsAndDatas.mstSkillArray
                     from classpassiveidtmp in svtClassPassiveIDArray
-                    where ((JObject)skilltmp)["id"].ToString() == classpassiveidtmp
+                    where ((JObject) skilltmp)["id"].ToString() == classpassiveidtmp
                     select JObject.Parse(skilltmp.ToString())
                     into mstsvtPskillobjtmp
                     select mstsvtPskillobjtmp["name"].ToString() != ""
@@ -1415,6 +1429,8 @@ namespace FGOSBIAReloaded
                 LimitCombineItems.Items.Clear();
                 SkillCombineItems.Items.Clear();
                 TDFuncList.Items.Clear();
+                RemindText.Text = "";
+                Title = "FGO从者基础信息解析";
             });
             IsSk1Strengthened.Dispatcher.Invoke(() => { IsSk1Strengthened.Text = "×"; });
             IsSk2Strengthened.Dispatcher.Invoke(() => { IsSk2Strengthened.Text = "×"; });
@@ -1975,11 +1991,11 @@ namespace FGOSBIAReloaded
         private void OnDownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
         {
             var path = Directory.GetCurrentDirectory();
-            if (MessageBox.Show("下载完成.下载目录为: \r\n" + path + "\\FGOSBIAReloaded(Update " + GlobalPathsAndDatas.NewerVersion +
-                                ").exe\r\n\r\n请自行替换文件.\r\n\r\n您是否要关闭程序?", "检查更新", MessageBoxButton.YesNo, MessageBoxImage.Information) == MessageBoxResult.Yes)
-            {
+            if (MessageBox.Show("下载完成.下载目录为: \r\n" + path + "\\FGOSBIAReloaded(Update " +
+                                GlobalPathsAndDatas.NewerVersion +
+                                ").exe\r\n\r\n请自行替换文件.\r\n\r\n您是否要关闭程序?", "检查更新", MessageBoxButton.YesNo,
+                MessageBoxImage.Information) == MessageBoxResult.Yes)
                 Dispatcher.Invoke(() => { Close(); });
-            }
             CheckUpdate.Dispatcher.Invoke(() => { CheckUpdate.IsEnabled = true; });
             progressbar1.Dispatcher.Invoke(() =>
             {
