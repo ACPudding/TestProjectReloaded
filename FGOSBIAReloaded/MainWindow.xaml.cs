@@ -608,18 +608,11 @@ namespace FGOSBIAReloaded
                             .Replace("3", "地").Replace("4", "星").Replace("5", "兽");
                         CardArrange = mstSvtobjtmp["cardIds"].ToString().Replace("\n", "").Replace("\t", "")
                             .Replace("\r", "").Replace(" ", "").Replace("2", "B").Replace("1", "A").Replace("3", "Q");
-                        if (CardArrange == "[Q,Q,Q,Q,Q]")
-                        {
-                            GlobalPathsAndDatas.askxlsx = false;
-                        }
+                        if (CardArrange == "[Q,Q,Q,Q,Q]") GlobalPathsAndDatas.askxlsx = false;
+                        if (ToggleDispIndi.IsChecked == true)
+                            SISI.Start(svtIndividualityInput);
                         else
-                        {
-                            if (ToggleDispIndi.IsChecked == true)
-                                SISI.Start(svtIndividualityInput);
-                            else
-                                svtIndividuality.Text = svtIndividualityInput;
-                        }
-
+                            svtIndividuality.Text = svtIndividualityInput;
                         cards.Text = CardArrange;
                         svtClassPassiveID = mstSvtobjtmp["classPassive"].ToString().Replace("\n", "").Replace("\t", "")
                             .Replace("\r", "").Replace(" ", "").Replace("[", "").Replace("]", "");
@@ -757,7 +750,7 @@ namespace FGOSBIAReloaded
                             ExcelFileOutput();
                         break;
                     case 1001:
-                        RemindText.Text = "此ID为礼装ID,图鉴编号为礼装的图鉴编号.礼装描述在羁绊文本的文本1处,礼装效果在技能1栏中.";
+                        RemindText.Text = "此ID为礼装ID,图鉴编号为礼装的图鉴编号.礼装描述在羁绊文本的文本1处.";
                         break;
                     default:
                         atkbalance1.Content = "( x 1.0 -)";
@@ -1123,16 +1116,16 @@ namespace FGOSBIAReloaded
                         switch (Convert.ToInt64(svtTreasureDeviceFuncIDArray[i]))
                         {
                             case 12:
-                                SkillLvs.TDFuncstrArray[i] = "強力攻撃";
+                                SkillLvs.TDFuncstrArray[i] = "強力攻撃·単体";
                                 break;
                             case 13:
-                                SkillLvs.TDFuncstrArray[i] = "強力攻撃";
+                                SkillLvs.TDFuncstrArray[i] = "強力攻撃·全体";
                                 break;
                             case 14:
-                                SkillLvs.TDFuncstrArray[i] = "防御無視攻撃";
+                                SkillLvs.TDFuncstrArray[i] = "防御無視攻撃·単体";
                                 break;
                             case 15:
-                                SkillLvs.TDFuncstrArray[i] = "防御無視攻撃";
+                                SkillLvs.TDFuncstrArray[i] = "防御無視攻撃·全体";
                                 break;
                             default:
                                 SkillLvs.TDFuncstrArray[i] = "強力特攻攻撃";
@@ -1176,7 +1169,7 @@ namespace FGOSBIAReloaded
                     case 11:
                     case 23:
                     case 25:
-                        RemindText.Text = "该从者尚未实装,故最终实装的数据可能会与目前的解析结果不同,请以实装之后的数据为准!望知悉.";
+                        RemindText.Text = "该从者尚未实装或为敌方数据,故最终实装的数据可能会与目前的解析结果不同,请以实装之后的数据为准!望知悉.";
                         break;
                 }
             });
@@ -2051,7 +2044,7 @@ namespace FGOSBIAReloaded
             var path = Directory.GetCurrentDirectory();
             if (MessageBox.Show("下载完成.下载目录为: \r\n" + path + "\\FGOSBIAReloaded(Update " +
                                 GlobalPathsAndDatas.NewerVersion +
-                                ").exe\r\n\r\n请自行替换文件.\r\n\r\n您是否要关闭程序?", "检查更新", MessageBoxButton.YesNo,
+                                ").exe\r\n\r\n请自行替换文件.\r\n\r\n您是否要关闭当前版本的程序?", "检查更新", MessageBoxButton.YesNo,
                 MessageBoxImage.Information) == MessageBoxResult.Yes)
                 Dispatcher.Invoke(() => { Close(); });
             CheckUpdate.Dispatcher.Invoke(() => { CheckUpdate.IsEnabled = true; });
@@ -2076,7 +2069,6 @@ namespace FGOSBIAReloaded
                                         HttpRequest.ReadableFilesize(e.TotalBytesToReceive);
             });
         }
-
 
         private void Button_Click_5(object sender, RoutedEventArgs e)
         {
@@ -2153,17 +2145,21 @@ namespace FGOSBIAReloaded
 
             var Outputs = "";
             foreach (var Cases in IndividualityStringArray)
+            {
+                if (Cases.Length >= 6) continue;
+                if (Cases == "5010" || Cases == "5000") continue;
                 for (var k = 0; k < IndividualityCommons.Length; k++)
                 {
-                    if (Cases != "5000" && Cases == IndividualityCommons[k][0])
+                    if (Cases == IndividualityCommons[k][0])
                     {
                         Outputs += IndividualityCommons[k][1] + ",";
                         break;
                     }
 
-                    if (k == IndividualityCommons.Length - 1 && Cases != IndividualityCommons[k][0] && Cases.Length <= 4
-                    ) Outputs += "未知特性(" + Cases + "),";
+                    if (k == IndividualityCommons.Length - 1 && Cases != IndividualityCommons[k][0])
+                        Outputs += "未知特性(" + Cases + "),";
                 }
+            }
 
             Outputs = Outputs.Substring(0, Outputs.Length - 1);
             svtIndividuality.Dispatcher.Invoke(() => { svtIndividuality.Text = Outputs; });
