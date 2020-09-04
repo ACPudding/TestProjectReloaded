@@ -2254,7 +2254,7 @@ namespace FGOSBIAReloaded
                     "1000,3,-1,2000"));
                 Skill3FuncList.Items.Add(new SkillListSval("暴击威力提升", "1000,3,3,200", "1000,3,3,250", "1000,3,3,300"));
                 Skill3FuncList.Items.Add(new SkillListSval("弱化无效状态", "1000,3,1", "1000,3,1", "1000,3,1"));
-                TDFuncList.Items.Add(new TDlistSval("防御强化解除", "1000", "1000", "1000", "1000", "1000"));
+                TDFuncList.Items.Add(new TDlistSval("攻击强化解除", "1000", "1000", "1000", "1000", "1000"));
                 TDFuncList.Items.Add(new TDlistSval("攻击力提升", "1000,3,-1,100", "1000,3,-1,150", "1000,3,-1,200",
                     "1000,3,-1,250", "1000,3,-1,300"));
                 TDFuncList.Items.Add(new TDlistSval("防御力提升", "1000,3,-1,100", "1000,3,-1,150", "1000,3,-1,200",
