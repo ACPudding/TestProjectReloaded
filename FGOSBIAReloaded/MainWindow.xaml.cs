@@ -1492,6 +1492,8 @@ namespace FGOSBIAReloaded
                 LimitCombineItems.Items.Clear();
                 SkillCombineItems.Items.Clear();
                 TDFuncList.Items.Clear();
+                PickupEventList.Items.Clear();
+                PickupEndedEventList.Items.Clear();
                 RemindText.Text = "";
                 Title = "FGO从者基础信息解析";
             });
@@ -1696,20 +1698,22 @@ namespace FGOSBIAReloaded
             {
                 var oldRaw = File.ReadAllText(gamedata.FullName + "raw");
                 if (string.CompareOrdinal(oldRaw, result) == 0 && Check)
-                {
-                    MessageBox.Show("当前的MasterData已是最新版本.", "无需更新", MessageBoxButton.OK, MessageBoxImage.Information);
-                    updatestatus.Dispatcher.Invoke(() => { updatestatus.Content = ""; });
-                    updatestatus.Dispatcher.Invoke(() => { updatesign.Content = ""; });
-                    progressbar.Dispatcher.Invoke(() =>
+                    if (MessageBox.Show(
+                        "当前的MasterData已是最新版本,无需重复下载.\r\n\r\n您确定要重新覆盖当前的MasterData数据吗?\r\n\r\n点击\"确认\"进行覆盖.", "无需更新",
+                        MessageBoxButton.OKCancel, MessageBoxImage.Information) == MessageBoxResult.Cancel)
                     {
-                        progressbar.Visibility = Visibility.Hidden;
-                        updatedatabutton.IsEnabled = true;
-                    });
-                    Button1.Dispatcher.Invoke(() => { Button1.IsEnabled = true; });
-                    OutputIDs.Dispatcher.Invoke(() => { OutputIDs.IsEnabled = true; });
-                    updatestatusring.Dispatcher.Invoke(() => { updatestatusring.IsActive = false; });
-                    return;
-                }
+                        updatestatus.Dispatcher.Invoke(() => { updatestatus.Content = ""; });
+                        updatestatus.Dispatcher.Invoke(() => { updatesign.Content = ""; });
+                        progressbar.Dispatcher.Invoke(() =>
+                        {
+                            progressbar.Visibility = Visibility.Hidden;
+                            updatedatabutton.IsEnabled = true;
+                        });
+                        Button1.Dispatcher.Invoke(() => { Button1.IsEnabled = true; });
+                        OutputIDs.Dispatcher.Invoke(() => { OutputIDs.IsEnabled = true; });
+                        updatestatusring.Dispatcher.Invoke(() => { updatestatusring.IsActive = false; });
+                        return;
+                    }
 
                 var fileinfo = gamedata.GetFileSystemInfos(); //返回目录中所有文件和子目录
                 foreach (var i in fileinfo)
@@ -2143,6 +2147,60 @@ namespace FGOSBIAReloaded
             GC.Collect();
         }
 
+        private void LoadEventList()
+        {
+            var path = Directory.GetCurrentDirectory();
+            var gamedata = new DirectoryInfo(path + @"\Android\masterdata\");
+            var dateTimeStart = TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1));
+            var EventName = "";
+            var Eventid = "";
+            PickupEventList.Dispatcher.Invoke(() => { PickupEventList.Items.Clear(); });
+            PickupEndedEventList.Dispatcher.Invoke(() => { PickupEndedEventList.Items.Clear(); });
+            if (File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstEvent"))
+            {
+                foreach (var mstEventtmp in GlobalPathsAndDatas.mstEventArray)
+                {
+                    var EventEndTimeStamp = Convert.ToInt32(((JObject) mstEventtmp)["endedAt"]);
+                    if (EventEndTimeStamp == 1893423600) continue;
+                    var TimeMinus = (DateTime.Now.Ticks - dateTimeStart.Ticks) / 10000000;
+                    EventName = ((JObject) mstEventtmp)["name"].ToString();
+                    Eventid = ((JObject) mstEventtmp)["id"].ToString();
+                    var EventEndTime = new TimeSpan(long.Parse(EventEndTimeStamp + "0000000"));
+                    var EndStr = Convert.ToString(dateTimeStart + EventEndTime);
+                    RemindText.Dispatcher.Invoke(() =>
+                    {
+                        RemindText.Text = "查看: " + EventName + " (" + Eventid + ").";
+                    });
+                    if (TimeMinus > EventEndTimeStamp)
+                        PickupEndedEventList.Dispatcher.Invoke(() =>
+                        {
+                            PickupEndedEventList.Items.Add(new EventList(Eventid, EventName, EndStr));
+                        });
+                    else
+                        PickupEventList.Dispatcher.Invoke(() =>
+                        {
+                            PickupEventList.Items.Add(new EventList(Eventid, EventName, EndStr));
+                        });
+                }
+
+                ButtonEvent.Dispatcher.Invoke(() => { ButtonEvent.IsEnabled = true; });
+                RemindText.Dispatcher.Invoke(() => { RemindText.Text = "显示完毕."; });
+                Thread.Sleep(1500);
+                RemindText.Dispatcher.Invoke(() =>
+                {
+                    if (RemindText.Text != "") RemindText.Text = "";
+                });
+            }
+            else
+            {
+                MessageBox.Show("游戏数据损坏,请重新下载游戏数据(位于\"设置\"选项卡).", "温馨提示:", MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+                ButtonEvent.Dispatcher.Invoke(() => { ButtonEvent.IsEnabled = true; });
+            }
+
+            GC.Collect();
+        }
+
         public void CheckSvtIndividuality(object Input)
         {
             var IndividualityStringArray = Input.ToString().Split(',');
@@ -2274,6 +2332,13 @@ namespace FGOSBIAReloaded
             });
         }
 
+        private void Button_Click_Event(object sender, RoutedEventArgs e)
+        {
+            ButtonQuest.IsEnabled = false;
+            var LEL = new Thread(LoadEventList);
+            LEL.Start();
+        }
+
         private struct SkillListSval
         {
             public string SkillName { get; }
@@ -2323,6 +2388,20 @@ namespace FGOSBIAReloaded
                 QuestName = v2;
                 QuestStartTime = v3;
                 QuestEndTime = v4;
+            }
+        }
+
+        private struct EventList
+        {
+            public string EventNumber { get; }
+            public string EventName { get; }
+            public string EventEndTime { get; }
+
+            public EventList(string v1, string v2, string v3) : this()
+            {
+                EventNumber = v1;
+                EventName = v2;
+                EventEndTime = v3;
             }
         }
 

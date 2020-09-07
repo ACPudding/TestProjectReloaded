@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using FGOSBIAReloaded.Properties;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -59,6 +58,10 @@ namespace FGOSBIAReloaded
                 File.ReadAllText(GlobalPathsAndDatas.gamedata.FullName + "decrypted_masterdata/" + "mstQuestPickup");
             GlobalPathsAndDatas.npcSvtFollower =
                 File.ReadAllText(GlobalPathsAndDatas.gamedata.FullName + "decrypted_masterdata/" + "npcSvtFollower");
+            GlobalPathsAndDatas.mstEvent =
+                File.ReadAllText(GlobalPathsAndDatas.gamedata.FullName + "decrypted_masterdata/" + "mstEvent");
+            GlobalPathsAndDatas.mstEventArray =
+                (JArray) JsonConvert.DeserializeObject(GlobalPathsAndDatas.mstEvent);
             GlobalPathsAndDatas.npcSvtFollowerArray =
                 (JArray) JsonConvert.DeserializeObject(GlobalPathsAndDatas.npcSvtFollower);
             GlobalPathsAndDatas.mstQuestArray = (JArray) JsonConvert.DeserializeObject(GlobalPathsAndDatas.mstQuest);
