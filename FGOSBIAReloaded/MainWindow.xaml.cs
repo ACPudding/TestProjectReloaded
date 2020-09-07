@@ -44,7 +44,12 @@ namespace FGOSBIAReloaded
 
             if (!Regex.IsMatch(textbox1.Text, "^\\d+$"))
             {
-                MessageBox.Show("从者ID输入错误,请检查.", "温馨提示:", MessageBoxButton.OK, MessageBoxImage.Error);
+                Dispatcher.Invoke(() =>
+                {
+                    MessageBox.Show(
+                        Application.Current.MainWindow, "从者ID输入错误,请检查.", "温馨提示:", MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+                });
                 ClearTexts();
                 Button1.Dispatcher.Invoke(() => { Button1.IsEnabled = true; });
                 return;
@@ -160,7 +165,12 @@ namespace FGOSBIAReloaded
             {
                 if (rarity.Text == "")
                 {
-                    MessageBox.Show("从者ID不存在或未实装,请重试.", "温馨提示:", MessageBoxButton.OK, MessageBoxImage.Information);
+                    Dispatcher.Invoke(() =>
+                    {
+                        MessageBox.Show(
+                            Application.Current.MainWindow, "从者ID不存在或未实装,请重试.", "温馨提示:", MessageBoxButton.OK,
+                            MessageBoxImage.Information);
+                    });
                     ClearTexts();
                     Button1.IsEnabled = true;
                     return;
@@ -709,20 +719,28 @@ namespace FGOSBIAReloaded
                         atkbalance1.Content = "( x 1.0 -)";
                         atkbalance2.Content = "( x 1.0 -)";
                         if (ToggleMsgboxOutputCheck.IsChecked != true || !GlobalPathsAndDatas.askxlsx) return;
-                        if (MessageBox.Show(
+                        Dispatcher.Invoke(() =>
+                        {
+                            GlobalPathsAndDatas.SuperMsgBoxRes = MessageBox.Show(
+                                Application.Current.MainWindow,
                                 "是否需要以xlsx的形式导出该从者的基础数据?",
-                                "导出?", MessageBoxButton.OKCancel, MessageBoxImage.Information) ==
-                            MessageBoxResult.OK)
+                                "导出?", MessageBoxButton.OKCancel, MessageBoxImage.Information);
+                        });
+                        if (GlobalPathsAndDatas.SuperMsgBoxRes == MessageBoxResult.OK)
                             ExcelFileOutput();
                         break;
                     case 3:
                         atkbalance1.Content = "( x 1.05 △)";
                         atkbalance2.Content = "( x 1.05 △)";
                         if (ToggleMsgboxOutputCheck.IsChecked != true || !GlobalPathsAndDatas.askxlsx) return;
-                        if (MessageBox.Show(
+                        Dispatcher.Invoke(() =>
+                        {
+                            GlobalPathsAndDatas.SuperMsgBoxRes = MessageBox.Show(
+                                Application.Current.MainWindow,
                                 "是否需要以xlsx的形式导出该从者的基础数据?",
-                                "导出?", MessageBoxButton.OKCancel, MessageBoxImage.Information) ==
-                            MessageBoxResult.OK)
+                                "导出?", MessageBoxButton.OKCancel, MessageBoxImage.Information);
+                        });
+                        if (GlobalPathsAndDatas.SuperMsgBoxRes == MessageBoxResult.OK)
                             ExcelFileOutput();
                         break;
                     case 5:
@@ -730,20 +748,28 @@ namespace FGOSBIAReloaded
                         atkbalance1.Content = "( x 0.9 ▽)";
                         atkbalance2.Content = "( x 0.9 ▽)";
                         if (ToggleMsgboxOutputCheck.IsChecked != true || !GlobalPathsAndDatas.askxlsx) return;
-                        if (MessageBox.Show(
+                        Dispatcher.Invoke(() =>
+                        {
+                            GlobalPathsAndDatas.SuperMsgBoxRes = MessageBox.Show(
+                                Application.Current.MainWindow,
                                 "是否需要以xlsx的形式导出该从者的基础数据?",
-                                "导出?", MessageBoxButton.OKCancel, MessageBoxImage.Information) ==
-                            MessageBoxResult.OK)
+                                "导出?", MessageBoxButton.OKCancel, MessageBoxImage.Information);
+                        });
+                        if (GlobalPathsAndDatas.SuperMsgBoxRes == MessageBoxResult.OK)
                             ExcelFileOutput();
                         break;
                     case 2:
                         atkbalance1.Content = "( x 0.95 ▽)";
                         atkbalance2.Content = "( x 0.95 ▽)";
                         if (ToggleMsgboxOutputCheck.IsChecked != true || !GlobalPathsAndDatas.askxlsx) return;
-                        if (MessageBox.Show(
+                        Dispatcher.Invoke(() =>
+                        {
+                            GlobalPathsAndDatas.SuperMsgBoxRes = MessageBox.Show(
+                                Application.Current.MainWindow,
                                 "是否需要以xlsx的形式导出该从者的基础数据?",
-                                "导出?", MessageBoxButton.OKCancel, MessageBoxImage.Information) ==
-                            MessageBoxResult.OK)
+                                "导出?", MessageBoxButton.OKCancel, MessageBoxImage.Information);
+                        });
+                        if (GlobalPathsAndDatas.SuperMsgBoxRes == MessageBoxResult.OK)
                             ExcelFileOutput();
                         break;
                     case 7:
@@ -752,10 +778,14 @@ namespace FGOSBIAReloaded
                         atkbalance1.Content = "( x 1.1 △)";
                         atkbalance2.Content = "( x 1.1 △)";
                         if (ToggleMsgboxOutputCheck.IsChecked != true || !GlobalPathsAndDatas.askxlsx) return;
-                        if (MessageBox.Show(
+                        Dispatcher.Invoke(() =>
+                        {
+                            GlobalPathsAndDatas.SuperMsgBoxRes = MessageBox.Show(
+                                Application.Current.MainWindow,
                                 "是否需要以xlsx的形式导出该从者的基础数据?",
-                                "导出?", MessageBoxButton.OKCancel, MessageBoxImage.Information) ==
-                            MessageBoxResult.OK)
+                                "导出?", MessageBoxButton.OKCancel, MessageBoxImage.Information);
+                        });
+                        if (GlobalPathsAndDatas.SuperMsgBoxRes == MessageBoxResult.OK)
                             ExcelFileOutput();
                         break;
                     case 1001:
@@ -1439,7 +1469,8 @@ namespace FGOSBIAReloaded
                     (current, svtIDtmp) => current + "ID: " + ((JObject) svtIDtmp)["id"] + "    " + "名称: " +
                                            ((JObject) svtIDtmp)["name"] + "\r\n");
                 File.WriteAllText(GlobalPathsAndDatas.path + "/SearchIDList.txt", output);
-                MessageBox.Show("导出成功,文件名为 SearchIDList.txt", "完成", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show(Application.Current.MainWindow, "导出成功,文件名为 SearchIDList.txt", "完成", MessageBoxButton.OK,
+                    MessageBoxImage.Information);
                 Process.Start(GlobalPathsAndDatas.path + "/SearchIDList.txt");
             });
         }
@@ -1646,12 +1677,16 @@ namespace FGOSBIAReloaded
                         case "maint":
                         {
                             var tmp = res["response"][0]["fail"]["detail"].ToString();
-                            if (MessageBox.Show(
+                            Dispatcher.Invoke(() =>
+                            {
+                                GlobalPathsAndDatas.SuperMsgBoxRes = MessageBox.Show(
+                                    Application.Current.MainWindow,
                                     "游戏服务器正在维护，请在维护后下载/更新数据. \r\n以下为服务器公告内容:\r\n\r\n『" +
                                     tmp.Replace("[00FFFF]", "").Replace("[url=", "")
                                         .Replace("][u]公式サイト お知らせ[/u][/url][-]", "") + "』\r\n\r\n点击\"确定\"可打开公告页面.",
-                                    "维护中", MessageBoxButton.OKCancel, MessageBoxImage.Information) ==
-                                MessageBoxResult.OK)
+                                    "维护中", MessageBoxButton.OKCancel, MessageBoxImage.Information);
+                            });
+                            if (GlobalPathsAndDatas.SuperMsgBoxRes == MessageBoxResult.OK)
                             {
                                 var re = new Regex(@"(?<url>http(s)?://([\w-]+\.)+[\w-]+(/[\w- ./?%&=]*)?)");
                                 var mc = re.Matches(tmp);
@@ -1678,7 +1713,11 @@ namespace FGOSBIAReloaded
             }
             catch (Exception e)
             {
-                MessageBox.Show("网络连接异常,请检查网络连接并重试.\r\n" + e, "网络连接异常", MessageBoxButton.OK, MessageBoxImage.Error);
+                Dispatcher.Invoke(() =>
+                {
+                    MessageBox.Show(Application.Current.MainWindow, "网络连接异常,请检查网络连接并重试.\r\n" + e, "网络连接异常",
+                        MessageBoxButton.OK, MessageBoxImage.Error);
+                });
                 updatestatus.Dispatcher.Invoke(() => { updatestatus.Content = ""; });
                 updatestatus.Dispatcher.Invoke(() => { updatesign.Content = ""; });
                 progressbar.Dispatcher.Invoke(() =>
@@ -1697,10 +1736,18 @@ namespace FGOSBIAReloaded
                 File.Exists(gamedata.FullName + "master"))
             {
                 var oldRaw = File.ReadAllText(gamedata.FullName + "raw");
+
                 if (string.CompareOrdinal(oldRaw, result) == 0 && Check)
-                    if (MessageBox.Show(
-                        "当前的MasterData已是最新版本,无需重复下载.\r\n\r\n您确定要重新覆盖当前的MasterData数据吗?\r\n\r\n点击\"确认\"进行覆盖.", "无需更新",
-                        MessageBoxButton.OKCancel, MessageBoxImage.Information) == MessageBoxResult.Cancel)
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        GlobalPathsAndDatas.SuperMsgBoxRes = MessageBox.Show(
+                            Application.Current.MainWindow,
+                            "当前的MasterData已是最新版本,无需重复下载.\r\n\r\n您确定要重新覆盖当前的MasterData数据吗?\r\n\r\n点击\"确认\"进行覆盖.",
+                            "无需更新",
+                            MessageBoxButton.OKCancel, MessageBoxImage.Information);
+                    });
+                    if (GlobalPathsAndDatas.SuperMsgBoxRes == MessageBoxResult.Cancel)
                     {
                         updatestatus.Dispatcher.Invoke(() => { updatestatus.Content = ""; });
                         updatestatus.Dispatcher.Invoke(() => { updatesign.Content = ""; });
@@ -1714,6 +1761,8 @@ namespace FGOSBIAReloaded
                         updatestatusring.Dispatcher.Invoke(() => { updatestatusring.IsActive = false; });
                         return;
                     }
+                }
+
 
                 var fileinfo = gamedata.GetFileSystemInfos(); //返回目录中所有文件和子目录
                 foreach (var i in fileinfo)
@@ -1800,7 +1849,11 @@ namespace FGOSBIAReloaded
             updatestatus.Dispatcher.Invoke(() => { updatestatus.Content = "下载完成，可以开始解析."; });
 
             progressbar.Dispatcher.Invoke(() => { progressbar.Value = progressbar.Maximum; });
-            MessageBox.Show("下载完成，可以开始解析.", "完成", MessageBoxButton.OK, MessageBoxImage.Information);
+            Dispatcher.Invoke(() =>
+            {
+                MessageBox.Show(Application.Current.MainWindow, "下载完成，可以开始解析.", "完成", MessageBoxButton.OK,
+                    MessageBoxImage.Information);
+            });
             updatestatus.Dispatcher.Invoke(() => { updatestatus.Content = ""; });
             updatestatus.Dispatcher.Invoke(() => { updatesign.Content = ""; });
             progressbar.Dispatcher.Invoke(() =>
@@ -1837,10 +1890,14 @@ namespace FGOSBIAReloaded
                 Directory.CreateDirectory(GlobalPathsAndDatas.outputdir.FullName);
             File.WriteAllText(GlobalPathsAndDatas.outputdir.FullName + "羁绊文本_" + JB.svtid + "_" + JB.svtnme + ".txt",
                 output);
-            MessageBox.Show(
-                "导出完成.\n\r文件名为: " + GlobalPathsAndDatas.outputdir.FullName + "羁绊文本_" + JB.svtid + "_" + JB.svtnme +
-                ".txt",
-                "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+            Dispatcher.Invoke(() =>
+            {
+                MessageBox.Show(
+                    Application.Current.MainWindow, "导出完成.\n\r文件名为: " + GlobalPathsAndDatas.outputdir.FullName +
+                                                    "羁绊文本_" + JB.svtid + "_" + JB.svtnme +
+                                                    ".txt",
+                    "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+            });
             Process.Start(GlobalPathsAndDatas.outputdir.FullName + "/" + "羁绊文本_" + JB.svtid + "_" + JB.svtnme + ".txt");
         }
 
@@ -1865,8 +1922,12 @@ namespace FGOSBIAReloaded
             VersionLabel.Content = CommonStrings.Version;
             if (!Directory.Exists(gamedata.FullName))
             {
-                MessageBox.Show("没有游戏数据,请先下载游戏数据(位于\"设置\"选项卡).", "温馨提示:", MessageBoxButton.OK,
-                    MessageBoxImage.Information);
+                Dispatcher.Invoke(() =>
+                {
+                    MessageBox.Show(
+                        Application.Current.MainWindow, "没有游戏数据,请先下载游戏数据(位于\"设置\"选项卡).", "温馨提示:", MessageBoxButton.OK,
+                        MessageBoxImage.Information);
+                });
                 Button1.IsEnabled = false;
             }
             else
@@ -1895,8 +1956,12 @@ namespace FGOSBIAReloaded
                     return;
                 }
 
-                MessageBox.Show("游戏数据损坏,请重新下载游戏数据(位于\"设置\"选项卡).", "温馨提示:", MessageBoxButton.OK,
-                    MessageBoxImage.Error);
+                Dispatcher.Invoke(() =>
+                {
+                    MessageBox.Show(
+                        Application.Current.MainWindow, "游戏数据损坏,请重新下载游戏数据(位于\"设置\"选项卡).", "温馨提示:", MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+                });
                 Button1.IsEnabled = false;
             }
         }
@@ -1961,9 +2026,14 @@ namespace FGOSBIAReloaded
             worksheet.Cells["D29"].Value = skill3details.Text;
             xlsx.SaveAs(new FileInfo(svtData.FullName + JB.svtnme + "_" + JB.svtid + ".xlsx"));
             streamget.Close();
-            MessageBox.Show("导出成功,文件名为: " + svtData.FullName + JB.svtnme + "_" + JB.svtid + ".xlsx", "导出完成",
-                MessageBoxButton.OK,
-                MessageBoxImage.Information);
+            Dispatcher.Invoke(() =>
+            {
+                MessageBox.Show(
+                    Application.Current.MainWindow,
+                    "导出成功,文件名为: " + svtData.FullName + JB.svtnme + "_" + JB.svtid + ".xlsx", "导出完成",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information);
+            });
             Process.Start(svtData.FullName + JB.svtnme + "_" + JB.svtid + ".xlsx");
             GC.Collect();
         }
@@ -1983,18 +2053,28 @@ namespace FGOSBIAReloaded
             }
             catch (Exception e)
             {
-                MessageBox.Show("网络连接异常,请检查网络连接并重试.\r\n" + e, "网络连接异常", MessageBoxButton.OK, MessageBoxImage.Error);
+                Dispatcher.Invoke(() =>
+                {
+                    MessageBox.Show(
+                        Application.Current.MainWindow, "网络连接异常,请检查网络连接并重试.\r\n" + e, "网络连接异常", MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+                });
                 CheckUpdate.Dispatcher.Invoke(() => { CheckUpdate.IsEnabled = true; });
                 return;
             }
 
             if (CommonStrings.VersionTag != VerChk["tag_name"].ToString())
             {
-                if (MessageBox.Show(
-                    "检测到软件更新\r\n\r\n新版本为:  " + VerChk["tag_name"] + "    当前版本为:  " + CommonStrings.VersionTag +
-                    "\r\n\r\nChangeLog:\r\n" + VerChk["body"] + "\r\n\r\n点击\"确认\"按钮可选择更新.", "检查更新",
-                    MessageBoxButton.OKCancel,
-                    MessageBoxImage.Information) == MessageBoxResult.OK)
+                Dispatcher.Invoke(() =>
+                {
+                    GlobalPathsAndDatas.SuperMsgBoxRes = MessageBox.Show(
+                        Application.Current.MainWindow,
+                        "检测到软件更新\r\n\r\n新版本为:  " + VerChk["tag_name"] + "    当前版本为:  " + CommonStrings.VersionTag +
+                        "\r\n\r\nChangeLog:\r\n" + VerChk["body"] + "\r\n\r\n点击\"确认\"按钮可选择更新.", "检查更新",
+                        MessageBoxButton.OKCancel,
+                        MessageBoxImage.Information);
+                });
+                if (GlobalPathsAndDatas.SuperMsgBoxRes == MessageBoxResult.OK)
                 {
                     VerAssetsJArray = (JArray) JsonConvert.DeserializeObject(VerChk["assets"].ToString());
                     for (var i = 0; i <= VerAssetsJArray.Count - 1; i++)
@@ -2002,8 +2082,13 @@ namespace FGOSBIAReloaded
                             GlobalPathsAndDatas.ExeUpdateUrl = VerAssetsJArray[i]["browser_download_url"].ToString();
                     if (GlobalPathsAndDatas.ExeUpdateUrl == "")
                     {
-                        MessageBox.Show("确认到新版本更新,但是获取下载Url失败.\r\n", "获取Url失败", MessageBoxButton.OK,
-                            MessageBoxImage.Error);
+                        Dispatcher.Invoke(() =>
+                        {
+                            MessageBox.Show(
+                                Application.Current.MainWindow, "确认到新版本更新,但是获取下载Url失败.\r\n", "获取Url失败",
+                                MessageBoxButton.OK,
+                                MessageBoxImage.Error);
+                        });
                         CheckUpdate.Dispatcher.Invoke(() => { CheckUpdate.IsEnabled = true; });
                         return;
                     }
@@ -2017,8 +2102,13 @@ namespace FGOSBIAReloaded
             }
             else
             {
-                MessageBox.Show("当前版本为:  " + CommonStrings.VersionTag + "\r\n\r\n无需更新.", "检查更新", MessageBoxButton.OK,
-                    MessageBoxImage.Information);
+                Dispatcher.Invoke(() =>
+                {
+                    MessageBox.Show(
+                        Application.Current.MainWindow, "当前版本为:  " + CommonStrings.VersionTag + "\r\n\r\n无需更新.", "检查更新",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Information);
+                });
                 CheckUpdate.Dispatcher.Invoke(() => { CheckUpdate.IsEnabled = true; });
             }
         }
@@ -2033,7 +2123,12 @@ namespace FGOSBIAReloaded
             }
             catch (Exception e)
             {
-                MessageBox.Show("写入文件异常.\r\n" + e, "异常", MessageBoxButton.OK, MessageBoxImage.Error);
+                Dispatcher.Invoke(() =>
+                {
+                    MessageBox.Show(
+                        Application.Current.MainWindow, "写入文件异常.\r\n" + e, "异常", MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+                });
                 CheckUpdate.Dispatcher.Invoke(() => { CheckUpdate.IsEnabled = true; });
                 throw;
             }
@@ -2058,10 +2153,16 @@ namespace FGOSBIAReloaded
         private void OnDownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
         {
             var path = Directory.GetCurrentDirectory();
-            if (MessageBox.Show("下载完成.下载目录为: \r\n" + path + "\\FGOSBIAReloaded(Update " +
-                                GlobalPathsAndDatas.NewerVersion +
-                                ").exe\r\n\r\n请自行替换文件.\r\n\r\n您是否要关闭当前版本的程序?", "检查更新", MessageBoxButton.YesNo,
-                MessageBoxImage.Information) == MessageBoxResult.Yes)
+            Dispatcher.Invoke(() =>
+            {
+                GlobalPathsAndDatas.SuperMsgBoxRes = MessageBox.Show(
+                    Application.Current.MainWindow,
+                    "下载完成.下载目录为: \r\n" + path + "\\FGOSBIAReloaded(Update " +
+                    GlobalPathsAndDatas.NewerVersion +
+                    ").exe\r\n\r\n请自行替换文件.\r\n\r\n您是否要关闭当前版本的程序?", "检查更新", MessageBoxButton.YesNo,
+                    MessageBoxImage.Information);
+            });
+            if (GlobalPathsAndDatas.SuperMsgBoxRes == MessageBoxResult.Yes)
                 Dispatcher.Invoke(() => { Close(); });
             CheckUpdate.Dispatcher.Invoke(() => { CheckUpdate.IsEnabled = true; });
             progressbar1.Dispatcher.Invoke(() =>
@@ -2139,8 +2240,12 @@ namespace FGOSBIAReloaded
             }
             else
             {
-                MessageBox.Show("游戏数据损坏,请重新下载游戏数据(位于\"设置\"选项卡).", "温馨提示:", MessageBoxButton.OK,
-                    MessageBoxImage.Error);
+                Dispatcher.Invoke(() =>
+                {
+                    MessageBox.Show(
+                        Application.Current.MainWindow, "游戏数据损坏,请重新下载游戏数据(位于\"设置\"选项卡).", "温馨提示:", MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+                });
                 ButtonQuest.Dispatcher.Invoke(() => { ButtonQuest.IsEnabled = true; });
             }
 
@@ -2193,8 +2298,12 @@ namespace FGOSBIAReloaded
             }
             else
             {
-                MessageBox.Show("游戏数据损坏,请重新下载游戏数据(位于\"设置\"选项卡).", "温馨提示:", MessageBoxButton.OK,
-                    MessageBoxImage.Error);
+                Dispatcher.Invoke(() =>
+                {
+                    MessageBox.Show(
+                        Application.Current.MainWindow, "游戏数据损坏,请重新下载游戏数据(位于\"设置\"选项卡).", "温馨提示:", MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+                });
                 ButtonEvent.Dispatcher.Invoke(() => { ButtonEvent.IsEnabled = true; });
             }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Windows;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -90,5 +91,6 @@ namespace FGOSBIAReloaded.Properties
         public static string ExeUpdateUrl;
         public static DateTime StartTime;
         public static string NewerVersion;
+        public static MessageBoxResult SuperMsgBoxRes;
     }
 }
