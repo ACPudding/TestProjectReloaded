@@ -2252,6 +2252,92 @@ namespace FGOSBIAReloaded
             GC.Collect();
         }
 
+
+        private void Button_Click_Class(object sender, RoutedEventArgs e)
+        {
+            var LCAR = new Thread(LoadClassAndRelations);
+            ButtonClass.IsEnabled = false;
+            LCAR.Start();
+        }
+
+        private void LoadClassAndRelations()
+        {
+            var path = Directory.GetCurrentDirectory();
+            var gamedata = new DirectoryInfo(path + @"\Android\masterdata\");
+            ClassList.Dispatcher.Invoke(() => { ClassList.Items.Clear(); });
+            if (File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstClass") &&
+                File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstClassRelation"))
+            {
+                foreach (var mstClasstmp in GlobalPathsAndDatas.mstClassArray)
+                {
+                    var ClassName = "";
+                    var WeakClass = "\r\n";
+                    var ResistClass = "\r\n";
+                    ClassName = ((JObject) mstClasstmp)["name"] + "(" + ((JObject) mstClasstmp)["id"] + ")";
+                    var tmpid = ((JObject) mstClasstmp)["id"].ToString();
+                    foreach (var mstClassRelationtmp in GlobalPathsAndDatas.mstClassRelationArray)
+                    {
+                        if (((JObject) mstClassRelationtmp)["atkClass"].ToString() != tmpid) continue;
+                        var ATKRATE = Convert.ToInt64(((JObject) mstClassRelationtmp)["attackRate"].ToString());
+                        if (ATKRATE > 1000)
+                        {
+                            var tmpweakid = ((JObject) mstClassRelationtmp)["defClass"].ToString();
+                            WeakClass +=
+                                (GetClassName(tmpweakid) == "？"
+                                    ? GetClassName(tmpweakid) + "(ID:" + tmpweakid + ")"
+                                    : GetClassName(tmpweakid)) + " (" + (float) ATKRATE / 1000 + "x)\r\n";
+                        }
+                        else if (ATKRATE < 1000)
+                        {
+                            var tmpresistid = ((JObject) mstClassRelationtmp)["defClass"].ToString();
+                            ResistClass +=
+                                (GetClassName(tmpresistid) == "？"
+                                    ? GetClassName(tmpresistid) + "(ID:" + tmpresistid + ")"
+                                    : GetClassName(tmpresistid)) + "(" + (float) ATKRATE / 1000 + "x)\r\n";
+                        }
+                    }
+
+                    WeakClass = WeakClass.Substring(0, WeakClass.Length - 2) + "\r\n";
+                    ResistClass = ResistClass.Substring(0, ResistClass.Length - 2) + "\r\n";
+                    ClassList.Dispatcher.Invoke(() =>
+                    {
+                        ClassList.Items.Add(new ClassRelationList(ClassName, WeakClass, ResistClass));
+                    });
+                }
+
+                ButtonClass.Dispatcher.Invoke(() => { ButtonClass.IsEnabled = true; });
+                RemindText.Dispatcher.Invoke(() => { RemindText.Text = "显示完毕."; });
+                Thread.Sleep(1500);
+                RemindText.Dispatcher.Invoke(() =>
+                {
+                    if (RemindText.Text != "") RemindText.Text = "";
+                });
+            }
+            else
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    MessageBox.Show(
+                        Application.Current.MainWindow, "游戏数据损坏,请重新下载游戏数据(位于\"设置\"选项卡).", "温馨提示:", MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+                });
+                ButtonClass.Dispatcher.Invoke(() => { ButtonClass.IsEnabled = true; });
+            }
+        }
+
+        private string GetClassName(string id)
+        {
+            var ClassName = "";
+            foreach (var mstClasstmp in GlobalPathsAndDatas.mstClassArray)
+            {
+                if (((JObject) mstClasstmp)["id"].ToString() != id) continue;
+                ClassName = ((JObject) mstClasstmp)["name"].ToString();
+                break;
+            }
+
+            return ClassName;
+        }
+
         private void LoadEventList()
         {
             var path = Directory.GetCurrentDirectory();
@@ -2443,7 +2529,7 @@ namespace FGOSBIAReloaded
 
         private void Button_Click_Event(object sender, RoutedEventArgs e)
         {
-            ButtonQuest.IsEnabled = false;
+            ButtonEvent.IsEnabled = false;
             var LEL = new Thread(LoadEventList);
             LEL.Start();
         }
@@ -2525,6 +2611,20 @@ namespace FGOSBIAReloaded
                 Status = v1;
                 Items = v2;
                 QP = v3;
+            }
+        }
+
+        private struct ClassRelationList
+        {
+            public string ClassName { get; }
+            public string WeakClass { get; }
+            public string ResistClass { get; }
+
+            public ClassRelationList(string v1, string v2, string v3) : this()
+            {
+                ClassName = v1;
+                WeakClass = v2;
+                ResistClass = v3;
             }
         }
     }

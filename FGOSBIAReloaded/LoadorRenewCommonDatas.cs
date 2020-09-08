@@ -60,6 +60,14 @@ namespace FGOSBIAReloaded
                 File.ReadAllText(GlobalPathsAndDatas.gamedata.FullName + "decrypted_masterdata/" + "npcSvtFollower");
             GlobalPathsAndDatas.mstEvent =
                 File.ReadAllText(GlobalPathsAndDatas.gamedata.FullName + "decrypted_masterdata/" + "mstEvent");
+            GlobalPathsAndDatas.mstClass =
+                File.ReadAllText(GlobalPathsAndDatas.gamedata.FullName + "decrypted_masterdata/" + "mstClass");
+            GlobalPathsAndDatas.mstClassRelation =
+                File.ReadAllText(GlobalPathsAndDatas.gamedata.FullName + "decrypted_masterdata/" + "mstClassRelation");
+            GlobalPathsAndDatas.mstClassArray =
+                (JArray) JsonConvert.DeserializeObject(GlobalPathsAndDatas.mstClass);
+            GlobalPathsAndDatas.mstClassRelationArray =
+                (JArray) JsonConvert.DeserializeObject(GlobalPathsAndDatas.mstClassRelation);
             GlobalPathsAndDatas.mstEventArray =
                 (JArray) JsonConvert.DeserializeObject(GlobalPathsAndDatas.mstEvent);
             GlobalPathsAndDatas.npcSvtFollowerArray =

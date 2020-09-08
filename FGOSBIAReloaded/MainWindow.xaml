@@ -1077,6 +1077,37 @@
                                 FontWeight="Bold" Foreground="#FF333333" />
                     </Grid>
                 </TabItem>
+                <TabItem Header="职介一览" FontFamily="Microsoft JhengHei UI">
+                    <TabItem.Background>
+                        <SolidColorBrush Color="#FF333333" Opacity="0.2" />
+                    </TabItem.Background>
+                    <Grid Margin="0,0,0,0">
+                        <Label Content="注:&#13;职介栏中括号内显示的为克制/逆克制伤害倍率.(全部为攻击侧数据)"
+                               HorizontalAlignment="Left" Height="44" VerticalAlignment="Top"
+                               Width="471" FontFamily="Microsoft JhengHei UI" FontSize="11.5" Foreground="#FF333333"
+                               FontWeight="Bold" />
+                        <ListView x:Name="ClassList" Margin="5,68,5,5" Foreground="#FF737373" FontSize="10">
+                            <ListView.Background>
+                                <SolidColorBrush Color="White" Opacity="0.4" />
+                            </ListView.Background>
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Header="职介名称(ID)" Width="101"
+                                                    DisplayMemberBinding="{Binding ClassName}" />
+                                    <GridViewColumn Header="Weak职介(红字)" Width="190"
+                                                    DisplayMemberBinding="{Binding WeakClass}" />
+                                    <GridViewColumn Header="Resist职介(蓝字)" Width="190"
+                                                    DisplayMemberBinding="{Binding ResistClass}" />
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
+                        <Button x:Name="ButtonClass" Content="显示" HorizontalAlignment="Left" Height="26"
+                                Margin="5,37,0,0"
+                                VerticalAlignment="Top" Width="81" Click="Button_Click_Class"
+                                FontFamily="Microsoft JhengHei UI"
+                                FontWeight="Bold" Foreground="#FF333333" />
+                    </Grid>
+                </TabItem>
                 <TabItem Header="设置" FontFamily="Microsoft JhengHei UI">
                     <TabItem.Background>
                         <SolidColorBrush Color="#FF333333" Opacity="0.2" />
