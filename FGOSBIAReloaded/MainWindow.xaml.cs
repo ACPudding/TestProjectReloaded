@@ -426,6 +426,8 @@ namespace FGOSBIAReloaded
                         SkillLvs.skilllv1svalArray[i], SkillLvs.skilllv6svalArray[i], SkillLvs.skilllv10svalArray[i]));
                 }
             });
+            var SCPSSLC = new Thread(ServantClassPassiveSkillSvalListCheck);
+            SCPSSLC.Start();
         }
 
         private void ServantBasicInformationCheck()
@@ -1145,7 +1147,13 @@ namespace FGOSBIAReloaded
                     where ((JObject) functmp)["id"].ToString() == skfuncidtmp
                     select JObject.Parse(functmp.ToString())
                     into mstFuncobjtmp
-                    select mstFuncobjtmp["popupText"].ToString()).ToArray();
+                    select mstFuncobjtmp["popupText"].ToString().Replace("チャージ", "Charge")
+                        .Replace("クリティカル", "Critical").Replace("ダメージ", "Damage").Replace("クイック", "Quick")
+                        .Replace("アーツ", "Arts").Replace("バスター", "Buster").Replace("スター", "Star")
+                        .Replace("ダウン", "Down")
+                        .Replace("アップ", "UP").Replace("ガッツ", "ガッツ(战续)").Replace("スタン", "スタン(眩晕)")
+                        .Replace("やけど", "やけど(灼伤)").Replace("アタック", "Attack").Replace("プラス", "Plus")
+                        .Replace("ターン", "Turn")).ToArray();
                 SkillLvs.TDFuncstrArray = svtTreasureDeviceFuncArray;
                 svtTreasureDeviceFunc = string.Join(", ", svtTreasureDeviceFuncArray);
                 SkillLvs.TDFuncstr = svtTreasureDeviceFunc;
@@ -1239,6 +1247,40 @@ namespace FGOSBIAReloaded
             catch (Exception)
             {
                 // ignored
+            }
+        }
+
+        private void ServantClassPassiveSkillSvalListCheck()
+        {
+            var svtClassPassiveIDListArray = SkillLvs.ClassPassiveID.Split(',');
+            var ClassPassiveSkillFuncName = "";
+            for (var i = 0; i <= svtClassPassiveIDListArray.Length - 1; i++)
+            {
+                foreach (var skilltmp in GlobalPathsAndDatas.mstSkillArray)
+                {
+                    if (((JObject) skilltmp)["id"].ToString() != svtClassPassiveIDListArray[i]) continue;
+                    var skillobjtmp = JObject.Parse(skilltmp.ToString());
+                    ClassPassiveSkillFuncName = skillobjtmp["name"].ToString().Replace("チャージ", "Charge")
+                        .Replace("クリティカル", "Critical").Replace("ダメージ", "Damage").Replace("クイック", "Quick")
+                        .Replace("アーツ", "Arts").Replace("バスター", "Buster").Replace("スター", "Star")
+                        .Replace("ダウン", "Down")
+                        .Replace("アップ", "UP").Replace("ガッツ", "ガッツ(战续)").Replace("スタン", "スタン(眩晕)")
+                        .Replace("やけど", "やけど(灼伤)").Replace("アタック", "Attack").Replace("プラス", "Plus")
+                        .Replace("ターン", "Turn");
+                }
+
+                SkillDetailCheck(svtClassPassiveIDListArray[i]);
+                for (var j = 0; j <= SkillLvs.SKLFuncstrArray.Length - 1; j++)
+                    if (SkillLvs.SKLFuncstrArray[j] == "" && SkillLvs.skilllv1svalArray[j].Count(c => c == ',') == 1 &&
+                        !SkillLvs.skilllv10svalArray[j].Contains("Hide"))
+                        SkillLvs.SKLFuncstrArray[j] = "HP回復";
+                var FuncStr = "\r\n" + string.Join("\r\n", SkillLvs.SKLFuncstrArray) + "\r\n";
+                var SvalStr = "\r\n" + string.Join("\r\n", SkillLvs.skilllv10svalArray) + "\r\n";
+                ClassPassiveFuncList.Dispatcher.Invoke(() =>
+                {
+                    ClassPassiveFuncList.Items.Add(new ClassPassiveSvalList(ClassPassiveSkillFuncName,
+                        svtClassPassiveIDListArray[i], FuncStr, SvalStr));
+                });
             }
         }
 
@@ -1525,6 +1567,8 @@ namespace FGOSBIAReloaded
                 TDFuncList.Items.Clear();
                 PickupEventList.Items.Clear();
                 PickupEndedEventList.Items.Clear();
+                ClassList.Items.Clear();
+                ClassPassiveFuncList.Items.Clear();
                 RemindText.Text = "";
                 Title = "FGO从者基础信息解析";
             });
@@ -1596,7 +1640,13 @@ namespace FGOSBIAReloaded
                             where ((JObject) functmp)["id"].ToString() == skfuncidtmp
                             select JObject.Parse(functmp.ToString())
                             into mstFuncobjtmp
-                            select mstFuncobjtmp["popupText"].ToString());
+                            select mstFuncobjtmp["popupText"].ToString().Replace("チャージ", "Charge")
+                                .Replace("クリティカル", "Critical").Replace("ダメージ", "Damage").Replace("クイック", "Quick")
+                                .Replace("アーツ", "Arts").Replace("バスター", "Buster").Replace("スター", "Star")
+                                .Replace("ダウン", "Down")
+                                .Replace("アップ", "UP").Replace("ガッツ", "ガッツ(战续)").Replace("スタン", "スタン(眩晕)")
+                                .Replace("やけど", "やけど(灼伤)").Replace("アタック", "Attack").Replace("プラス", "Plus")
+                                .Replace("ターン", "Turn"));
                     }
                 }
 
@@ -2522,7 +2572,7 @@ namespace FGOSBIAReloaded
                 jibantext3.Text = "〇 危险代码注入 EX：\r\n为了规避掉一些奇怪的问题就写了很多奇怪的代码(我自己也看不太懂,直接百度233).";
                 jibantext4.Text = "〇 共享安乐 B+：\r\n这个就没啥好解释了((((\r\n胡诌的技能.";
                 jibantext5.Text = "兜率天·極楽曼荼羅 (トゥシタ·ヘブンズフィールド):\r\n自己比较喜欢杀生院的宝具名,于是查了Wiki随便按样式编了一个名字.(好中二啊orz)";
-                jibantext6.Text = "为什么选择Foreigner是因为感觉逼格比较高(WinForm版程序的一设是Caster).\r\n或许可以给自己设置一个3破改变宝具名称,给自己融合一个外神x.";
+                jibantext6.Text = "为什么选择Foreigner是因为感觉逼格比较高(WinForm版程序的一设是Caster).\r\n或许可以给自己设置一个3破改变宝具名称x.";
                 jibantext7.Text = "希望有缘人能够重写本烂程序.\r\n                           ---作者记";
             });
         }
@@ -2547,6 +2597,22 @@ namespace FGOSBIAReloaded
                 SkillSvallv1 = v2;
                 SkillSvallv6 = v3;
                 SkillSvallv10 = v4;
+            }
+        }
+
+        private struct ClassPassiveSvalList
+        {
+            public string ClassPassiveName { get; }
+            public string ClassPassiveID { get; }
+            public string ClassPassiveFuncName { get; }
+            public string ClassPassiveFuncSval { get; }
+
+            public ClassPassiveSvalList(string v1, string v2, string v3, string v4) : this()
+            {
+                ClassPassiveName = v1;
+                ClassPassiveID = v2;
+                ClassPassiveFuncName = v3;
+                ClassPassiveFuncSval = v4;
             }
         }
 

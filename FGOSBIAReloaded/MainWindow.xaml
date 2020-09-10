@@ -643,6 +643,38 @@
                         </ListView>
                     </Grid>
                 </TabItem>
+                <TabItem Header="职介技能" FontFamily="Microsoft JhengHei UI">
+                    <TabItem.Background>
+                        <SolidColorBrush Color="#FF333333" Opacity="0.2" />
+                    </TabItem.Background>
+                    <Grid Margin="0,0,0,0">
+                        <Label Content="注:&#13;此处显示职介技能的详细数值,按照技能进行分类,如果一个技能有多个效果则会换行显示." HorizontalAlignment="Left" Height="52" VerticalAlignment="Top"
+                               Width="485"
+                               FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
+                               Margin="2,-1,0,0" FontWeight="Bold" />
+                        <Label Content="具体数值:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top"
+                               Width="97"
+                               FontFamily="Microsoft JhengHei UI" FontSize="14" Foreground="#FF333333"
+                               Margin="0,32,0,0" FontWeight="Bold" />
+                        <ListView x:Name="ClassPassiveFuncList" Margin="5,59,5,2" Foreground="#FF737373" FontSize="9.5">
+                            <ListView.Background>
+                                <SolidColorBrush Color="White" Opacity="0.4" />
+                            </ListView.Background>
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Header="职介技能" Width="100"
+                                                    DisplayMemberBinding="{Binding ClassPassiveName}" />
+                                    <GridViewColumn Header="ID" Width="60"
+                                                    DisplayMemberBinding="{Binding ClassPassiveID}" />
+                                    <GridViewColumn Header="效果名称" Width="160"
+                                                    DisplayMemberBinding="{Binding ClassPassiveFuncName}" />
+                                    <GridViewColumn Header="数值" Width="160"
+                                                    DisplayMemberBinding="{Binding ClassPassiveFuncSval}" />
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
+                    </Grid>
+                </TabItem>
                 <TabItem Header="技能1" FontFamily="Microsoft JhengHei UI">
                     <TabItem.Background>
                         <SolidColorBrush Color="#FF333333" Opacity="0.2" />
