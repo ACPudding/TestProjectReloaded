@@ -1207,6 +1207,13 @@
                         <Label Content="宝具/技能描述按照Buff换行" HorizontalAlignment="Left" Height="26"
                                Margin="35,126,0,0" VerticalAlignment="Top" Width="203" Foreground="#FF333333"
                                FontFamily="Microsoft JhengHei UI" FontSize="10" />
+                        <CheckBox x:Name="ToggleBuffFuncTranslate" Content="" HorizontalAlignment="Left" Height="17"
+                                  Margin="17,152,0,0" VerticalAlignment="Top" Width="116" Foreground="LightGray"
+                                  FontFamily="Microsoft JhengHei UI" FontSize="9"
+                                  ToolTip="勾选此项时,技能与宝具的具体数值的效果名称会进行翻译,不勾选则直接显示原文." />
+                        <Label Content="翻译部分Buff名称" HorizontalAlignment="Left" Height="26"
+                               Margin="35,150,0,0" VerticalAlignment="Top" Width="203" Foreground="#FF333333"
+                               FontFamily="Microsoft JhengHei UI" FontSize="10" />
                     </Grid>
                 </TabItem>
                 <TabItem Header="关于" FontFamily="Microsoft JhengHei UI">
