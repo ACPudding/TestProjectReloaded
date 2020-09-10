@@ -648,7 +648,8 @@
                         <SolidColorBrush Color="#FF333333" Opacity="0.2" />
                     </TabItem.Background>
                     <Grid Margin="0,0,0,0">
-                        <Label Content="注:&#13;此处显示职介技能的详细数值,按照技能进行分类,如果一个技能有多个效果则会换行显示." HorizontalAlignment="Left" Height="52" VerticalAlignment="Top"
+                        <Label Content="注:&#13;此处显示职介技能的详细数值,按照技能进行分类,如果一个技能有多个效果则会换行显示." HorizontalAlignment="Left"
+                               Height="52" VerticalAlignment="Top"
                                Width="485"
                                FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
                                Margin="2,-1,0,0" FontWeight="Bold" />
@@ -1124,11 +1125,11 @@
                             </ListView.Background>
                             <ListView.View>
                                 <GridView>
-                                    <GridViewColumn Header="职介名称(ID)" Width="101"
+                                    <GridViewColumn Header="职介名称(ID)" Width="140"
                                                     DisplayMemberBinding="{Binding ClassName}" />
-                                    <GridViewColumn Header="Weak职介(红字)" Width="190"
+                                    <GridViewColumn Header="Weak职介(红字)" Width="170"
                                                     DisplayMemberBinding="{Binding WeakClass}" />
-                                    <GridViewColumn Header="Resist职介(蓝字)" Width="190"
+                                    <GridViewColumn Header="Resist职介(蓝字)" Width="170"
                                                     DisplayMemberBinding="{Binding ResistClass}" />
                                 </GridView>
                             </ListView.View>

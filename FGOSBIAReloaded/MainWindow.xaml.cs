@@ -1254,6 +1254,7 @@ namespace FGOSBIAReloaded
         {
             var svtClassPassiveIDListArray = SkillLvs.ClassPassiveID.Split(',');
             var ClassPassiveSkillFuncName = "";
+            var SvalStr = "";
             for (var i = 0; i <= svtClassPassiveIDListArray.Length - 1; i++)
             {
                 foreach (var skilltmp in GlobalPathsAndDatas.mstSkillArray)
@@ -1275,12 +1276,19 @@ namespace FGOSBIAReloaded
                         !SkillLvs.skilllv10svalArray[j].Contains("Hide"))
                         SkillLvs.SKLFuncstrArray[j] = "HP回復";
                 var FuncStr = "\r\n" + string.Join("\r\n", SkillLvs.SKLFuncstrArray) + "\r\n";
-                var SvalStr = "\r\n" + string.Join("\r\n", SkillLvs.skilllv10svalArray) + "\r\n";
-                ClassPassiveFuncList.Dispatcher.Invoke(() =>
+                if (SkillLvs.skilllv10svalArray == null)
                 {
-                    ClassPassiveFuncList.Items.Add(new ClassPassiveSvalList(ClassPassiveSkillFuncName,
-                        svtClassPassiveIDListArray[i], FuncStr, SvalStr));
-                });
+                    SvalStr = "\r\n";
+                }
+                else
+                {
+                    SvalStr = "\r\n" + string.Join("\r\n", SkillLvs.skilllv10svalArray) + "\r\n";
+                    ClassPassiveFuncList.Dispatcher.Invoke(() =>
+                    {
+                        ClassPassiveFuncList.Items.Add(new ClassPassiveSvalList(ClassPassiveSkillFuncName,
+                            svtClassPassiveIDListArray[i], FuncStr, SvalStr));
+                    });
+                }
             }
         }
 
