@@ -96,5 +96,6 @@ namespace FGOSBIAReloaded.Properties
         public static DateTime StartTime;
         public static string NewerVersion;
         public static MessageBoxResult SuperMsgBoxRes;
+        public static string TranslationList;
     }
 }

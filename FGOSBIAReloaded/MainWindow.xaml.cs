@@ -151,6 +151,11 @@ namespace FGOSBIAReloaded
                 }
             }
 
+            ToggleBuffFuncTranslate.Dispatcher.Invoke(() =>
+            {
+                if (ToggleBuffFuncTranslate.IsChecked == true)
+                    GlobalPathsAndDatas.TranslationList = HttpRequest.GetBuffTranslationList();
+            });
             SCAC.Start();
             SBIC.Start();
             SCIC.Start();
@@ -1153,13 +1158,7 @@ namespace FGOSBIAReloaded
                         where ((JObject) functmp)["id"].ToString() == skfuncidtmp
                         select JObject.Parse(functmp.ToString())
                         into mstFuncobjtmp
-                        select mstFuncobjtmp["popupText"].ToString().Replace("チャージ", "Charge")
-                            .Replace("クリティカル", "Critical").Replace("ダメージ", "Damage").Replace("クイック", "Quick")
-                            .Replace("アーツ", "Arts").Replace("バスター", "Buster").Replace("スター", "Star")
-                            .Replace("ダウン", "Down")
-                            .Replace("アップ", "UP").Replace("ガッツ", "ガッツ(战续)").Replace("スタン", "スタン(眩晕)")
-                            .Replace("やけど", "やけど(灼伤)").Replace("アタック", "Attack").Replace("プラス", "Plus")
-                            .Replace("ターン", "Turn")).ToArray();
+                        select TranslateBuff(mstFuncobjtmp["popupText"].ToString())).ToArray();
                 else
                     svtTreasureDeviceFuncArray = (from skfuncidtmp in svtTreasureDeviceFuncIDArray
                         from functmp in GlobalPathsAndDatas.mstFuncArray
@@ -1209,6 +1208,36 @@ namespace FGOSBIAReloaded
             catch (Exception)
             {
                 // ignored
+            }
+        }
+
+        private string TranslateBuff(string buffname)
+        {
+            try
+            {
+                var TranslationListArray = GlobalPathsAndDatas.TranslationList.Replace("\r\n", "").Split('|');
+                var TranslationListFullArray = new string[TranslationListArray.Length][];
+                for (var i = 0; i < TranslationListArray.Length; i++)
+                {
+                    var TempSplit2 = TranslationListArray[i].Split(',');
+                    TranslationListFullArray[i] = new string[TempSplit2.Length];
+                    for (var j = 0; j < TempSplit2.Length; j++) TranslationListFullArray[i][j] = TempSplit2[j];
+                }
+
+                for (var k = 0; k < TranslationListArray.Length; k++)
+                    if (buffname.Contains(TranslationListFullArray[k][0]))
+                        buffname = buffname.Replace(TranslationListFullArray[k][0], TranslationListFullArray[k][1]);
+                return buffname;
+            }
+            catch (Exception e)
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    MessageBox.Show(
+                        Application.Current.MainWindow, "翻译列表损坏.\r\n" + e, "错误", MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+                });
+                return buffname;
             }
         }
 
@@ -1279,16 +1308,9 @@ namespace FGOSBIAReloaded
                 {
                     if (((JObject) skilltmp)["id"].ToString() != svtClassPassiveIDListArray[i]) continue;
                     var skillobjtmp = JObject.Parse(skilltmp.ToString());
-                    if (NeedTranslate)
-                        ClassPassiveSkillFuncName = skillobjtmp["name"].ToString().Replace("チャージ", "Charge")
-                            .Replace("クリティカル", "Critical").Replace("ダメージ", "Damage").Replace("クイック", "Quick")
-                            .Replace("アーツ", "Arts").Replace("バスター", "Buster").Replace("スター", "Star")
-                            .Replace("ダウン", "Down")
-                            .Replace("アップ", "UP").Replace("ガッツ", "ガッツ(战续)").Replace("スタン", "スタン(眩晕)")
-                            .Replace("やけど", "やけど(灼伤)").Replace("アタック", "Attack").Replace("プラス", "Plus")
-                            .Replace("ターン", "Turn");
-                    else
-                        ClassPassiveSkillFuncName = skillobjtmp["name"].ToString();
+                    ClassPassiveSkillFuncName = NeedTranslate
+                        ? TranslateBuff(skillobjtmp["name"].ToString())
+                        : skillobjtmp["name"].ToString();
                 }
 
                 SkillDetailCheck(svtClassPassiveIDListArray[i]);
@@ -1671,13 +1693,7 @@ namespace FGOSBIAReloaded
                                 where ((JObject) functmp)["id"].ToString() == skfuncidtmp
                                 select JObject.Parse(functmp.ToString())
                                 into mstFuncobjtmp
-                                select mstFuncobjtmp["popupText"].ToString().Replace("チャージ", "Charge")
-                                    .Replace("クリティカル", "Critical").Replace("ダメージ", "Damage").Replace("クイック", "Quick")
-                                    .Replace("アーツ", "Arts").Replace("バスター", "Buster").Replace("スター", "Star")
-                                    .Replace("ダウン", "Down")
-                                    .Replace("アップ", "UP").Replace("ガッツ", "ガッツ(战续)").Replace("スタン", "スタン(眩晕)")
-                                    .Replace("やけど", "やけど(灼伤)").Replace("アタック", "Attack").Replace("プラス", "Plus")
-                                    .Replace("ターン", "Turn"));
+                                select TranslateBuff(mstFuncobjtmp["popupText"].ToString()));
                         else
                             svtSKFuncList.AddRange(from skfuncidtmp in svtSKFuncIDArray
                                 from functmp in GlobalPathsAndDatas.mstFuncArray
