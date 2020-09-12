@@ -1294,44 +1294,52 @@ namespace FGOSBIAReloaded
 
         private void ServantClassPassiveSkillSvalListCheck()
         {
-            var svtClassPassiveIDListArray = SkillLvs.ClassPassiveID.Split(',');
-            var ClassPassiveSkillFuncName = "";
-            var SvalStr = "";
-            var NeedTranslate = false;
-            ToggleBuffFuncTranslate.Dispatcher.Invoke(() =>
+            try
             {
-                if (ToggleBuffFuncTranslate.IsChecked == true) NeedTranslate = true;
-            });
-            for (var i = 0; i <= svtClassPassiveIDListArray.Length - 1; i++)
-            {
-                foreach (var skilltmp in GlobalPathsAndDatas.mstSkillArray)
+                var svtClassPassiveIDListArray = SkillLvs.ClassPassiveID.Split(',');
+                var ClassPassiveSkillFuncName = "";
+                var SvalStr = "";
+                var NeedTranslate = false;
+                ToggleBuffFuncTranslate.Dispatcher.Invoke(() =>
                 {
-                    if (((JObject) skilltmp)["id"].ToString() != svtClassPassiveIDListArray[i]) continue;
-                    var skillobjtmp = JObject.Parse(skilltmp.ToString());
-                    ClassPassiveSkillFuncName = NeedTranslate
-                        ? TranslateBuff(skillobjtmp["name"].ToString())
-                        : skillobjtmp["name"].ToString();
-                }
-
-                SkillDetailCheck(svtClassPassiveIDListArray[i]);
-                for (var j = 0; j <= SkillLvs.SKLFuncstrArray.Length - 1; j++)
-                    if (SkillLvs.SKLFuncstrArray[j] == "" && SkillLvs.skilllv1svalArray[j].Count(c => c == ',') == 1 &&
-                        !SkillLvs.skilllv10svalArray[j].Contains("Hide"))
-                        SkillLvs.SKLFuncstrArray[j] = "HP回復";
-                var FuncStr = "\r\n" + string.Join("\r\n", SkillLvs.SKLFuncstrArray) + "\r\n";
-                if (SkillLvs.skilllv10svalArray == null)
+                    if (ToggleBuffFuncTranslate.IsChecked == true) NeedTranslate = true;
+                });
+                for (var i = 0; i <= svtClassPassiveIDListArray.Length - 1; i++)
                 {
-                    SvalStr = "\r\n";
-                }
-                else
-                {
-                    SvalStr = "\r\n" + string.Join("\r\n", SkillLvs.skilllv10svalArray) + "\r\n";
-                    ClassPassiveFuncList.Dispatcher.Invoke(() =>
+                    foreach (var skilltmp in GlobalPathsAndDatas.mstSkillArray)
                     {
-                        ClassPassiveFuncList.Items.Add(new ClassPassiveSvalList(ClassPassiveSkillFuncName,
-                            svtClassPassiveIDListArray[i], FuncStr, SvalStr));
-                    });
+                        if (((JObject) skilltmp)["id"].ToString() != svtClassPassiveIDListArray[i]) continue;
+                        var skillobjtmp = JObject.Parse(skilltmp.ToString());
+                        ClassPassiveSkillFuncName = NeedTranslate
+                            ? TranslateBuff(skillobjtmp["name"].ToString())
+                            : skillobjtmp["name"].ToString();
+                    }
+
+                    SkillDetailCheck(svtClassPassiveIDListArray[i]);
+                    for (var j = 0; j <= SkillLvs.SKLFuncstrArray.Length - 1; j++)
+                        if (SkillLvs.SKLFuncstrArray[j] == "" &&
+                            SkillLvs.skilllv1svalArray[j].Count(c => c == ',') == 1 &&
+                            !SkillLvs.skilllv10svalArray[j].Contains("Hide"))
+                            SkillLvs.SKLFuncstrArray[j] = "HP回復";
+                    var FuncStr = "\r\n" + string.Join("\r\n", SkillLvs.SKLFuncstrArray) + "\r\n";
+                    if (SkillLvs.skilllv10svalArray == null)
+                    {
+                        SvalStr = "\r\n";
+                    }
+                    else
+                    {
+                        SvalStr = "\r\n" + string.Join("\r\n", SkillLvs.skilllv10svalArray) + "\r\n";
+                        ClassPassiveFuncList.Dispatcher.Invoke(() =>
+                        {
+                            ClassPassiveFuncList.Items.Add(new ClassPassiveSvalList(ClassPassiveSkillFuncName,
+                                svtClassPassiveIDListArray[i], FuncStr, SvalStr));
+                        });
+                    }
                 }
+            }
+            catch (Exception)
+            {
+                // ignored
             }
         }
 
