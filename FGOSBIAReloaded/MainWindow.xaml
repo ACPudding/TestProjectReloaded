@@ -307,7 +307,52 @@
                                VerticalAlignment="Top"
                                Width="202" FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
                                Margin="290,313,0,0" HorizontalContentAlignment="Center" FontWeight="Bold" />
-
+                    </Grid>
+                </TabItem>
+                <TabItem Header="成长曲线" FontFamily="Microsoft JhengHei UI">
+                    <TabItem.Background>
+                        <SolidColorBrush Color="#FF333333" Opacity="0.2" />
+                    </TabItem.Background>
+                    <Grid Margin="0,0,0,0">
+                        <Label Content="注:&#13;本页仅供显示从者成长的曲线图形状,红色为ATK曲线,蓝色为HP曲线,目前仅能实现显示功能."
+                               HorizontalAlignment="Left" Height="38" VerticalAlignment="Top"
+                               Width="492" FontFamily="Microsoft JhengHei UI" FontSize="11.5" Foreground="#FF333333"
+                               FontWeight="Bold" />
+                        <Canvas x:Name="chartCanvas" HorizontalAlignment="Left" Height="352" VerticalAlignment="Top"
+                                Width="472" Margin="10,10,0,0">
+                            <Line x:Name="x_axis" Stroke="Black" StrokeThickness="2" X1="0" Y1="352" X2="472" Y2="352"
+                                  StrokeStartLineCap="Round" />
+                            <Line x:Name="y_axis" Stroke="Black" StrokeThickness="2" X1="0" Y1="352" X2="0" Y2="60"
+                                  StrokeStartLineCap="Round" />
+                            <Path x:Name="x_axisArrow" Fill="Black">
+                                <Path.Data>
+                                    <PathGeometry>
+                                        <PathFigure StartPoint="472,347" IsClosed="True">
+                                            <LineSegment Point="472,356" />
+                                            <LineSegment Point="482,352" />
+                                        </PathFigure>
+                                    </PathGeometry>
+                                </Path.Data>
+                            </Path>
+                            <Path x:Name="y_axisArrow" Fill="Black">
+                                <Path.Data>
+                                    <PathGeometry>
+                                        <PathFigure StartPoint="-4,60" IsClosed="True">
+                                            <LineSegment Point="4,60" />
+                                            <LineSegment Point="0,50" />
+                                        </PathFigure>
+                                    </PathGeometry>
+                                </Path.Data>
+                            </Path>
+                            <TextBlock x:Name="x_label" Text="lv" Canvas.Left="455" Canvas.Top="325"
+                                                              FontFamily="Microsoft JhengHei" FontSize="14"/>
+                            
+                            <TextBlock x:Name="y_label" Text="max" Canvas.Left="-10" Canvas.Top="30"
+                                                             FontFamily="Microsoft JhengHei" FontSize="14"/>
+                            
+                            <TextBlock x:Name="o_label" Text="0" Canvas.Left="-15" Canvas.Top="346"
+                                                           FontFamily="Microsoft JhengHei UI" FontSize="14"/>
+                        </Canvas>
                     </Grid>
                 </TabItem>
                 <TabItem Header="升级材料" FontFamily="Microsoft JhengHei UI">

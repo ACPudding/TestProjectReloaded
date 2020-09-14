@@ -64,6 +64,8 @@ namespace FGOSBIAReloaded.Properties
         public static string mstClass = File.ReadAllText(gamedata.FullName + "decrypted_masterdata/" + "mstClass");
         public static string mstClassRelation = File.ReadAllText(gamedata.FullName + "decrypted_masterdata/" + "mstClassRelation");
         public static string mstGift = File.ReadAllText(gamedata.FullName + "decrypted_masterdata/" + "mstGift");
+        public static string mstSvtExp = File.ReadAllText(gamedata.FullName + "decrypted_masterdata/" + "mstSvtExp");
+        public static JArray mstSvtExpArray = (JArray)JsonConvert.DeserializeObject(mstSvtExp);
         public static JArray mstGiftArray = (JArray)JsonConvert.DeserializeObject(mstGift);
         public static JArray mstClassRelationArray = (JArray)JsonConvert.DeserializeObject(mstClassRelation);
         public static JArray mstClassArray = (JArray)JsonConvert.DeserializeObject(mstClass);
@@ -99,5 +101,8 @@ namespace FGOSBIAReloaded.Properties
         public static string NewerVersion;
         public static MessageBoxResult SuperMsgBoxRes;
         public static string TranslationList;
+        public static int basichp;
+        public static int basicatk;
+        public static string CurveType;
     }
 }

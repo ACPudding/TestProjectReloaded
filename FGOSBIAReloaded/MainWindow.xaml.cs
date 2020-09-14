@@ -10,6 +10,8 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
+using System.Windows.Media;
+using System.Windows.Shapes;
 using FGOSBIAReloaded.Properties;
 using MahApps.Metro.Controls;
 using Newtonsoft.Json;
@@ -23,6 +25,9 @@ namespace FGOSBIAReloaded
     /// </summary>
     public partial class MainWindow : MetroWindow
     {
+        private Polyline platk;
+        private Polyline plhp;
+
         public MainWindow()
         {
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
@@ -251,6 +256,8 @@ namespace FGOSBIAReloaded
                     svtNPDamageType = mstTDobjtmp["effectFlag"].ToString().Replace("0", "辅助宝具")
                         .Replace("1", "全体宝具").Replace("2", "单体宝具");
                     nptype.Dispatcher.Invoke(() => { nptype.Text = svtNPDamageType; });
+                    var DSSCL = new Thread(DrawServantStrengthenCurveLine);
+                    DSSCL.Start(GlobalPathsAndDatas.CurveType);
 
                     if (svtNPDamageType == "辅助宝具")
                     {
@@ -591,6 +598,9 @@ namespace FGOSBIAReloaded
                 var svthpMax = "";
                 var svtatkBase = "";
                 var svtatkMax = "";
+                GlobalPathsAndDatas.basicatk = 0;
+                GlobalPathsAndDatas.basichp = 0;
+                GlobalPathsAndDatas.CurveType = "";
                 var svtcriticalWeight = "";
                 var svtpower = "";
                 var svtdefense = "";
@@ -626,6 +636,7 @@ namespace FGOSBIAReloaded
                         svtstarrate = mstSvtobjtmp["starRate"].ToString();
                         svtdeathrate = mstSvtobjtmp["deathRate"].ToString();
                         svtcollectionid = mstSvtobjtmp["collectionNo"].ToString();
+                        GlobalPathsAndDatas.CurveType = mstSvtobjtmp["expType"].ToString();
                         svtIndividualityInput = mstSvtobjtmp["individuality"].ToString().Replace("\n", "")
                             .Replace("\t", "")
                             .Replace("\r", "").Replace(" ", "").Replace("[", "").Replace("]", "");
@@ -673,6 +684,8 @@ namespace FGOSBIAReloaded
                         basicatk.Text = svtatkBase;
                         svtatkMax = mstsvtLimitobjtmp["atkMax"].ToString();
                         maxatk.Text = svtatkMax;
+                        GlobalPathsAndDatas.basicatk = Convert.ToInt32(svtatkBase);
+                        GlobalPathsAndDatas.basichp = Convert.ToInt32(svthpBase);
                         svtcriticalWeight = mstsvtLimitobjtmp["criticalWeight"].ToString();
                         jixing.Text = svtcriticalWeight;
                         svtpower = mstsvtLimitobjtmp["power"].ToString();
@@ -1628,22 +1641,31 @@ namespace FGOSBIAReloaded
                 Skill1FuncList.Items.Clear();
                 Skill2FuncList.Items.Clear();
                 Skill3FuncList.Items.Clear();
-                PickupQuestList.Items.Clear();
                 LimitCombineItems.Items.Clear();
                 SkillCombineItems.Items.Clear();
                 TDFuncList.Items.Clear();
-                PickupEventList.Items.Clear();
-                PickupEndedEventList.Items.Clear();
-                ClassList.Items.Clear();
                 ClassPassiveFuncList.Items.Clear();
                 RemindText.Text = "";
                 Title = "FGO从者基础信息解析";
+                chartCanvas.Children.Remove(plhp);
+                chartCanvas.Children.Remove(platk);
             });
             IsSk1Strengthened.Dispatcher.Invoke(() => { IsSk1Strengthened.Text = "×"; });
             IsSk2Strengthened.Dispatcher.Invoke(() => { IsSk2Strengthened.Text = "×"; });
             IsSk3Strengthened.Dispatcher.Invoke(() => { IsSk3Strengthened.Text = "×"; });
             IsNPStrengthened.Dispatcher.Invoke(() => { IsNPStrengthened.Text = "×"; });
             GC.Collect();
+        }
+
+        private void ClearLists()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                PickupEventList.Items.Clear();
+                PickupEndedEventList.Items.Clear();
+                ClassList.Items.Clear();
+                PickupQuestList.Items.Clear();
+            });
         }
 
         private void SkillDetailCheck(string sklid)
@@ -1730,6 +1752,8 @@ namespace FGOSBIAReloaded
         private void Button_Click_2(object sender, RoutedEventArgs e)
         {
             var clean = new Thread(ClearTexts);
+            var clean2 = new Thread(ClearLists);
+            clean2.Start();
             clean.Start();
         }
 
@@ -2040,6 +2064,7 @@ namespace FGOSBIAReloaded
             var LoadData = new Thread(LoadorRenewCommonDatas.ReloadData);
             LoadData.IsBackground = true;
             VersionLabel.Content = CommonStrings.Version;
+            DrawScale();
             if (!Directory.Exists(gamedata.FullName))
             {
                 Dispatcher.Invoke(() =>
@@ -2575,6 +2600,116 @@ namespace FGOSBIAReloaded
             }
 
             GC.Collect();
+        }
+
+        private void AddChart(int[] Array)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                if (Array == null) throw new ArgumentNullException(nameof(Array));
+                var xmin = 0.0;
+                var xmax = 100.0;
+                var ymin = 0.0;
+                var ymax = 0.0;
+                var AdjustHPCurve = new int[101];
+                var AdjustATKCurve = new int[101];
+                for (var lv = 0; lv < 101; lv++)
+                {
+                    AdjustHPCurve[lv] = GlobalPathsAndDatas.basichp + Array[lv] * GlobalPathsAndDatas.basichp / 150;
+                    AdjustATKCurve[lv] = GlobalPathsAndDatas.basicatk + Array[lv] * GlobalPathsAndDatas.basicatk / 150;
+                }
+
+                chartCanvas.Children.Remove(plhp);
+                chartCanvas.Children.Remove(platk);
+                ymin = 0.0;
+                ymax = Math.Max(AdjustATKCurve[100], AdjustHPCurve[100]);
+                // Draw ATK curve:
+                platk = new Polyline {Stroke = Brushes.Red, StrokeThickness = 2};
+                for (var i = 1; i < 101; i++)
+                {
+                    double x = i;
+                    double y = AdjustATKCurve[i];
+                    var atklinep = CurvePoint(new Point(x, y), xmin, xmax, ymin, ymax);
+                    platk.Points.Add(atklinep);
+                }
+
+                chartCanvas.Children.Add(platk);
+                // Draw HP curve:
+                plhp = new Polyline {Stroke = Brushes.Blue, StrokeThickness = 2};
+                for (var i = 1; i < 101; i++)
+                {
+                    double x = i;
+                    double y = AdjustHPCurve[i];
+                    var hplinep = CurvePoint(new Point(x, y), xmin, xmax, ymin, ymax);
+                    plhp.Points.Add(hplinep);
+                }
+
+                chartCanvas.Children.Add(plhp);
+            });
+        }
+
+        private Point CurvePoint(Point pt, double xmin, double xmax, double ymin, double ymax)
+        {
+            var result = new Point
+            {
+                X = (pt.X - xmin) * chartCanvas.Width * 0.95 / (xmax - xmin),
+                Y = chartCanvas.Height - (pt.Y - ymin) * chartCanvas.Height * 0.80
+                    / (ymax - ymin)
+            };
+            return result;
+        }
+
+        private void DrawScale()
+        {
+            for (var i = 0; i < 101; i++)
+            {
+                var x_scale = new Line();
+                x_scale.StrokeEndLineCap = PenLineCap.Triangle;
+                x_scale.StrokeThickness = 1;
+                x_scale.Stroke = new SolidColorBrush(Color.FromRgb(0, 0, 0));
+
+                x_scale.X1 = 0 + i * 4.5;
+                x_scale.X2 = x_scale.X1;
+
+                x_scale.Y1 = 352;
+                if (i % 5 == 0 && i != 0)
+                {
+                    x_scale.StrokeThickness = 2;
+                    x_scale.Y2 = x_scale.Y1 - 8;
+                }
+                else
+                {
+                    x_scale.Y2 = x_scale.Y1 - 4;
+                }
+
+                Dispatcher.Invoke(() => { chartCanvas.Children.Add(x_scale); });
+            }
+        }
+
+        private int[] GetSvtCurveData(object TypeID)
+        {
+            var TempData = new int[101];
+            foreach (var mstSvtExptmp in GlobalPathsAndDatas.mstSvtExpArray)
+            {
+                if (((JObject) mstSvtExptmp)["type"].ToString() != TypeID.ToString()) continue;
+                TempData[Convert.ToInt32(((JObject) mstSvtExptmp)["lv"])] =
+                    Convert.ToInt32(((JObject) mstSvtExptmp)["curve"].ToString());
+            }
+
+            return TempData;
+        }
+
+        private void DrawServantStrengthenCurveLine(object TypeID)
+        {
+            try
+            {
+                var BaseCurveData = GetSvtCurveData(TypeID);
+                AddChart(BaseCurveData);
+            }
+            catch (Exception)
+            {
+                //ignore
+            }
         }
 
         public void CheckSvtIndividuality(object Input)
