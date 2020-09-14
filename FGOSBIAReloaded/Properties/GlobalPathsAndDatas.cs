@@ -63,6 +63,8 @@ namespace FGOSBIAReloaded.Properties
         public static string mstEvent = File.ReadAllText(gamedata.FullName + "decrypted_masterdata/" + "mstEvent");
         public static string mstClass = File.ReadAllText(gamedata.FullName + "decrypted_masterdata/" + "mstClass");
         public static string mstClassRelation = File.ReadAllText(gamedata.FullName + "decrypted_masterdata/" + "mstClassRelation");
+        public static string mstGift = File.ReadAllText(gamedata.FullName + "decrypted_masterdata/" + "mstGift");
+        public static JArray mstGiftArray = (JArray)JsonConvert.DeserializeObject(mstGift);
         public static JArray mstClassRelationArray = (JArray)JsonConvert.DeserializeObject(mstClassRelation);
         public static JArray mstClassArray = (JArray)JsonConvert.DeserializeObject(mstClass);
         public static JArray mstEventArray = (JArray)JsonConvert.DeserializeObject(mstEvent);

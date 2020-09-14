@@ -1094,11 +1094,11 @@
                                 <GridView>
                                     <GridViewColumn Header="关卡编号" Width="70"
                                                     DisplayMemberBinding="{Binding QuestNumber}" />
-                                    <GridViewColumn Header="关卡名称" Width="137"
+                                    <GridViewColumn Header="关卡名称" Width="170"
                                                     DisplayMemberBinding="{Binding QuestName}" />
-                                    <GridViewColumn Header="Start PickUP Time" Width="137"
+                                    <GridViewColumn Header="Start PickUP Time" Width="120"
                                                     DisplayMemberBinding="{Binding QuestStartTime}" />
-                                    <GridViewColumn Header="End PickUP Time" Width="137"
+                                    <GridViewColumn Header="End PickUP Time" Width="120"
                                                     DisplayMemberBinding="{Binding QuestEndTime}" />
                                 </GridView>
                             </ListView.View>

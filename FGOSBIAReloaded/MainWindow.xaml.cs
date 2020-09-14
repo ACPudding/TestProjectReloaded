@@ -964,6 +964,14 @@ namespace FGOSBIAReloaded
 
         private string CheckItemName(object ID)
         {
+            switch (Convert.ToInt64(ID))
+            {
+                case 8:
+                    return "宝具强化";
+                case 9:
+                    return "技能强化";
+            }
+
             foreach (var mstItemtmp in GlobalPathsAndDatas.mstItemArray)
             {
                 if (((JObject) mstItemtmp)["id"].ToString() != ID.ToString()) continue;
@@ -2331,13 +2339,7 @@ namespace FGOSBIAReloaded
                     var TimeMinus = (DateTime.Now.Ticks - dateTimeStart.Ticks) / 10000000;
                     if (TimeMinus > QuestPUEndTimeStamp) continue;
                     questid = ((JObject) mstQuestPickup)["questId"].ToString();
-                    foreach (var mstQuest in GlobalPathsAndDatas.mstQuestArray)
-                    {
-                        if (((JObject) mstQuest)["id"].ToString() != questid) continue;
-                        QuestName = ((JObject) mstQuest)["name"].ToString();
-                        break;
-                    }
-
+                    QuestName = GetQuestNameAndType(questid);
                     var QuestPUStartTime = new TimeSpan(long.Parse(QuestPUStartTimeStamp + "0000000"));
                     var QuestPUEndTime = new TimeSpan(long.Parse(QuestPUEndTimeStamp + "0000000"));
                     var StartStr = Convert.ToString(dateTimeStart + QuestPUStartTime);
@@ -2364,6 +2366,72 @@ namespace FGOSBIAReloaded
             GC.Collect();
         }
 
+        private string GetQuestNameAndType(string questid)
+        {
+            var QuestName = "";
+            foreach (var mstQuest in GlobalPathsAndDatas.mstQuestArray)
+            {
+                if (((JObject) mstQuest)["id"].ToString() != questid) continue;
+                var CharaID = ((JObject) mstQuest)["charaIconId"].ToString();
+                try
+                {
+                    CharaID = CharaID.Substring(0, CharaID.Length - 1);
+                }
+                catch (Exception)
+                {
+                    //ignore
+                }
+
+                var TempName = ((JObject) mstQuest)["name"].ToString();
+                if (TempName.Length > 14) TempName = TempName.Insert(14, "\r\n");
+                QuestName = "\r\n" + TempName + "\r\n\r\nAP消耗: " + ((JObject) mstQuest)["actConsume"] + "   等级推荐: lv." +
+                            ((JObject) mstQuest)["recommendLv"] + "\r\n从者ID: " + CharaID + "\r\n";
+                if (((JObject) mstQuest)["giftId"].ToString() != "0")
+                {
+                    var giftid = ((JObject) mstQuest)["giftId"].ToString();
+                    QuestName += "任务奖励: " + CheckGiftNames(giftid) + "\r\n";
+                }
+                else
+                {
+                    var itemid = ((JObject) mstQuest)["giftIconId"].ToString();
+                    QuestName += "任务奖励: " + CheckItemName(itemid) + "\r\n";
+                }
+
+                break;
+            }
+
+            return QuestName;
+        }
+
+        private string CheckGiftNames(string giftid)
+        {
+            var giftids = "";
+            var giftquantities = "";
+            var giftNames = "";
+            foreach (var mstGifttmp in GlobalPathsAndDatas.mstGiftArray)
+            {
+                if (((JObject) mstGifttmp)["id"].ToString() != giftid) continue;
+                giftids += ((JObject) mstGifttmp)["objectId"] + ",";
+                giftquantities += ((JObject) mstGifttmp)["num"] + ",";
+            }
+
+            try
+            {
+                giftids = giftids.Substring(0, giftids.Length - 1);
+                giftquantities = giftquantities.Substring(0, giftquantities.Length - 1);
+                var giftidArray = giftids.Split(',');
+                var giftQuantityArray = giftquantities.Split(',');
+                for (var ii = 0; ii < giftidArray.Length; ii++)
+                    giftNames += CheckItemName(giftidArray[ii]) +
+                                 (giftQuantityArray[ii] == "0" ? "" : " x " + giftQuantityArray[ii]) + ",";
+                giftNames = giftNames.Substring(0, giftNames.Length - 1);
+                return giftNames;
+            }
+            catch (Exception)
+            {
+                return "Error Loading GiftNames.";
+            }
+        }
 
         private void Button_Click_Class(object sender, RoutedEventArgs e)
         {
@@ -2467,6 +2535,7 @@ namespace FGOSBIAReloaded
                     if (EventEndTimeStamp == 1893423600) continue;
                     var TimeMinus = (DateTime.Now.Ticks - dateTimeStart.Ticks) / 10000000;
                     EventName = ((JObject) mstEventtmp)["name"].ToString();
+                    if (EventName.Length > 40) EventName = EventName.Insert(40, "\r\n");
                     Eventid = ((JObject) mstEventtmp)["id"].ToString();
                     var EventEndTime = new TimeSpan(long.Parse(EventEndTimeStamp + "0000000"));
                     var EndStr = Convert.ToString(dateTimeStart + EventEndTime);
