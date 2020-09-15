@@ -101,7 +101,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="CheckNeededFiles.cs" />
     <Compile Include="LoadorRenewCommonDatas.cs" />
     <Compile Include="Properties\CommonStrings.cs" />
     <Compile Include="Properties\GlobalPathsAndDatas.cs" />

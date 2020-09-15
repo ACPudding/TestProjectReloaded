@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using FGOSBIAReloaded.Properties;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -9,111 +10,108 @@ namespace FGOSBIAReloaded
     {
         public static void ReloadData()
         {
-            GlobalPathsAndDatas.path = Directory.GetCurrentDirectory();
-            GlobalPathsAndDatas.gamedata = new DirectoryInfo(GlobalPathsAndDatas.path + @"\Android\masterdata\");
-            GlobalPathsAndDatas.folder = new DirectoryInfo(GlobalPathsAndDatas.path + @"\Android\");
-            GlobalPathsAndDatas.outputdir = new DirectoryInfo(GlobalPathsAndDatas.path + @"\Output\");
-            GlobalPathsAndDatas.mstSvt =
+            var mstSvt =
                 File.ReadAllText(GlobalPathsAndDatas.gamedata.FullName + "decrypted_masterdata/" + "mstSvt");
-            GlobalPathsAndDatas.mstSvtLimit =
+            var mstSvtLimit =
                 File.ReadAllText(GlobalPathsAndDatas.gamedata.FullName + "decrypted_masterdata/" + "mstSvtLimit");
-            GlobalPathsAndDatas.mstCv =
+            var mstCv =
                 File.ReadAllText(GlobalPathsAndDatas.gamedata.FullName + "decrypted_masterdata/" + "mstCv");
-            GlobalPathsAndDatas.mstIllustrator =
+            var mstIllustrator =
                 File.ReadAllText(GlobalPathsAndDatas.gamedata.FullName + "decrypted_masterdata/" + "mstIllustrator");
-            GlobalPathsAndDatas.mstSvtCard =
+            var mstSvtCard =
                 File.ReadAllText(GlobalPathsAndDatas.gamedata.FullName + "decrypted_masterdata/" + "mstSvtCard");
-            GlobalPathsAndDatas.mstSvtTreasureDevice =
+            var mstSvtTreasureDevice =
                 File.ReadAllText(GlobalPathsAndDatas.gamedata.FullName + "decrypted_masterdata/" +
                                  "mstSvtTreasureDevice");
-            GlobalPathsAndDatas.mstTreasureDevice =
+            var mstTreasureDevice =
                 File.ReadAllText(GlobalPathsAndDatas.gamedata.FullName + "decrypted_masterdata/" + "mstTreasureDevice");
-            GlobalPathsAndDatas.mstTreasureDeviceDetail =
+            var mstTreasureDeviceDetail =
                 File.ReadAllText(GlobalPathsAndDatas.gamedata.FullName + "decrypted_masterdata/" +
                                  "mstTreasureDeviceDetail");
-            GlobalPathsAndDatas.mstSkill =
+            var mstSkill =
                 File.ReadAllText(GlobalPathsAndDatas.gamedata.FullName + "decrypted_masterdata/" + "mstSkill");
-            GlobalPathsAndDatas.mstSvtSkill =
+            var mstSvtSkill =
                 File.ReadAllText(GlobalPathsAndDatas.gamedata.FullName + "decrypted_masterdata/" + "mstSvtSkill");
-            GlobalPathsAndDatas.mstSkillDetail =
+            var mstSkillDetail =
                 File.ReadAllText(GlobalPathsAndDatas.gamedata.FullName + "decrypted_masterdata/" + "mstSkillDetail");
-            GlobalPathsAndDatas.mstFunc =
+            var mstFunc =
                 File.ReadAllText(GlobalPathsAndDatas.gamedata.FullName + "decrypted_masterdata/" + "mstFunc");
-            GlobalPathsAndDatas.mstTreasureDeviceLv =
+            var mstTreasureDeviceLv =
                 File.ReadAllText(
                     GlobalPathsAndDatas.gamedata.FullName + "decrypted_masterdata/" + "mstTreasureDeviceLv");
-            GlobalPathsAndDatas.mstSvtComment =
+            var mstSvtComment =
                 File.ReadAllText(GlobalPathsAndDatas.gamedata.FullName + "decrypted_masterdata/" + "mstSvtComment");
-            GlobalPathsAndDatas.mstCombineLimit =
+            var mstCombineLimit =
                 File.ReadAllText(GlobalPathsAndDatas.gamedata.FullName + "decrypted_masterdata/" + "mstCombineLimit");
-            GlobalPathsAndDatas.mstCombineSkill =
+            var mstCombineSkill =
                 File.ReadAllText(GlobalPathsAndDatas.gamedata.FullName + "decrypted_masterdata/" + "mstCombineSkill");
-            GlobalPathsAndDatas.mstSkillLv =
+            var mstSkillLv =
                 File.ReadAllText(GlobalPathsAndDatas.gamedata.FullName + "decrypted_masterdata/" + "mstSkillLv");
-            GlobalPathsAndDatas.mstQuest =
+            var mstQuest =
                 File.ReadAllText(GlobalPathsAndDatas.gamedata.FullName + "decrypted_masterdata/" + "mstQuest");
-            GlobalPathsAndDatas.mstItem =
+            var mstItem =
                 File.ReadAllText(GlobalPathsAndDatas.gamedata.FullName + "decrypted_masterdata/" + "mstItem");
-            GlobalPathsAndDatas.mstQuestPickup =
+            var mstQuestPickup =
                 File.ReadAllText(GlobalPathsAndDatas.gamedata.FullName + "decrypted_masterdata/" + "mstQuestPickup");
-            GlobalPathsAndDatas.npcSvtFollower =
+            var npcSvtFollower =
                 File.ReadAllText(GlobalPathsAndDatas.gamedata.FullName + "decrypted_masterdata/" + "npcSvtFollower");
-            GlobalPathsAndDatas.mstEvent =
+            var mstEvent =
                 File.ReadAllText(GlobalPathsAndDatas.gamedata.FullName + "decrypted_masterdata/" + "mstEvent");
-            GlobalPathsAndDatas.mstClass =
+            var mstClass =
                 File.ReadAllText(GlobalPathsAndDatas.gamedata.FullName + "decrypted_masterdata/" + "mstClass");
-            GlobalPathsAndDatas.mstClassRelation =
+            var mstClassRelation =
                 File.ReadAllText(GlobalPathsAndDatas.gamedata.FullName + "decrypted_masterdata/" + "mstClassRelation");
-            GlobalPathsAndDatas.mstGift =
+            var mstGift =
                 File.ReadAllText(GlobalPathsAndDatas.gamedata.FullName + "decrypted_masterdata/" + "mstGift");
-            GlobalPathsAndDatas.mstSvtExp =
+            var mstSvtExp =
                 File.ReadAllText(GlobalPathsAndDatas.gamedata.FullName + "decrypted_masterdata/" + "mstSvtExp");
             GlobalPathsAndDatas.mstSvtExpArray =
-                (JArray)JsonConvert.DeserializeObject(GlobalPathsAndDatas.mstSvtExp);
+                (JArray)JsonConvert.DeserializeObject(mstSvtExp);
             GlobalPathsAndDatas.mstGiftArray =
-                (JArray)JsonConvert.DeserializeObject(GlobalPathsAndDatas.mstGift);
+                (JArray)JsonConvert.DeserializeObject(mstGift);
             GlobalPathsAndDatas.mstClassArray =
-                (JArray) JsonConvert.DeserializeObject(GlobalPathsAndDatas.mstClass);
+                (JArray) JsonConvert.DeserializeObject(mstClass);
             GlobalPathsAndDatas.mstClassRelationArray =
-                (JArray) JsonConvert.DeserializeObject(GlobalPathsAndDatas.mstClassRelation);
+                (JArray) JsonConvert.DeserializeObject(mstClassRelation);
             GlobalPathsAndDatas.mstEventArray =
-                (JArray) JsonConvert.DeserializeObject(GlobalPathsAndDatas.mstEvent);
+                (JArray) JsonConvert.DeserializeObject(mstEvent);
             GlobalPathsAndDatas.npcSvtFollowerArray =
-                (JArray) JsonConvert.DeserializeObject(GlobalPathsAndDatas.npcSvtFollower);
-            GlobalPathsAndDatas.mstQuestArray = (JArray) JsonConvert.DeserializeObject(GlobalPathsAndDatas.mstQuest);
-            GlobalPathsAndDatas.mstItemArray = (JArray) JsonConvert.DeserializeObject(GlobalPathsAndDatas.mstItem);
+                (JArray) JsonConvert.DeserializeObject(npcSvtFollower);
+            GlobalPathsAndDatas.mstQuestArray = (JArray) JsonConvert.DeserializeObject(mstQuest);
+            GlobalPathsAndDatas.mstItemArray = (JArray) JsonConvert.DeserializeObject(mstItem);
             GlobalPathsAndDatas.mstQuestPickupArray =
-                (JArray) JsonConvert.DeserializeObject(GlobalPathsAndDatas.mstQuestPickup);
+                (JArray) JsonConvert.DeserializeObject(mstQuestPickup);
             GlobalPathsAndDatas.mstCombineLimitArray =
-                (JArray) JsonConvert.DeserializeObject(GlobalPathsAndDatas.mstCombineLimit);
+                (JArray) JsonConvert.DeserializeObject(mstCombineLimit);
             GlobalPathsAndDatas.mstCombineSkillArray =
-                (JArray) JsonConvert.DeserializeObject(GlobalPathsAndDatas.mstCombineSkill);
+                (JArray) JsonConvert.DeserializeObject(mstCombineSkill);
             GlobalPathsAndDatas.mstSkillLvArray =
-                (JArray) JsonConvert.DeserializeObject(GlobalPathsAndDatas.mstSkillLv);
+                (JArray) JsonConvert.DeserializeObject(mstSkillLv);
             GlobalPathsAndDatas.mstSvtCommentArray =
-                (JArray) JsonConvert.DeserializeObject(GlobalPathsAndDatas.mstSvtComment);
-            GlobalPathsAndDatas.mstSvtArray = (JArray) JsonConvert.DeserializeObject(GlobalPathsAndDatas.mstSvt);
+                (JArray) JsonConvert.DeserializeObject(mstSvtComment);
+            GlobalPathsAndDatas.mstSvtArray = (JArray) JsonConvert.DeserializeObject(mstSvt);
             GlobalPathsAndDatas.mstSvtLimitArray =
-                (JArray) JsonConvert.DeserializeObject(GlobalPathsAndDatas.mstSvtLimit);
-            GlobalPathsAndDatas.mstCvArray = (JArray) JsonConvert.DeserializeObject(GlobalPathsAndDatas.mstCv);
+                (JArray) JsonConvert.DeserializeObject(mstSvtLimit);
+            GlobalPathsAndDatas.mstCvArray = (JArray) JsonConvert.DeserializeObject(mstCv);
             GlobalPathsAndDatas.mstIllustratorArray =
-                (JArray) JsonConvert.DeserializeObject(GlobalPathsAndDatas.mstIllustrator);
+                (JArray) JsonConvert.DeserializeObject(mstIllustrator);
             GlobalPathsAndDatas.mstSvtCardArray =
-                (JArray) JsonConvert.DeserializeObject(GlobalPathsAndDatas.mstSvtCard);
+                (JArray) JsonConvert.DeserializeObject(mstSvtCard);
             GlobalPathsAndDatas.mstSvtTreasureDevicedArray =
-                (JArray) JsonConvert.DeserializeObject(GlobalPathsAndDatas.mstSvtTreasureDevice);
+                (JArray) JsonConvert.DeserializeObject(mstSvtTreasureDevice);
             GlobalPathsAndDatas.mstTreasureDevicedArray =
-                (JArray) JsonConvert.DeserializeObject(GlobalPathsAndDatas.mstTreasureDevice);
+                (JArray) JsonConvert.DeserializeObject(mstTreasureDevice);
             GlobalPathsAndDatas.mstTreasureDeviceDetailArray =
-                (JArray) JsonConvert.DeserializeObject(GlobalPathsAndDatas.mstTreasureDeviceDetail);
-            GlobalPathsAndDatas.mstSkillArray = (JArray) JsonConvert.DeserializeObject(GlobalPathsAndDatas.mstSkill);
+                (JArray) JsonConvert.DeserializeObject(mstTreasureDeviceDetail);
+            GlobalPathsAndDatas.mstSkillArray = (JArray) JsonConvert.DeserializeObject(mstSkill);
             GlobalPathsAndDatas.mstSvtSkillArray =
-                (JArray) JsonConvert.DeserializeObject(GlobalPathsAndDatas.mstSvtSkill);
+                (JArray) JsonConvert.DeserializeObject(mstSvtSkill);
             GlobalPathsAndDatas.mstSkillDetailArray =
-                (JArray) JsonConvert.DeserializeObject(GlobalPathsAndDatas.mstSkillDetail);
-            GlobalPathsAndDatas.mstFuncArray = (JArray) JsonConvert.DeserializeObject(GlobalPathsAndDatas.mstFunc);
+                (JArray) JsonConvert.DeserializeObject(mstSkillDetail);
+            GlobalPathsAndDatas.mstFuncArray = (JArray) JsonConvert.DeserializeObject(mstFunc);
             GlobalPathsAndDatas.mstTreasureDeviceLvArray =
-                (JArray) JsonConvert.DeserializeObject(GlobalPathsAndDatas.mstTreasureDeviceLv);
+                (JArray) JsonConvert.DeserializeObject(mstTreasureDeviceLv);
+            GC.Collect();
         }
     }
 }

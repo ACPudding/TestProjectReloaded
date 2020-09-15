@@ -601,6 +601,8 @@ namespace FGOSBIAReloaded
                 GlobalPathsAndDatas.basicatk = 0;
                 GlobalPathsAndDatas.basichp = 0;
                 GlobalPathsAndDatas.CurveType = "";
+                GlobalPathsAndDatas.maxatk = 0;
+                GlobalPathsAndDatas.maxhp = 0;
                 var svtcriticalWeight = "";
                 var svtpower = "";
                 var svtdefense = "";
@@ -686,6 +688,8 @@ namespace FGOSBIAReloaded
                         maxatk.Text = svtatkMax;
                         GlobalPathsAndDatas.basicatk = Convert.ToInt32(svtatkBase);
                         GlobalPathsAndDatas.basichp = Convert.ToInt32(svthpBase);
+                        GlobalPathsAndDatas.maxatk = Convert.ToInt32(svtatkMax);
+                        GlobalPathsAndDatas.maxhp = Convert.ToInt32(svthpMax);
                         svtcriticalWeight = mstsvtLimitobjtmp["criticalWeight"].ToString();
                         jixing.Text = svtcriticalWeight;
                         svtpower = mstsvtLimitobjtmp["power"].ToString();
@@ -1196,22 +1200,22 @@ namespace FGOSBIAReloaded
                         switch (Convert.ToInt64(svtTreasureDeviceFuncIDArray[i]))
                         {
                             case 12:
-                                SkillLvs.TDFuncstrArray[i] = "強力攻撃·単体";
+                                SkillLvs.TDFuncstrArray[i] = "強力攻撃(単体)";
                                 break;
                             case 13:
-                                SkillLvs.TDFuncstrArray[i] = "強力攻撃·全体";
+                                SkillLvs.TDFuncstrArray[i] = "強力攻撃(全体)";
                                 break;
                             case 14:
-                                SkillLvs.TDFuncstrArray[i] = "防御無視攻撃·単体";
+                                SkillLvs.TDFuncstrArray[i] = "防御無視攻撃(単体)";
                                 break;
                             case 15:
-                                SkillLvs.TDFuncstrArray[i] = "防御無視攻撃·全体";
+                                SkillLvs.TDFuncstrArray[i] = "防御無視攻撃(全体)";
                                 break;
                             case 22:
-                                SkillLvs.TDFuncstrArray[i] = "HP越少威力越高攻撃·単体";
+                                SkillLvs.TDFuncstrArray[i] = "HP越少威力\r\n越高攻撃(単体)";
                                 break;
                             default:
-                                SkillLvs.TDFuncstrArray[i] = "強力特攻攻撃";
+                                SkillLvs.TDFuncstrArray[i] = "強力攻撃(特攻)";
                                 break;
                         }
 
@@ -1585,15 +1589,21 @@ namespace FGOSBIAReloaded
         {
             Dispatcher.Invoke(() =>
             {
-                if (CheckNeededFiles.CheckDirectoryExists()) return;
-                if (CheckNeededFiles.CheckFilesExists()) return;
-                var output = GlobalPathsAndDatas.mstSvtArray.Aggregate("",
-                    (current, svtIDtmp) => current + "ID: " + ((JObject) svtIDtmp)["id"] + "    " + "名称: " +
-                                           ((JObject) svtIDtmp)["name"] + "\r\n");
-                File.WriteAllText(GlobalPathsAndDatas.path + "/SearchIDList.txt", output);
-                MessageBox.Show(Application.Current.MainWindow, "导出成功,文件名为 SearchIDList.txt", "完成", MessageBoxButton.OK,
-                    MessageBoxImage.Information);
-                Process.Start(GlobalPathsAndDatas.path + "/SearchIDList.txt");
+                try
+                {
+                    var output = GlobalPathsAndDatas.mstSvtArray.Aggregate("",
+                        (current, svtIDtmp) => current + "ID: " + ((JObject) svtIDtmp)["id"] + "    " + "名称: " +
+                                               ((JObject) svtIDtmp)["name"] + "\r\n");
+                    File.WriteAllText(GlobalPathsAndDatas.path + "/SearchIDList.txt", output);
+                    MessageBox.Show(Application.Current.MainWindow, "导出成功,文件名为 SearchIDList.txt", "完成",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Information);
+                    Process.Start(GlobalPathsAndDatas.path + "/SearchIDList.txt");
+                }
+                catch (Exception)
+                {
+                    //ignore
+                }
             });
         }
 
@@ -2047,8 +2057,7 @@ namespace FGOSBIAReloaded
 
         private void JBOutput_Click(object sender, RoutedEventArgs e)
         {
-            var JO = new Thread(JBOut);
-            JO.IsBackground = true;
+            var JO = new Thread(JBOut) {IsBackground = true};
             JO.Start();
         }
 
@@ -2077,37 +2086,21 @@ namespace FGOSBIAReloaded
             }
             else
             {
-                if (File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstSvt") &&
-                    File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstSvtLimit") &&
-                    File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstCv") &&
-                    File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstIllustrator") &&
-                    File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstSvtCard") &&
-                    File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstTreasureDevice") &&
-                    File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstSvtTreasureDevice") &&
-                    File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstTreasureDeviceDetail") &&
-                    File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstSkill") &&
-                    File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstSkillDetail") &&
-                    File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstSvtSkill") &&
-                    File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstFunc") &&
-                    File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstSvtComment") &&
-                    File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstTreasureDeviceLv") &&
-                    File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstSkillLv") &&
-                    File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstCombineSkill") &&
-                    File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstCombineLimit") &&
-                    File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstItem") &&
-                    File.Exists(gamedata.FullName + "decrypted_masterdata/" + "npcSvtFollower"))
+                try
                 {
                     LoadData.Start();
-                    return;
                 }
-
-                Dispatcher.Invoke(() =>
+                catch (Exception)
                 {
-                    MessageBox.Show(
-                        Application.Current.MainWindow, "游戏数据损坏,请重新下载游戏数据(位于\"设置\"选项卡).", "温馨提示:", MessageBoxButton.OK,
-                        MessageBoxImage.Error);
-                });
-                Button1.IsEnabled = false;
+                    Dispatcher.Invoke(() =>
+                    {
+                        MessageBox.Show(
+                            Application.Current.MainWindow, "游戏数据损坏,请重新下载游戏数据(位于\"设置\"选项卡).", "温馨提示:",
+                            MessageBoxButton.OK,
+                            MessageBoxImage.Error);
+                    });
+                    Button1.IsEnabled = false;
+                }
             }
         }
 
@@ -2308,7 +2301,7 @@ namespace FGOSBIAReloaded
                     MessageBoxImage.Information);
             });
             if (GlobalPathsAndDatas.SuperMsgBoxRes == MessageBoxResult.Yes)
-                Dispatcher.Invoke(() => { Close(); });
+                Dispatcher.Invoke(Close);
             CheckUpdate.Dispatcher.Invoke(() => { CheckUpdate.IsEnabled = true; });
             progressbar1.Dispatcher.Invoke(() =>
             {
@@ -2400,7 +2393,7 @@ namespace FGOSBIAReloaded
                 var CharaID = ((JObject) mstQuest)["charaIconId"].ToString();
                 try
                 {
-                    CharaID = CharaID.Substring(0, CharaID.Length - 1);
+                    CharaID = CharaID.Substring(0, CharaID.Length - 3) + "00";
                 }
                 catch (Exception)
                 {
@@ -2530,7 +2523,7 @@ namespace FGOSBIAReloaded
             }
         }
 
-        private string GetClassName(string id)
+        private static string GetClassName(string id)
         {
             var ClassName = "";
             foreach (var mstClasstmp in GlobalPathsAndDatas.mstClassArray)
@@ -2615,8 +2608,10 @@ namespace FGOSBIAReloaded
                 var AdjustATKCurve = new int[101];
                 for (var lv = 0; lv < 101; lv++)
                 {
-                    AdjustHPCurve[lv] = GlobalPathsAndDatas.basichp + Array[lv] * GlobalPathsAndDatas.basichp / 150;
-                    AdjustATKCurve[lv] = GlobalPathsAndDatas.basicatk + Array[lv] * GlobalPathsAndDatas.basicatk / 150;
+                    AdjustHPCurve[lv] = GlobalPathsAndDatas.basichp +
+                                        Array[lv] * (GlobalPathsAndDatas.maxhp - GlobalPathsAndDatas.basichp) / 1000;
+                    AdjustATKCurve[lv] = GlobalPathsAndDatas.basicatk +
+                                         Array[lv] * (GlobalPathsAndDatas.maxatk - GlobalPathsAndDatas.basicatk) / 1000;
                 }
 
                 chartCanvas.Children.Remove(plhp);
@@ -2686,7 +2681,7 @@ namespace FGOSBIAReloaded
             }
         }
 
-        private int[] GetSvtCurveData(object TypeID)
+        private static int[] GetSvtCurveData(object TypeID)
         {
             var TempData = new int[101];
             foreach (var mstSvtExptmp in GlobalPathsAndDatas.mstSvtExpArray)
