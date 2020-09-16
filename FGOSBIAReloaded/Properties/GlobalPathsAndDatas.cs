@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Windows;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace FGOSBIAReloaded.Properties
@@ -12,9 +11,9 @@ namespace FGOSBIAReloaded.Properties
         public static DirectoryInfo gamedata = new DirectoryInfo(path + @"\Android\masterdata\");
         public static DirectoryInfo folder = new DirectoryInfo(path + @"\Android\");
         public static DirectoryInfo outputdir = new DirectoryInfo(path + @"\Output\");
-        public static JArray mstSvtExpArray=null;
+        public static JArray mstSvtExpArray = null;
         public static JArray mstGiftArray = null;
-        public static JArray mstClassRelationArray =null;
+        public static JArray mstClassRelationArray = null;
         public static JArray mstClassArray = null;
         public static JArray mstEventArray = null;
         public static JArray npcSvtFollowerArray = null;

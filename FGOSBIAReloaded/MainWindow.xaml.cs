@@ -1197,27 +1197,7 @@ namespace FGOSBIAReloaded
                 for (var i = 0; i <= SkillLvs.TDFuncstrArray.Length - 1; i++)
                 {
                     if (SkillLvs.TDFuncstrArray[i] == "なし" && SkillLvs.TDlv1OC1strArray[i].Count(c => c == ',') > 0)
-                        switch (Convert.ToInt64(svtTreasureDeviceFuncIDArray[i]))
-                        {
-                            case 12:
-                                SkillLvs.TDFuncstrArray[i] = "強力攻撃(単体)";
-                                break;
-                            case 13:
-                                SkillLvs.TDFuncstrArray[i] = "強力攻撃(全体)";
-                                break;
-                            case 14:
-                                SkillLvs.TDFuncstrArray[i] = "防御無視攻撃(単体)";
-                                break;
-                            case 15:
-                                SkillLvs.TDFuncstrArray[i] = "防御無視攻撃(全体)";
-                                break;
-                            case 22:
-                                SkillLvs.TDFuncstrArray[i] = "HP越少威力\r\n越高攻撃(単体)";
-                                break;
-                            default:
-                                SkillLvs.TDFuncstrArray[i] = "強力攻撃(特攻)";
-                                break;
-                        }
+                        SkillLvs.TDFuncstrArray[i] = TranslateTDAttackName(svtTreasureDeviceFuncIDArray[i]);
 
                     if (SkillLvs.TDFuncstrArray[i] == "" && SkillLvs.TDlv1OC1strArray[i].Count(c => c == ',') == 1 &&
                         !SkillLvs.TDlv1OC1strArray[i].Contains("Hide")) SkillLvs.TDFuncstrArray[i] = "HP回復";
@@ -1233,6 +1213,37 @@ namespace FGOSBIAReloaded
             catch (Exception)
             {
                 // ignored
+            }
+        }
+
+        private string TranslateTDAttackName(string TDFuncID)
+        {
+            try
+            {
+                var GetTDFuncTranslationListArray = HttpRequest.GetTDAttackNameTranslationList().Replace("\r\n", "")
+                    .Replace("+", Environment.NewLine).Split('|');
+                var TDTranslistFullArray = new string[GetTDFuncTranslationListArray.Length][];
+                for (var i = 0; i < GetTDFuncTranslationListArray.Length; i++)
+                {
+                    var TempSplit2 = GetTDFuncTranslationListArray[i].Split(',');
+                    TDTranslistFullArray[i] = new string[TempSplit2.Length];
+                    for (var j = 0; j < TempSplit2.Length; j++) TDTranslistFullArray[i][j] = TempSplit2[j];
+                }
+
+                for (var k = 0; k < GetTDFuncTranslationListArray.Length; k++)
+                    if (TDTranslistFullArray[k][0] == TDFuncID)
+                        return TDTranslistFullArray[k][1];
+                return "暫無翻譯\r\nID: " + TDFuncID;
+            }
+            catch (Exception e)
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    MessageBox.Show(
+                        Application.Current.MainWindow, "翻译列表损坏.\r\n" + e, "错误", MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+                });
+                return "FuncID: " + TDFuncID;
             }
         }
 
