@@ -44,6 +44,7 @@ namespace FGOSBIAReloaded.Properties
         public static string NewerVersion;
         public static MessageBoxResult SuperMsgBoxRes;
         public static string TranslationList;
+        public static string[] TranslationListArray=null;
         public static int basichp;
         public static int basicatk;
         public static int maxhp;
