@@ -345,13 +345,13 @@
                                 </Path.Data>
                             </Path>
                             <TextBlock x:Name="x_label" Text="lv" Canvas.Left="455" Canvas.Top="325"
-                                                              FontFamily="Microsoft JhengHei" FontSize="14"/>
+                                       FontFamily="Microsoft JhengHei" FontSize="14" />
 
                             <TextBlock x:Name="y_label" Text="max" Canvas.Left="-10" Canvas.Top="30"
-                                                             FontFamily="Microsoft JhengHei" FontSize="14"/>
+                                       FontFamily="Microsoft JhengHei" FontSize="14" />
 
                             <TextBlock x:Name="o_label" Text="0" Canvas.Left="-15" Canvas.Top="346"
-                                                           FontFamily="Microsoft JhengHei UI" FontSize="14"/>
+                                       FontFamily="Microsoft JhengHei UI" FontSize="14" />
                         </Canvas>
                     </Grid>
                 </TabItem>
@@ -1255,17 +1255,18 @@
                         <CheckBox x:Name="ToggleBuffFuncTranslate" Content="" HorizontalAlignment="Left" Height="17"
                                   Margin="17,152,0,0" VerticalAlignment="Top" Width="116" Foreground="LightGray"
                                   FontFamily="Microsoft JhengHei UI" FontSize="9"
-                                  ToolTip="勾选此项时,技能与宝具的具体数值的效果名称会进行翻译,不勾选则直接显示原文." IsChecked="True"/>
+                                  ToolTip="勾选此项时,技能与宝具的具体数值的效果名称会进行翻译,不勾选则直接显示原文." IsChecked="True" />
                         <Label Content="翻译部分Buff名称" HorizontalAlignment="Left" Height="26"
                                Margin="35,150,0,0" VerticalAlignment="Top" Width="203" Foreground="#FF333333"
                                FontFamily="Microsoft JhengHei UI" FontSize="10" />
                         <CheckBox x:Name="ToggleFuncDiffer" Content="" HorizontalAlignment="Left" Height="17"
-                            Margin="17,176,0,0" VerticalAlignment="Top" Width="116" Foreground="LightGray"
-                            FontFamily="Microsoft JhengHei UI" FontSize="9"
-                            ToolTip="勾选此项时,技能与宝具的具体数值的效果数值会进行分析显示&#xA;如1000,3,-1,200的BusterUP会写成20%(100%) - 3回合·无限次&#xA;不勾选则原样显示." IsChecked="True"/>
+                                  Margin="17,176,0,0" VerticalAlignment="Top" Width="116" Foreground="LightGray"
+                                  FontFamily="Microsoft JhengHei UI" FontSize="9"
+                                  ToolTip="勾选此项时,技能与宝具的具体数值的效果数值会进行分析显示&#xA;如1000,3,-1,200的BusterUP会写成20%(100%) - 3回合·无限次&#xA;不勾选则原样显示.&#xA;注:目前实现方式比较杂乱可能会带来误解析的可能性."
+                                  IsChecked="True" />
                         <Label Content="对效果进行分析显示(Beta)" HorizontalAlignment="Left" Height="26"
-                            Margin="35,174,0,0" VerticalAlignment="Top" Width="203" Foreground="#FF333333"
-                            FontFamily="Microsoft JhengHei UI" FontSize="10" />
+                               Margin="35,174,0,0" VerticalAlignment="Top" Width="203" Foreground="#FF333333"
+                               FontFamily="Microsoft JhengHei UI" FontSize="10" />
                     </Grid>
                 </TabItem>
                 <TabItem Header="关于" FontFamily="Microsoft JhengHei UI">

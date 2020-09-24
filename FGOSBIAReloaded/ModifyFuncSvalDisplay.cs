@@ -35,7 +35,6 @@ namespace FGOSBIAReloaded
                 case 20:
                 case 21:
                 case 22:
-                case 25:
                 case 26:
                 case 27:
                 case 29:
@@ -63,11 +62,11 @@ namespace FGOSBIAReloaded
                 case 59:
                 case 60:
                 case 61:
-                case 69:
                 case 71:
                 case 72:
                 case 75:
                 case 77:
+                case 83:
                 case 86:
                 case 87:
                 case 88:
@@ -207,7 +206,7 @@ namespace FGOSBIAReloaded
                         output = Funcsval;
                         break;
                     }
-                case 83:
+                case 69:
                     Tempsval = Funcsval.Split(',');
                     if (Tempsval.Length == 3)
                     {
@@ -233,6 +232,7 @@ namespace FGOSBIAReloaded
                     }
                 case 23:
                 case 24:
+                case 25:
                 case 28:
                 case 34:
                 case 57:
@@ -390,6 +390,24 @@ namespace FGOSBIAReloaded
                 {
                     output = Funcsval;
                 }
+            }
+
+            if (Funcname == "宝具封印")
+            {
+                Tempsval = Funcsval.Split(',');
+                if (Tempsval.Length == 3)
+                    try
+                    {
+                        output =
+                            "∅" +
+                            (Tempsval[0] == "1000" ? "" : "(" + Convert.ToDouble(Tempsval[0]) / 10 + "%成功率)") +
+                            (Tempsval[1] == "-1" ? "" : " - " + Tempsval[1] + "回合") +
+                            (Tempsval[2] == "-1" ? "" : " · " + Tempsval[2] + "次");
+                    }
+                    catch (Exception)
+                    {
+                        output = Funcsval;
+                    }
             }
 
             if (Funcname.Contains("對特性") || Funcname.Contains("對Buff"))
