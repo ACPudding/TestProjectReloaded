@@ -11,7 +11,8 @@ namespace FGOSBIAReloaded
             var output = Funcsval;
             string[] Tempsval;
             Tempsval = null;
-            switch (ReturnArrayNum(Funcname))
+            var ArrayNum = ReturnArrayNum(Funcname);
+            switch (ArrayNum)
             {
                 case 1:
                 case 2:
@@ -183,29 +184,6 @@ namespace FGOSBIAReloaded
                         output = Funcsval;
                         break;
                     }
-                case 33:
-                case 115:
-                    Tempsval = Funcsval.Split(',');
-                    if (Tempsval.Length == 2)
-                    {
-                        try
-                        {
-                            output = Tempsval[1] + (Tempsval[0] == "1000"
-                                ? ""
-                                : "(" + Convert.ToDouble(Tempsval[0]) / 10 + "%成功率)");
-                            break;
-                        }
-                        catch (Exception)
-                        {
-                            output = Funcsval;
-                            break;
-                        }
-                    }
-                    else
-                    {
-                        output = Funcsval;
-                        break;
-                    }
                 case 69:
                     Tempsval = Funcsval.Split(',');
                     if (Tempsval.Length == 3)
@@ -235,7 +213,6 @@ namespace FGOSBIAReloaded
                 case 25:
                 case 28:
                 case 34:
-                case 57:
                 case 63:
                 case 64:
                 case 65:
@@ -250,6 +227,67 @@ namespace FGOSBIAReloaded
                                      (Tempsval[0] == "1000" ? "" : "(" + Convert.ToDouble(Tempsval[0]) / 10 + "%成功率)") +
                                      (Tempsval[1] == "-1" ? "" : " - " + Tempsval[1] + "回合") +
                                      (Tempsval[2] == "-1" ? "" : " · " + Tempsval[2] + "次");
+                            break;
+                        }
+                        catch (Exception)
+                        {
+                            output = Funcsval;
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        output = Funcsval;
+                        break;
+                    }
+                case 33:
+                    Tempsval = Funcsval.Split(',');
+                    if (Tempsval.Length == 4)
+                    {
+                        try
+                        {
+                            output = Tempsval[3] + "個" +
+                                     (Tempsval[0] == "1000" ? "" : "(" + Convert.ToDouble(Tempsval[0]) / 10 + "%成功率)") +
+                                     (Tempsval[1] == "-1" ? "" : " - " + Tempsval[1] + "回合") +
+                                     (Tempsval[2] == "-1" ? "" : " · " + Tempsval[2] + "次");
+                            break;
+                        }
+                        catch (Exception)
+                        {
+                            output = Funcsval;
+                            break;
+                        }
+                    }
+                    else if (Tempsval.Length == 2)
+                    {
+                        try
+                        {
+                            output = Tempsval[1] + "個" + (Tempsval[0] == "1000"
+                                ? ""
+                                : "(" + Convert.ToDouble(Tempsval[0]) / 10 + "%成功率)");
+                            break;
+                        }
+                        catch (Exception)
+                        {
+                            output = Funcsval;
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        output = Funcsval;
+                        break;
+                    }
+                case 57:
+                case 115:
+                    Tempsval = Funcsval.Split(',');
+                    if (Tempsval.Length == 2)
+                    {
+                        try
+                        {
+                            output = Tempsval[1] + "個" + (Tempsval[0] == "1000"
+                                ? ""
+                                : "(" + Convert.ToDouble(Tempsval[0]) / 10 + "%成功率)");
                             break;
                         }
                         catch (Exception)
@@ -377,6 +415,33 @@ namespace FGOSBIAReloaded
                     }
 
                     break;
+                case "毒":
+                case "やけど":
+                case "灼傷":
+                case "呪い":
+                case "詛咒":
+                    Tempsval = Funcsval.Split(',');
+                    if (Tempsval.Length == 4)
+                    {
+                        try
+                        {
+                            output = Tempsval[3] + "HP" +
+                                     (Tempsval[0] == "1000" ? "" : "(" + Convert.ToDouble(Tempsval[0]) / 10 + "%成功率)") +
+                                     (Tempsval[1] == "-1" ? "" : " - " + Tempsval[1] + "回合") +
+                                     (Tempsval[2] == "-1" ? "" : " · " + Tempsval[2] + "次");
+                            break;
+                        }
+                        catch (Exception)
+                        {
+                            output = Funcsval;
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        output = Funcsval;
+                        break;
+                    }
             }
 
             if (Funcname.Contains("強力攻撃") || Funcname.Contains("防御無視攻撃"))
@@ -392,7 +457,7 @@ namespace FGOSBIAReloaded
                 }
             }
 
-            if (Funcname == "宝具封印")
+            if (Funcname == "宝具封印" || Funcname == "魅了")
             {
                 Tempsval = Funcsval.Split(',');
                 if (Tempsval.Length == 3)
@@ -466,7 +531,6 @@ namespace FGOSBIAReloaded
             if (Funcname == "人格交換" || Funcname.Contains("暫無翻譯")) output = Funcsval;
             if (Funcname != "即死") return output;
             output = Convert.ToDouble(Funcsval) / 10 + "%";
-            ;
             return output;
         }
 
