@@ -41,9 +41,9 @@ namespace FGOSBIAReloaded
 
         public static Stream GetXlsx()
         {
-            var xlsxurl1 = "https://gitee.com/ACPudding/ACPudding.github.io/raw/master/fileserv/SvtInfoBasicxlsx.xlsx";
+            var xlsxurl1 = "https://gitee.com/ACPudding/ACPudding.github.io/raw/master/fileserv/SvtInfo.xlsx";
             var xlsxurl2 =
-                "https://raw.githubusercontent.com/ACPudding/ACPudding.github.io/master/fileserv/SvtInfoBasicxlsx.xlsx";
+                "https://raw.githubusercontent.com/ACPudding/ACPudding.github.io/master/fileserv/SvtInfo.xlsx";
             var httpWebRequest =
                 (HttpWebRequest) WebRequest.Create(xlsxurl2);
             httpWebRequest.Method = "GET";
@@ -151,7 +151,7 @@ namespace FGOSBIAReloaded
                 "https://raw.githubusercontent.com/ACPudding/ACPudding.github.io/master/fileserv/TDAttackName";
             var TDurl2 = "https://gitee.com/ACPudding/ACPudding.github.io/raw/master/fileserv/TDAttackName";
             var httpWebRequest =
-                (HttpWebRequest)WebRequest.Create(TDurl1);
+                (HttpWebRequest) WebRequest.Create(TDurl1);
             httpWebRequest.Method = "GET";
             try
             {
@@ -163,7 +163,7 @@ namespace FGOSBIAReloaded
             catch (Exception)
             {
                 httpWebRequest =
-                    (HttpWebRequest)WebRequest.Create(TDurl2);
+                    (HttpWebRequest) WebRequest.Create(TDurl2);
                 httpWebRequest.Method = "GET";
                 try
                 {

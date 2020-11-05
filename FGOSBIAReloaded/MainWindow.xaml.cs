@@ -411,6 +411,9 @@ namespace FGOSBIAReloaded
 
         private void ServantSkillLevelCheck()
         {
+            SkillLvs.skill1forExcel = "";
+            SkillLvs.skill2forExcel = "";
+            SkillLvs.skill3forExcel = "";
             Dispatcher.Invoke(() =>
             {
                 if (skill1ID.Text == "") return;
@@ -435,6 +438,17 @@ namespace FGOSBIAReloaded
 
                     Skill1FuncList.Items.Add(new SkillListSval(SkillLvs.SKLFuncstrArray[i],
                         SkillLvs.skilllv1svalArray[i], SkillLvs.skilllv6svalArray[i], SkillLvs.skilllv10svalArray[i]));
+                    SkillLvs.skill1forExcel += SkillLvs.SKLFuncstrArray[i] + " 【" +
+                                               SkillLvs.skilllv10svalArray[i].Replace("\r\n", "") + "】\r\n";
+                }
+
+                try
+                {
+                    SkillLvs.skill1forExcel = SkillLvs.skill1forExcel.Substring(0, SkillLvs.skill1forExcel.Length - 2);
+                }
+                catch (Exception)
+                {
+                    // ignored
                 }
 
                 SkillDetailCheck(SkillLvs.skillID2);
@@ -458,6 +472,17 @@ namespace FGOSBIAReloaded
 
                     Skill2FuncList.Items.Add(new SkillListSval(SkillLvs.SKLFuncstrArray[i],
                         SkillLvs.skilllv1svalArray[i], SkillLvs.skilllv6svalArray[i], SkillLvs.skilllv10svalArray[i]));
+                    SkillLvs.skill2forExcel += SkillLvs.SKLFuncstrArray[i] + " 【" +
+                                               SkillLvs.skilllv10svalArray[i].Replace("\r\n", "") + "】\r\n";
+                }
+
+                try
+                {
+                    SkillLvs.skill2forExcel = SkillLvs.skill2forExcel.Substring(0, SkillLvs.skill2forExcel.Length - 2);
+                }
+                catch (Exception)
+                {
+                    // ignored
                 }
 
                 SkillDetailCheck(SkillLvs.skillID3);
@@ -481,6 +506,17 @@ namespace FGOSBIAReloaded
 
                     Skill3FuncList.Items.Add(new SkillListSval(SkillLvs.SKLFuncstrArray[i],
                         SkillLvs.skilllv1svalArray[i], SkillLvs.skilllv6svalArray[i], SkillLvs.skilllv10svalArray[i]));
+                    SkillLvs.skill3forExcel += SkillLvs.SKLFuncstrArray[i] + " 【" +
+                                               SkillLvs.skilllv10svalArray[i].Replace("\r\n", "") + "】\r\n";
+                }
+
+                try
+                {
+                    SkillLvs.skill3forExcel = SkillLvs.skill3forExcel.Substring(0, SkillLvs.skill3forExcel.Length - 2);
+                }
+                catch (Exception)
+                {
+                    // ignored
                 }
             });
             var SCPSSLC = new Thread(ServantClassPassiveSkillSvalListCheck);
@@ -1167,6 +1203,7 @@ namespace FGOSBIAReloaded
             SkillLvs.TDlv3OC3strArray = null;
             SkillLvs.TDlv4OC4strArray = null;
             SkillLvs.TDlv5OC5strArray = null;
+            SkillLvs.TDforExcel = "";
             foreach (var TDLVtmp in GlobalPathsAndDatas.mstTreasureDeviceLvArray)
             {
                 if (((JObject) TDLVtmp)["treaureDeviceId"].ToString() == svtTDID &&
@@ -1275,6 +1312,20 @@ namespace FGOSBIAReloaded
                             SkillLvs.TDlv1OC1strArray[i], SkillLvs.TDlv2OC2strArray[i], SkillLvs.TDlv3OC3strArray[i],
                             SkillLvs.TDlv4OC4strArray[i], SkillLvs.TDlv5OC5strArray[i]));
                     });
+                    SkillLvs.TDforExcel += (SkillLvs.TDFuncstrArray[i] != ""
+                                               ? SkillLvs.TDFuncstrArray[i].Replace("\r\n", "")
+                                               : "未知效果") +
+                                           " 【{" + SkillLvs.TDlv1OC1strArray[i].Replace("\r\n", "") + "} - {" +
+                                           SkillLvs.TDlv5OC5strArray[i].Replace("\r\n", "") + "}】\r\n";
+                }
+
+                try
+                {
+                    SkillLvs.TDforExcel = SkillLvs.TDforExcel.Substring(0, SkillLvs.TDforExcel.Length - 2);
+                }
+                catch (Exception)
+                {
+                    // ignored
                 }
             }
             catch (Exception)
@@ -2203,54 +2254,59 @@ namespace FGOSBIAReloaded
             var xlsx =
                 new ExcelPackage(streamget);
             var worksheet = xlsx.Workbook.Worksheets[0];
-            worksheet.Cells["L1"].Value = JB.svtid;
+            worksheet.Cells["H3"].Value = JB.svtid;
             worksheet.Cells["A1"].Value += "(" + JB.svtnme + ")";
-            worksheet.Cells["C2"].Value = Svtname.Text;
-            worksheet.Cells["J2"].Value = SvtBattlename.Text;
-            worksheet.Cells["B3"].Value = svtclass.Text;
-            worksheet.Cells["E3"].Value = rarity.Text;
-            worksheet.Cells["G3"].Value = gendle.Text;
-            worksheet.Cells["J3"].Value = hiddenattri.Text;
-            worksheet.Cells["M3"].Value = collection.Text;
-            worksheet.Cells["B4"].Value = cv.Text;
-            worksheet.Cells["H4"].Value = illust.Text;
-            worksheet.Cells["B5"].Value = ssvtstarrate.Text;
-            worksheet.Cells["F5"].Value = ssvtdeathrate.Text;
-            worksheet.Cells["J5"].Value = jixing.Text;
-            worksheet.Cells["M5"].Value = notrealnprate.Text;
-            worksheet.Cells["C6"].Value = nprate.Text;
-            worksheet.Cells["C8"].Value = classskill.Text;
-            worksheet.Cells["C10"].Value = basichp.Text;
-            worksheet.Cells["F10"].Value = basicatk.Text;
-            worksheet.Cells["I10"].Value = maxhp.Text;
-            worksheet.Cells["L10"].Value = maxatk.Text;
-            worksheet.Cells["C11"].Value = cards.Text;
-            worksheet.Cells["B14"].Value = bustercard.Text;
-            worksheet.Cells["I14"].Value = artscard.Text;
-            worksheet.Cells["B15"].Value = quickcard.Text;
-            worksheet.Cells["I15"].Value = extracard.Text;
-            worksheet.Cells["B16"].Value = treasuredevicescard.Text;
+            worksheet.Cells["B3"].Value = Svtname.Text;
+            worksheet.Cells["B4"].Value = svtclass.Text;
+            worksheet.Cells["E4"].Value = rarity.Text;
+            worksheet.Cells["H4"].Value = gendle.Text;
+            worksheet.Cells["L4"].Value = hiddenattri.Text;
+            worksheet.Cells["K3"].Value = collection.Text;
+            worksheet.Cells["B5"].Value = cv.Text;
+            worksheet.Cells["H5"].Value = illust.Text;
+            worksheet.Cells["B6"].Value = ssvtstarrate.Text;
+            worksheet.Cells["E6"].Value = ssvtdeathrate.Text;
+            worksheet.Cells["I6"].Value = jixing.Text;
+            worksheet.Cells["L6"].Value = notrealnprate.Text;
+            worksheet.Cells["C7"].Value = nprate.Text;
+            worksheet.Cells["C10"].Value = classskill.Text;
+            worksheet.Cells["C9"].Value = basichp.Text;
+            worksheet.Cells["F9"].Value = basicatk.Text;
+            worksheet.Cells["I9"].Value = maxhp.Text;
+            worksheet.Cells["L9"].Value = maxatk.Text;
+            worksheet.Cells["C13"].Value = cards.Text;
+            worksheet.Cells["D15"].Value = bustercard.Text;
+            worksheet.Cells["I15"].Value = artscard.Text;
+            worksheet.Cells["D16"].Value = quickcard.Text;
+            worksheet.Cells["I16"].Value = extracard.Text;
+            worksheet.Cells["E17"].Value = treasuredevicescard.Text;
             worksheet.Cells["C18"].Value = npcardtype.Text;
             worksheet.Cells["G18"].Value = nptype.Text;
             worksheet.Cells["J18"].Value = nprank.Text;
             worksheet.Cells["C19"].Value = npruby.Text;
             worksheet.Cells["C20"].Value = npname.Text;
             worksheet.Cells["C21"].Value = npdetail.Text;
-            worksheet.Cells["D24"].Value = skill1name.Text;
-            worksheet.Cells["H24"].Value = skill1cdlv1.Text;
-            worksheet.Cells["J24"].Value = skill1cdlv6.Text;
-            worksheet.Cells["L24"].Value = skill1cdlv10.Text;
-            worksheet.Cells["D25"].Value = skill1details.Text;
-            worksheet.Cells["D26"].Value = skill2name.Text;
-            worksheet.Cells["H26"].Value = skill2cdlv1.Text;
-            worksheet.Cells["J26"].Value = skill2cdlv6.Text;
-            worksheet.Cells["L26"].Value = skill2cdlv10.Text;
-            worksheet.Cells["D27"].Value = skill2details.Text;
-            worksheet.Cells["D28"].Value = skill3name.Text;
-            worksheet.Cells["H28"].Value = skill3cdlv1.Text;
-            worksheet.Cells["J28"].Value = skill3cdlv6.Text;
-            worksheet.Cells["L28"].Value = skill3cdlv10.Text;
-            worksheet.Cells["D29"].Value = skill3details.Text;
+            worksheet.Cells["P1"].Value = skill1name.Text;
+            worksheet.Cells["T1"].Value = skill1cdlv1.Text;
+            worksheet.Cells["V1"].Value = skill1cdlv6.Text;
+            worksheet.Cells["X1"].Value = skill1cdlv10.Text;
+            worksheet.Cells["P2"].Value = skill1details.Text;
+            worksheet.Cells["P10"].Value = skill2name.Text;
+            worksheet.Cells["T10"].Value = skill2cdlv1.Text;
+            worksheet.Cells["V10"].Value = skill2cdlv6.Text;
+            worksheet.Cells["X10"].Value = skill2cdlv10.Text;
+            worksheet.Cells["P11"].Value = skill2details.Text;
+            worksheet.Cells["P19"].Value = skill3name.Text;
+            worksheet.Cells["T19"].Value = skill3cdlv1.Text;
+            worksheet.Cells["V19"].Value = skill3cdlv6.Text;
+            worksheet.Cells["X19"].Value = skill3cdlv10.Text;
+            worksheet.Cells["P20"].Value = skill3details.Text;
+            worksheet.Cells["C28"].Value = svtIndividuality.Text;
+            worksheet.Cells["C12"].Value = Convert.ToString(sixwei.Content).Replace("\n", "        ");
+            worksheet.Cells["P6"].Value = SkillLvs.skill1forExcel;
+            worksheet.Cells["P15"].Value = SkillLvs.skill2forExcel;
+            worksheet.Cells["P24"].Value = SkillLvs.skill3forExcel;
+            worksheet.Cells["C24"].Value = SkillLvs.TDforExcel;
             xlsx.SaveAs(new FileInfo(svtData.FullName + JB.svtnme + "_" + JB.svtid + ".xlsx"));
             streamget.Close();
             Dispatcher.Invoke(() =>

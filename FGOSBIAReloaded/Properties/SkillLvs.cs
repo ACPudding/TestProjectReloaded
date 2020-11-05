@@ -24,5 +24,9 @@
         public static string[] TDlv4OC4strArray;
         public static string[] TDlv5OC5strArray;
         public static string ClassPassiveID;
+        public static string skill1forExcel;
+        public static string skill2forExcel;
+        public static string skill3forExcel;
+        public static string TDforExcel;
     }
 }
