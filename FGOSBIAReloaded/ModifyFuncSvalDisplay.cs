@@ -475,6 +475,23 @@ namespace FGOSBIAReloaded
                     }
             }
 
+            if (Funcname == "強化解除" || Funcname == "防御強化解除" || Funcname == "攻撃強化解除" || Funcname == "攻撃弱体解除" ||
+                Funcname == "防御弱体解除" || Funcname == "弱体解除")
+            {
+                Tempsval = Funcsval.Split(',');
+                if (Tempsval.Length == 1)
+                    try
+                    {
+                        output =
+                            "∅" +
+                            (Tempsval[0] == "1000" ? "" : "(" + Convert.ToDouble(Tempsval[0]) / 10 + "%成功率)");
+                    }
+                    catch (Exception)
+                    {
+                        output = Funcsval;
+                    }
+            }
+
             if (Funcname.Contains("對特性") || Funcname.Contains("對Buff"))
             {
                 Tempsval = Funcsval.Split(',');
