@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -38,7 +39,7 @@ namespace FGOSBIAReloaded
         {
             Button1.IsEnabled = false;
             textbox1.Text = Regex.Replace(textbox1.Text, @"\s", "");
-            var ES = new Thread(EasternEggSvt);
+            var ES = new Task(() => { EasternEggSvt(); });
             if (textbox1.Text == "ACPD" || textbox1.Text == "acpd")
             {
                 ClearTexts();
@@ -60,8 +61,7 @@ namespace FGOSBIAReloaded
                 return;
             }
 
-            var SA = new Thread(StartAnalyze);
-            SA.IsBackground = true;
+            var SA = new Task(StartAnalyze);
             SA.Start();
         }
 
@@ -69,22 +69,14 @@ namespace FGOSBIAReloaded
         {
             var svtID = "";
             var svtTDID = "";
-            var SCAC = new Thread(ServantCardsArrangementCheck);
-            var SBIC = new Thread(ServantBasicInformationCheck);
-            var SCIC = new Thread(ServantCVandIllustCheck);
-            var SJTC = new Thread(ServantJibanTextCheck);
-            var STDI = new Thread(ServantTreasureDeviceInformationCheck);
-            var SSIC = new Thread(ServantSkillInformationCheck);
-            var SCLIC = new Thread(ServantCombineLimitItemsCheck);
-            var SCSIC = new Thread(ServantCombineSkillItemsCheck);
-            SCAC.IsBackground = true;
-            SBIC.IsBackground = true;
-            SCIC.IsBackground = true;
-            SJTC.IsBackground = true;
-            STDI.IsBackground = true;
-            SSIC.IsBackground = true;
-            SCLIC.IsBackground = true;
-            SCSIC.IsBackground = true;
+            var SCAC = new Task(ServantCardsArrangementCheck);
+            var SBIC = new Task(ServantBasicInformationCheck);
+            var SCIC = new Task(ServantCVandIllustCheck);
+            var SJTC = new Task(ServantJibanTextCheck);
+            var STDI = new Task(() => { ServantTreasureDeviceInformationCheck(svtTDID); });
+            var SSIC = new Task(ServantSkillInformationCheck);
+            var SCLIC = new Task(ServantCombineLimitItemsCheck);
+            var SCSIC = new Task(ServantCombineSkillItemsCheck);
             SkillLvs.skillID1 = "";
             SkillLvs.skillID2 = "";
             SkillLvs.skillID3 = "";
@@ -182,9 +174,12 @@ namespace FGOSBIAReloaded
             SJTC.Start();
             SCLIC.Start();
             SCSIC.Start();
-            STDI.Start(svtTDID);
-            ServantTreasureDeviceSvalCheck(svtTDID);
+            STDI.Start();
+            Task.WaitAny(SCLIC);
+            var STDSC = new Task(() => { ServantTreasureDeviceSvalCheck(svtTDID); });
+            STDSC.Start();
             SSIC.Start();
+            Task.WaitAll(STDSC, SSIC);
             Button1.Dispatcher.Invoke(() => { Button1.IsEnabled = true; });
             Dispatcher.Invoke(() =>
             {
@@ -268,9 +263,8 @@ namespace FGOSBIAReloaded
                     svtNPDamageType = mstTDobjtmp["effectFlag"].ToString().Replace("0", "辅助宝具")
                         .Replace("1", "全体宝具").Replace("2", "单体宝具");
                     nptype.Dispatcher.Invoke(() => { nptype.Text = svtNPDamageType; });
-                    var DSSCL = new Thread(DrawServantStrengthenCurveLine);
-                    DSSCL.Start(GlobalPathsAndDatas.CurveType);
-
+                    var DSSCL = new Task(() => { DrawServantStrengthenCurveLine(GlobalPathsAndDatas.CurveType); });
+                    DSSCL.Start();
                     if (svtNPDamageType == "辅助宝具")
                     {
                         svtNPCardhit = 0;
@@ -522,14 +516,12 @@ namespace FGOSBIAReloaded
                     // ignored
                 }
             });
-            var SCPSSLC = new Thread(ServantClassPassiveSkillSvalListCheck);
+            var SCPSSLC = new Task(ServantClassPassiveSkillSvalListCheck);
             SCPSSLC.Start();
         }
 
         private void ServantBasicInformationCheck()
         {
-            var SISI = new Thread(CheckSvtIndividuality);
-            SISI.IsBackground = true;
             Dispatcher.Invoke(() =>
             {
                 var RankString = new string[100];
@@ -732,15 +724,16 @@ namespace FGOSBIAReloaded
                         CardArrange = mstSvtobjtmp["cardIds"].ToString().Replace("\n", "").Replace("\t", "")
                             .Replace("\r", "").Replace(" ", "").Replace("2", "B").Replace("1", "A").Replace("3", "Q");
                         if (CardArrange == "[Q,Q,Q,Q,Q]") GlobalPathsAndDatas.askxlsx = false;
+                        var SISI = new Task(() => { CheckSvtIndividuality(svtIndividualityInput); });
                         if (ToggleDispIndi.IsChecked == true)
-                            SISI.Start(svtIndividualityInput);
+                            SISI.Start();
                         else
                             svtIndividuality.Text = svtIndividualityInput;
                         cards.Text = CardArrange;
                         svtClassPassiveID = mstSvtobjtmp["classPassive"].ToString().Replace("\n", "").Replace("\t", "")
                             .Replace("\r", "").Replace(" ", "").Replace("[", "").Replace("]", "");
                         SkillLvs.ClassPassiveID = svtClassPassiveID;
-                        var SCPSC = new Thread(ServantClassPassiveSkillCheck);
+                        var SCPSC = new Task(ServantClassPassiveSkillCheck);
                         SCPSC.Start();
                         hiddenattri.Text = svtHideAttri;
                         classData = int.Parse(svtClass);
@@ -753,8 +746,8 @@ namespace FGOSBIAReloaded
                             svtclass.Text = ReadClassName.ReadClassOriginName(classData);
                         }
 
-                        var CheckShiZhuang = new Thread(CheckSvtIsFullinGame);
-                        CheckShiZhuang.Start(classData);
+                        var CheckShiZhuang = new Task(() => { CheckSvtIsFullinGame(classData); });
+                        CheckShiZhuang.Start();
                         genderData = int.Parse(svtgender);
                         gendle.Text = gender[genderData];
                         starrate = float.Parse(svtstarrate) / 10;
@@ -1294,7 +1287,8 @@ namespace FGOSBIAReloaded
                 SkillLvs.TDFuncstr = svtTreasureDeviceFunc;
                 for (var i = 0; i <= SkillLvs.TDFuncstrArray.Length - 1; i++)
                 {
-                    if ((SkillLvs.TDFuncstrArray[i] == "なし" || SkillLvs.TDFuncstrArray[i] == "" && SkillLvs.TDlv1OC1strArray[i].Contains("Hide")) &&
+                    if ((SkillLvs.TDFuncstrArray[i] == "なし" || SkillLvs.TDFuncstrArray[i] == "" &&
+                            SkillLvs.TDlv1OC1strArray[i].Contains("Hide")) &&
                         SkillLvs.TDlv1OC1strArray[i].Count(c => c == ',') > 0)
                         SkillLvs.TDFuncstrArray[i] = TranslateTDAttackName(svtTreasureDeviceFuncIDArray[i]);
 
@@ -1624,7 +1618,7 @@ namespace FGOSBIAReloaded
                 SkillLvs.skillID3 = FindSkillIDinNPCSvt(JB.svtid, 3);
             }
 
-            var SSLC = new Thread(ServantSkillLevelCheck);
+            var SSLC = new Task(() => { ServantSkillLevelCheck(); });
             SSLC.Start();
 
             Dispatcher.Invoke(() =>
@@ -1728,8 +1722,7 @@ namespace FGOSBIAReloaded
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
-            var OSI = new Thread(OutputSVTIDs);
-            OSI.IsBackground = true;
+            var OSI = new Task(() => { OutputSVTIDs(); });
             OSI.Start();
         }
 
@@ -1910,8 +1903,8 @@ namespace FGOSBIAReloaded
 
         private void Button_Click_2(object sender, RoutedEventArgs e)
         {
-            var clean = new Thread(ClearTexts);
-            var clean2 = new Thread(ClearLists);
+            var clean = new Task(() => { ClearTexts(); });
+            var clean2 = new Task(() => { ClearLists(); });
             clean2.Start();
             clean.Start();
         }
@@ -1927,8 +1920,7 @@ namespace FGOSBIAReloaded
             var path = Directory.GetCurrentDirectory();
             var gamedata = new DirectoryInfo(path + @"\Android\masterdata\");
             var folder = new DirectoryInfo(path + @"\Android\");
-            var LoadData = new Thread(LoadorRenewCommonDatas.ReloadData);
-            LoadData.IsBackground = true;
+            var LoadData = new Task(LoadorRenewCommonDatas.ReloadData);
             string result;
             JObject res;
             var Check = true;
@@ -2174,9 +2166,8 @@ namespace FGOSBIAReloaded
 
         private void Button_Click_3(object sender, RoutedEventArgs e)
         {
-            var HTTPReq = new Thread(HttpRequestData);
-            HTTPReq.IsBackground = true;
-            HTTPReq.Start();
+            var UpgradeMasterData = new Task(() => { HttpRequestData(); });
+            UpgradeMasterData.Start();
         }
 
         private void JBOut()
@@ -2206,7 +2197,7 @@ namespace FGOSBIAReloaded
 
         private void JBOutput_Click(object sender, RoutedEventArgs e)
         {
-            var JO = new Thread(JBOut) {IsBackground = true};
+            var JO = new Task(() => { JBOut(); });
             JO.Start();
         }
 
@@ -2219,8 +2210,7 @@ namespace FGOSBIAReloaded
         {
             var path = Directory.GetCurrentDirectory();
             var gamedata = new DirectoryInfo(path + @"\Android\masterdata\");
-            var LoadData = new Thread(LoadorRenewCommonDatas.ReloadData);
-            LoadData.IsBackground = true;
+            var LoadData = new Task(() => { LoadorRenewCommonDatas.ReloadData(); });
             VersionLabel.Content = CommonStrings.Version;
             DrawScale();
             if (!Directory.Exists(gamedata.FullName))
@@ -2352,7 +2342,6 @@ namespace FGOSBIAReloaded
             JArray VerAssetsJArray;
             GlobalPathsAndDatas.ExeUpdateUrl = "";
             GlobalPathsAndDatas.NewerVersion = "";
-            var Sub = new Thread(DownloadFilesSub);
             try
             {
                 VerChkRaw = HttpRequest.GetApplicationUpdateJson();
@@ -2400,7 +2389,8 @@ namespace FGOSBIAReloaded
                         return;
                     }
 
-                    Sub.Start(VerChk["tag_name"].ToString());
+                    var Sub = new Task(() => { DownloadFilesSub(VerChk["tag_name"].ToString()); });
+                    Sub.Start();
                 }
                 else
                 {
@@ -2497,13 +2487,13 @@ namespace FGOSBIAReloaded
         private void Button_Click_5(object sender, RoutedEventArgs e)
         {
             CheckUpdate.IsEnabled = false;
-            var VCE = new Thread(VersionCheckEvent);
+            var VCE = new Task(VersionCheckEvent);
             VCE.Start();
         }
 
         private void Button_Click_Quest(object sender, RoutedEventArgs e)
         {
-            var LPQL = new Thread(LoadPickUPQuestList);
+            var LPQL = new Task(LoadPickUPQuestList);
             ButtonQuest.IsEnabled = false;
             LPQL.Start();
         }
@@ -2622,7 +2612,7 @@ namespace FGOSBIAReloaded
 
         private void Button_Click_Class(object sender, RoutedEventArgs e)
         {
-            var LCAR = new Thread(LoadClassAndRelations);
+            var LCAR = new Task(LoadClassAndRelations);
             ButtonClass.IsEnabled = false;
             LCAR.Start();
         }
@@ -3010,7 +3000,7 @@ namespace FGOSBIAReloaded
         private void Button_Click_Event(object sender, RoutedEventArgs e)
         {
             ButtonEvent.IsEnabled = false;
-            var LEL = new Thread(LoadEventList);
+            var LEL = new Task(LoadEventList);
             LEL.Start();
         }
 
