@@ -9,8 +9,7 @@ namespace FGOSBIAReloaded
         public static string ModifyFuncStr(string Funcname, string Funcsval)
         {
             var output = Funcsval;
-            string[] Tempsval;
-            Tempsval = null;
+            string[] Tempsval = null;
             var ArrayNum = ReturnArrayNum(Funcname);
             switch (ArrayNum)
             {
@@ -224,6 +223,29 @@ namespace FGOSBIAReloaded
                         try
                         {
                             output = Tempsval[3] +
+                                     (Tempsval[0] == "1000" ? "" : "(" + Convert.ToDouble(Tempsval[0]) / 10 + "%成功率)") +
+                                     (Tempsval[1] == "-1" ? "" : " - " + Tempsval[1] + "回合") +
+                                     (Tempsval[2] == "-1" ? "" : " · " + Tempsval[2] + "次");
+                            break;
+                        }
+                        catch (Exception)
+                        {
+                            output = Funcsval;
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        output = Funcsval;
+                        break;
+                    }
+                case 74:
+                    Tempsval = Funcsval.Split(',');
+                    if (Tempsval.Length == 4)
+                    {
+                        try
+                        {
+                            output = Tempsval[3] + "段階" + 
                                      (Tempsval[0] == "1000" ? "" : "(" + Convert.ToDouble(Tempsval[0]) / 10 + "%成功率)") +
                                      (Tempsval[1] == "-1" ? "" : " - " + Tempsval[1] + "回合") +
                                      (Tempsval[2] == "-1" ? "" : " · " + Tempsval[2] + "次");

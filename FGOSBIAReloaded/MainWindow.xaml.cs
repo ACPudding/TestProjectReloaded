@@ -433,8 +433,11 @@ namespace FGOSBIAReloaded
                     Skill1FuncList.Items.Add(new SkillListSval(SkillLvs.SKLFuncstrArray[i],
                         SkillLvs.skilllv1svalArray[i], SkillLvs.skilllv6svalArray[i], SkillLvs.skilllv10svalArray[i]));
                     SkillLvs.skill1forExcel += SkillLvs.SKLFuncstrArray[i] + " 【{" +
-                                               SkillLvs.skilllv1svalArray[i].Replace("\r\n", " ") + "} - {" +
-                                               SkillLvs.skilllv10svalArray[i].Replace("\r\n", " ") + "}】\r\n";
+                                               (SkillLvs.skilllv1svalArray[i].Replace("\r\n", " ") ==
+                                                SkillLvs.skilllv10svalArray[i].Replace("\r\n", " ")
+                                                   ? SkillLvs.skilllv10svalArray[i].Replace("\r\n", " ")
+                                                   : SkillLvs.skilllv1svalArray[i].Replace("\r\n", " ") + "} - {" +
+                                                     SkillLvs.skilllv10svalArray[i].Replace("\r\n", " ")) + "}】\r\n";
                 }
 
                 try
@@ -468,8 +471,11 @@ namespace FGOSBIAReloaded
                     Skill2FuncList.Items.Add(new SkillListSval(SkillLvs.SKLFuncstrArray[i],
                         SkillLvs.skilllv1svalArray[i], SkillLvs.skilllv6svalArray[i], SkillLvs.skilllv10svalArray[i]));
                     SkillLvs.skill2forExcel += SkillLvs.SKLFuncstrArray[i] + " 【{" +
-                                               SkillLvs.skilllv1svalArray[i].Replace("\r\n", " ") + "} - {" +
-                                               SkillLvs.skilllv10svalArray[i].Replace("\r\n", " ") + "}】\r\n";
+                                               (SkillLvs.skilllv1svalArray[i].Replace("\r\n", " ") ==
+                                                SkillLvs.skilllv10svalArray[i].Replace("\r\n", " ")
+                                                   ? SkillLvs.skilllv10svalArray[i].Replace("\r\n", " ")
+                                                   : SkillLvs.skilllv1svalArray[i].Replace("\r\n", " ") + "} - {" +
+                                                     SkillLvs.skilllv10svalArray[i].Replace("\r\n", " ")) + "}】\r\n";
                 }
 
                 try
@@ -503,8 +509,11 @@ namespace FGOSBIAReloaded
                     Skill3FuncList.Items.Add(new SkillListSval(SkillLvs.SKLFuncstrArray[i],
                         SkillLvs.skilllv1svalArray[i], SkillLvs.skilllv6svalArray[i], SkillLvs.skilllv10svalArray[i]));
                     SkillLvs.skill3forExcel += SkillLvs.SKLFuncstrArray[i] + " 【{" +
-                                               SkillLvs.skilllv1svalArray[i].Replace("\r\n", " ") + "} - {" +
-                                               SkillLvs.skilllv10svalArray[i].Replace("\r\n", " ") + "}】\r\n";
+                                               (SkillLvs.skilllv1svalArray[i].Replace("\r\n", " ") ==
+                                                SkillLvs.skilllv10svalArray[i].Replace("\r\n", " ")
+                                                   ? SkillLvs.skilllv10svalArray[i].Replace("\r\n", " ")
+                                                   : SkillLvs.skilllv1svalArray[i].Replace("\r\n", " ") + "} - {" +
+                                                     SkillLvs.skilllv10svalArray[i].Replace("\r\n", " ")) + "}】\r\n";
                 }
 
                 try
@@ -1318,8 +1327,11 @@ namespace FGOSBIAReloaded
                     SkillLvs.TDforExcel += (SkillLvs.TDFuncstrArray[i] != ""
                                                ? SkillLvs.TDFuncstrArray[i].Replace("\r\n", "")
                                                : "未知效果") +
-                                           " 【{" + SkillLvs.TDlv1OC1strArray[i].Replace("\r\n", " ") + "} - {" +
-                                           SkillLvs.TDlv5OC5strArray[i].Replace("\r\n", " ") + "}】\r\n";
+                                           " 【{" + (SkillLvs.TDlv1OC1strArray[i].Replace("\r\n", " ") ==
+                                                    SkillLvs.TDlv5OC5strArray[i].Replace("\r\n", " ")
+                                               ? SkillLvs.TDlv5OC5strArray[i].Replace("\r\n", " ")
+                                               : SkillLvs.TDlv1OC1strArray[i].Replace("\r\n", " ") + "} - {" +
+                                                 SkillLvs.TDlv5OC5strArray[i].Replace("\r\n", " ")) + "}】\r\n";
                 }
 
                 try
