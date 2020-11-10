@@ -110,6 +110,7 @@
     <Compile Include="Properties\GlobalPathsAndDatas.cs" />
     <Compile Include="Properties\ReadClassName.cs" />
     <Compile Include="Properties\SkillLvs.cs" />
+    <Compile Include="ServantAnalyzeServ.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

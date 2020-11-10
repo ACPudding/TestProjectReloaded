@@ -69,118 +69,11 @@ namespace FGOSBIAReloaded
         {
             var svtID = "";
             var svtTDID = "";
-            var SCAC = new Task(ServantCardsArrangementCheck);
-            var SBIC = new Task(ServantBasicInformationCheck);
-            var SCIC = new Task(ServantCVandIllustCheck);
-            var SJTC = new Task(ServantJibanTextCheck);
-            var STDI = new Task(() => { ServantTreasureDeviceInformationCheck(svtTDID); });
-            var SSIC = new Task(ServantSkillInformationCheck);
-            var SCLIC = new Task(ServantCombineLimitItemsCheck);
-            var SCSIC = new Task(ServantCombineSkillItemsCheck);
-            SkillLvs.skillID1 = "";
-            SkillLvs.skillID2 = "";
-            SkillLvs.skillID3 = "";
             IsNPStrengthened.Dispatcher.Invoke(() => { IsNPStrengthened.Text = "×"; });
             textbox1.Dispatcher.Invoke(() => { svtID = Convert.ToString(textbox1.Text); });
-            JB.svtid = svtID;
-            JB.JB1 = "";
-            JB.JB2 = "";
-            JB.JB3 = "";
-            JB.JB4 = "";
-            JB.JB5 = "";
-            JB.JB6 = "";
-            JB.JB7 = "";
             ClearTexts();
-            try
-            {
-                foreach (var svtTreasureDevicestmp in GlobalPathsAndDatas.mstSvtTreasureDevicedArray)
-                {
-                    if (((JObject) svtTreasureDevicestmp)["svtId"].ToString() == svtID &&
-                        ((JObject) svtTreasureDevicestmp)["num"].ToString() == "1" &&
-                        ((JObject) svtTreasureDevicestmp)["treasureDeviceId"].ToString().Length <= 5)
-                    {
-                        var mstsvtTDobjtmp = JObject.Parse(svtTreasureDevicestmp.ToString());
-                        svtTDID = mstsvtTDobjtmp["treasureDeviceId"].ToString();
-                    }
-
-                    if (((JObject) svtTreasureDevicestmp)["svtId"].ToString() == svtID &&
-                        ((JObject) svtTreasureDevicestmp)["num"].ToString() == "98" &&
-                        ((JObject) svtTreasureDevicestmp)["priority"].ToString() == "0")
-                    {
-                        var mstsvtTDobjtmp = JObject.Parse(svtTreasureDevicestmp.ToString());
-                        svtTDID = mstsvtTDobjtmp["treasureDeviceId"].ToString();
-                    }
-
-                    if (((JObject) svtTreasureDevicestmp)["svtId"].ToString() == svtID &&
-                        ((JObject) svtTreasureDevicestmp)["priority"].ToString() == "101")
-                    {
-                        var mstsvtTDobjtmp = JObject.Parse(svtTreasureDevicestmp.ToString());
-                        svtTDID = mstsvtTDobjtmp["treasureDeviceId"].ToString();
-                    }
-
-                    if (((JObject) svtTreasureDevicestmp)["svtId"].ToString() == svtID &&
-                        ((JObject) svtTreasureDevicestmp)["priority"].ToString() == "102")
-                    {
-                        var mstsvtTDobjtmp = JObject.Parse(svtTreasureDevicestmp.ToString());
-                        svtTDID = mstsvtTDobjtmp["treasureDeviceId"].ToString();
-                        IsNPStrengthened.Dispatcher.Invoke(() => { IsNPStrengthened.Text = "√"; });
-                    }
-
-                    if (((JObject) svtTreasureDevicestmp)["svtId"].ToString() == svtID &&
-                        ((JObject) svtTreasureDevicestmp)["priority"].ToString() == "103")
-                    {
-                        var mstsvtTDobjtmp = JObject.Parse(svtTreasureDevicestmp.ToString());
-                        svtTDID = mstsvtTDobjtmp["treasureDeviceId"].ToString();
-                    }
-
-                    if (((JObject) svtTreasureDevicestmp)["svtId"].ToString() == svtID &&
-                        ((JObject) svtTreasureDevicestmp)["priority"].ToString() == "104")
-                    {
-                        var mstsvtTDobjtmp = JObject.Parse(svtTreasureDevicestmp.ToString());
-                        svtTDID = mstsvtTDobjtmp["treasureDeviceId"].ToString();
-                    }
-
-                    if (((JObject) svtTreasureDevicestmp)["svtId"].ToString() != svtID ||
-                        ((JObject) svtTreasureDevicestmp)["priority"].ToString() != "105") continue;
-                    {
-                        var mstsvtTDobjtmp = JObject.Parse(svtTreasureDevicestmp.ToString());
-                        svtTDID = mstsvtTDobjtmp["treasureDeviceId"].ToString();
-                        break;
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                Dispatcher.Invoke(() =>
-                {
-                    MessageBox.Show(
-                        Application.Current.MainWindow, "您太心急了,稍等一下再解析吧!\r\n" + e, "温馨提示:", MessageBoxButton.OK,
-                        MessageBoxImage.Information);
-                    Button1.IsEnabled = true;
-                });
-                return;
-            }
-
-            textbox1.Dispatcher.Invoke(() => { textbox1.Text = svtID; });
-
-            ToggleBuffFuncTranslate.Dispatcher.Invoke(() =>
-            {
-                if (ToggleBuffFuncTranslate.IsChecked == true)
-                    GlobalPathsAndDatas.TranslationList = HttpRequest.GetBuffTranslationList();
-            });
-            SCAC.Start();
-            SBIC.Start();
-            SCIC.Start();
-            SJTC.Start();
-            SCLIC.Start();
-            SCSIC.Start();
-            STDI.Start();
-            Task.WaitAny(SCLIC);
-            var STDSC = new Task(() => { ServantTreasureDeviceSvalCheck(svtTDID); });
-            STDSC.Start();
-            SSIC.Start();
-            Task.WaitAll(STDSC, SSIC);
             Button1.Dispatcher.Invoke(() => { Button1.IsEnabled = true; });
+
             Dispatcher.Invoke(() =>
             {
                 if (rarity.Text == "")
@@ -1380,7 +1273,7 @@ namespace FGOSBIAReloaded
             }
         }
 
-        private string TranslateBuff(string buffname)
+        public string TranslateBuff(string buffname)
         {
             try
             {
