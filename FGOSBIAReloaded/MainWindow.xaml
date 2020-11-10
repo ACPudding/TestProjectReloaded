@@ -400,7 +400,7 @@
                         <Label Content="文本1:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top" Width="97"
                                FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
                                FontWeight="Bold" Margin="1,14,0,0" />
-                        <TextBox x:Name="jibantext1" HorizontalAlignment="Left" Height="65" Margin="44,14,0,0"
+                        <TextBox x:Name="Biography1" HorizontalAlignment="Left" Height="65" Margin="44,14,0,0"
                                  TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="195"
                                  IsReadOnly="True" VerticalContentAlignment="Center" Foreground="#FF333333"
                                  FontFamily="Meiryo">
@@ -411,7 +411,7 @@
                         <Label Content="文本2:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top" Width="97"
                                FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
                                Margin="244,14,0,0" FontWeight="Bold" />
-                        <TextBox x:Name="jibantext2" HorizontalAlignment="Left" Height="65" Margin="287,14,0,0"
+                        <TextBox x:Name="Biography2" HorizontalAlignment="Left" Height="65" Margin="287,14,0,0"
                                  TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="195"
                                  IsReadOnly="True" VerticalContentAlignment="Center" Foreground="#FF333333"
                                  FontFamily="Meiryo">
@@ -422,7 +422,7 @@
                         <Label Content="文本3:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top" Width="97"
                                FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
                                Margin="1,84,0,0" FontWeight="Bold" />
-                        <TextBox x:Name="jibantext3" HorizontalAlignment="Left" Height="65" Margin="44,85,0,0"
+                        <TextBox x:Name="Biography3" HorizontalAlignment="Left" Height="65" Margin="44,85,0,0"
                                  TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="195"
                                  IsReadOnly="True" VerticalContentAlignment="Center" Foreground="#FF333333"
                                  FontFamily="Meiryo">
@@ -433,7 +433,7 @@
                         <Label Content="文本4:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top" Width="97"
                                FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
                                Margin="244,84,0,0" FontWeight="Bold" />
-                        <TextBox x:Name="jibantext4" HorizontalAlignment="Left" Height="65" Margin="287,85,0,0"
+                        <TextBox x:Name="Biography4" HorizontalAlignment="Left" Height="65" Margin="287,85,0,0"
                                  TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="195"
                                  IsReadOnly="True" VerticalContentAlignment="Center" Foreground="#FF333333"
                                  FontFamily="Meiryo">
@@ -444,7 +444,7 @@
                         <Label Content="文本5:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top" Width="97"
                                FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
                                Margin="1,154,0,0" FontWeight="Bold" />
-                        <TextBox x:Name="jibantext5" HorizontalAlignment="Left" Height="65" Margin="44,154,0,0"
+                        <TextBox x:Name="Biography5" HorizontalAlignment="Left" Height="65" Margin="44,154,0,0"
                                  TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="195"
                                  IsReadOnly="True" VerticalContentAlignment="Center" Foreground="#FF333333"
                                  FontFamily="Meiryo">
@@ -455,7 +455,7 @@
                         <Label Content="文本6:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top" Width="97"
                                FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
                                Margin="244,154,0,0" FontWeight="Bold" />
-                        <TextBox x:Name="jibantext6" HorizontalAlignment="Left" Height="65" Margin="287,154,0,0"
+                        <TextBox x:Name="Biography6" HorizontalAlignment="Left" Height="65" Margin="287,154,0,0"
                                  TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="195"
                                  IsReadOnly="True" VerticalContentAlignment="Center" Foreground="#FF333333"
                                  FontFamily="Meiryo">
@@ -466,7 +466,7 @@
                         <Label Content="文本7:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top" Width="97"
                                FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
                                Margin="1,224,0,0" FontWeight="Bold" />
-                        <TextBox x:Name="jibantext7" HorizontalAlignment="Left" Height="65" Margin="44,224,0,0"
+                        <TextBox x:Name="Biography7" HorizontalAlignment="Left" Height="65" Margin="44,224,0,0"
                                  TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="195"
                                  IsReadOnly="True" VerticalContentAlignment="Center" Foreground="#FF333333"
                                  FontFamily="Meiryo">

@@ -17,7 +17,7 @@ namespace FGOSBIAReloaded
         private static double[] nprateartscount = new double[4];
         private static double[] npratemagicbase = new double[100];
 
-        private static string[] svtTreasureDeviceID(string svtID)
+        public static string[] svtTreasureDeviceID(string svtID)
         {
             var svtTDID = "";
             var TDisStrngthened = "0";
@@ -90,7 +90,7 @@ namespace FGOSBIAReloaded
             return result;
         }
 
-        private static string[] ServantCVandIllust(string svtID)
+        public static string[] ServantCVandIllust(string svtID)
         {
             var svtillust = "unknown"; //illustID 不输出
             var svtcv = "unknown"; //CVID 不输出
@@ -127,9 +127,10 @@ namespace FGOSBIAReloaded
             return result;
         }
 
-        private static JArray ServantCardArrange(string svtID)
+        public static JArray ServantCardArrange(string svtID)
         {
             var result = new JArray();
+            var obj = new JObject();
             var svtArtsCardhit = 1;
             var svtArtsCardhitDamage = "unknown";
             var svtArtsCardQuantity = 0;
@@ -148,8 +149,8 @@ namespace FGOSBIAReloaded
                     svtArtsCardhitDamage = mstSvtCardobjtmp["normalDamage"].ToString().Replace("\n", "")
                         .Replace("\t", "").Replace("\r", "").Replace(" ", "");
                     svtArtsCardhit += svtArtsCardhitDamage.Count(c => c == ',');
-                    result.Add(new JArray("arts", svtArtsCardhit + " hit " + svtArtsCardhitDamage));
-                    result.Add(new JArray("artsHit", svtArtsCardhit));
+                    obj.Add("arts", svtArtsCardhit + " hit " + svtArtsCardhitDamage);
+                    obj.Add("artsHit", svtArtsCardhit);
                 }
 
                 if (((JObject) svtCardtmp)["svtId"].ToString() == svtID &&
@@ -159,7 +160,7 @@ namespace FGOSBIAReloaded
                     svtBustersCardhitDamage = mstSvtCardobjtmp["normalDamage"].ToString().Replace("\n", "")
                         .Replace("\t", "").Replace("\r", "").Replace(" ", "");
                     svtBustersCardhit += svtBustersCardhitDamage.Count(c => c == ',');
-                    result.Add(new JArray("buster", svtBustersCardhit + " hit " + svtBustersCardhitDamage));
+                    obj.Add("buster", svtBustersCardhit + " hit " + svtBustersCardhitDamage);
                 }
 
                 if (((JObject) svtCardtmp)["svtId"].ToString() == svtID &&
@@ -169,7 +170,7 @@ namespace FGOSBIAReloaded
                     svtQuicksCardhitDamage = mstSvtCardobjtmp["normalDamage"].ToString().Replace("\n", "")
                         .Replace("\t", "").Replace("\r", "").Replace(" ", "");
                     svtQuicksCardhit += svtQuicksCardhitDamage.Count(c => c == ',');
-                    result.Add(new JArray("quick", svtQuicksCardhit + " hit " + svtQuicksCardhitDamage));
+                    obj.Add("quick", svtQuicksCardhit + " hit " + svtQuicksCardhitDamage);
                 }
 
                 if (((JObject) svtCardtmp)["svtId"].ToString() != svtID ||
@@ -179,14 +180,14 @@ namespace FGOSBIAReloaded
                     svtExtraCardhitDamage = mstSvtCardobjtmp["normalDamage"].ToString().Replace("\n", "")
                         .Replace("\t", "").Replace("\r", "").Replace(" ", "");
                     svtExtraCardhit += svtExtraCardhitDamage.Count(c => c == ',');
-                    result.Add(new JArray("extra", svtExtraCardhit + " hit " + svtExtraCardhitDamage));
+                    obj.Add("extra", svtExtraCardhit + " hit " + svtExtraCardhitDamage);
                 }
             }
-
+            result.Add(obj);
             return result;
         }
 
-        private JArray ServantSkillInformation(string svtID)
+        public static JArray ServantSkillInformation(string svtID)
         {
             var skill1Name = string.Empty;
             var skill2Name = string.Empty;
@@ -339,25 +340,27 @@ namespace FGOSBIAReloaded
                 }
             }
 
-            var result = new JArray
+            var result = new JArray();
+            var obj = new JObject
             {
-                new JArray("skill1ID", skill1ID),
-                new JArray("skill2ID", skill2ID),
-                new JArray("skill3ID", skill3ID),
-                new JArray("skill1Name", skill1Name),
-                new JArray("skill2Name", skill2Name),
-                new JArray("skill3Name", skill3Name),
-                new JArray("skill1Detail", skill1detail),
-                new JArray("skill2Detail", skill2detail),
-                new JArray("skill3Detail", skill3detail),
-                new JArray("sk1IsStrengthened", sk1IsStrengthened),
-                new JArray("sk2IsStrengthened", sk2IsStrengthened),
-                new JArray("sk3IsStrengthened", sk3IsStrengthened)
+                {"skill1ID", skill1ID},
+                {"skill2ID", skill2ID},
+                {"skill3ID", skill3ID},
+                {"skill1Name", skill1Name},
+                {"skill2Name", skill2Name},
+                {"skill3Name", skill3Name},
+                {"skill1Detail", skill1detail},
+                {"skill2Detail", skill2detail},
+                {"skill3Detail", skill3detail},
+                {"sk1IsStrengthened", sk1IsStrengthened},
+                {"sk2IsStrengthened", sk2IsStrengthened},
+                {"sk3IsStrengthened", sk3IsStrengthened}
             };
+            result.Add(obj);
             return result;
         }
 
-        private string FindSkillIDinNPCSvt(string svtid, int skillnum)
+        private static string FindSkillIDinNPCSvt(string svtid, int skillnum)
         {
             foreach (var npcSvtFollowertmp in GlobalPathsAndDatas.npcSvtFollowerArray)
             {
@@ -377,55 +380,56 @@ namespace FGOSBIAReloaded
             return "";
         }
 
-        private JArray ServantBiography(string svtID)
+        public static JArray ServantBiography(string svtID)
         {
             var result = new JArray();
+            var obj = new JObject();
             foreach (var SCTMP in GlobalPathsAndDatas.mstSvtCommentArray)
             {
                 if (((JObject) SCTMP)["svtId"].ToString() == svtID && ((JObject) SCTMP)["id"].ToString() == "1")
                 {
                     var SCobjtmp = JObject.Parse(SCTMP.ToString());
-                    result.Add(new JArray("Biography1", SCobjtmp["comment"].ToString().Replace("\n", "\r\n")));
+                    obj.Add("Biography1", SCobjtmp["comment"].ToString().Replace("\n", "\r\n"));
                 }
 
                 if (((JObject) SCTMP)["svtId"].ToString() == svtID && ((JObject) SCTMP)["id"].ToString() == "2")
                 {
                     var SCobjtmp = JObject.Parse(SCTMP.ToString());
-                    result.Add(new JArray("Biography2", SCobjtmp["comment"].ToString().Replace("\n", "\r\n")));
+                    obj.Add("Biography2", SCobjtmp["comment"].ToString().Replace("\n", "\r\n"));
                 }
 
                 if (((JObject) SCTMP)["svtId"].ToString() == svtID && ((JObject) SCTMP)["id"].ToString() == "3")
                 {
                     var SCobjtmp = JObject.Parse(SCTMP.ToString());
-                    result.Add(new JArray("Biography3", SCobjtmp["comment"].ToString().Replace("\n", "\r\n")));
+                    obj.Add("Biography3", SCobjtmp["comment"].ToString().Replace("\n", "\r\n"));
                 }
 
                 if (((JObject) SCTMP)["svtId"].ToString() == svtID && ((JObject) SCTMP)["id"].ToString() == "4")
                 {
                     var SCobjtmp = JObject.Parse(SCTMP.ToString());
-                    result.Add(new JArray("Biography4", SCobjtmp["comment"].ToString().Replace("\n", "\r\n")));
+                    obj.Add("Biography4", SCobjtmp["comment"].ToString().Replace("\n", "\r\n"));
                 }
 
                 if (((JObject) SCTMP)["svtId"].ToString() == svtID && ((JObject) SCTMP)["id"].ToString() == "5")
                 {
                     var SCobjtmp = JObject.Parse(SCTMP.ToString());
-                    result.Add(new JArray("Biography5", SCobjtmp["comment"].ToString().Replace("\n", "\r\n")));
+                    obj.Add("Biography5", SCobjtmp["comment"].ToString().Replace("\n", "\r\n"));
                 }
 
                 if (((JObject) SCTMP)["svtId"].ToString() == svtID && ((JObject) SCTMP)["id"].ToString() == "6")
                 {
                     var SCobjtmp = JObject.Parse(SCTMP.ToString());
-                    result.Add(new JArray("Biography6", SCobjtmp["comment"].ToString().Replace("\n", "\r\n")));
+                    obj.Add("Biography6", SCobjtmp["comment"].ToString().Replace("\n", "\r\n"));
                 }
 
                 if (((JObject) SCTMP)["svtId"].ToString() != svtID ||
                     ((JObject) SCTMP)["id"].ToString() != "7") continue;
                 {
                     var SCobjtmp = JObject.Parse(SCTMP.ToString());
-                    result.Add(new JArray("Biography7", SCobjtmp["comment"].ToString().Replace("\n", "\r\n")));
+                    obj.Add("Biography7", SCobjtmp["comment"].ToString().Replace("\n", "\r\n"));
                 }
             }
-
+            result.Add(obj);
             return result;
         }
 

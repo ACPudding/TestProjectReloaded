@@ -40,14 +40,14 @@ namespace FGOSBIAReloaded
             Button1.IsEnabled = false;
             textbox1.Text = Regex.Replace(textbox1.Text, @"\s", "");
             var ES = new Task(() => { EasternEggSvt(); });
-            if (textbox1.Text == "ACPD" || textbox1.Text == "acpd")
+            /*if (textbox1.Text == "ACPD" || textbox1.Text == "acpd")
             {
                 ClearTexts();
                 ES.Start();
                 Button1.Dispatcher.Invoke(() => { Button1.IsEnabled = true; });
                 return;
             }
-
+            */
             if (!Regex.IsMatch(textbox1.Text, "^\\d+$"))
             {
                 Dispatcher.Invoke(() =>
@@ -69,13 +69,23 @@ namespace FGOSBIAReloaded
         {
             var svtID = "";
             var svtTDID = "";
+            var TempTDArray = new string[2];
             IsNPStrengthened.Dispatcher.Invoke(() => { IsNPStrengthened.Text = "×"; });
             textbox1.Dispatcher.Invoke(() => { svtID = Convert.ToString(textbox1.Text); });
             ClearTexts();
-            Button1.Dispatcher.Invoke(() => { Button1.IsEnabled = true; });
+            TempTDArray = ServantAnalyzeServ.svtTreasureDeviceID(svtID);
+            svtTDID = TempTDArray[0];
 
+            var CVTask = new Task(() => { ServantCVandIllustTask(svtID); }); 
+            CVTask.Start();
+            var BiographyTask = new Task(() => { ServantBiographyTask(svtID); });
+            BiographyTask.Start();
+            var CardArrangementTask = new Task(() => { ServantCardArrangementTask(svtID); });
+            CardArrangementTask.Start();
+
+            Button1.Dispatcher.Invoke(() => { Button1.IsEnabled = true; });
             Dispatcher.Invoke(() =>
-            {
+            { /*
                 if (rarity.Text == "")
                 {
                     MessageBox.Show(
@@ -84,7 +94,7 @@ namespace FGOSBIAReloaded
                     ClearTexts();
                     Button1.IsEnabled = true;
                     return;
-                }
+                }*/
 
                 if (cards.Text == "[Q,Q,Q,Q,Q]" && svtclass.Text != "礼装")
                     RemindText.Text = "此ID为小怪(或部分boss以及种火芙芙),配卡、技能、宝具信息解析并不准确,请知悉.";
@@ -92,806 +102,68 @@ namespace FGOSBIAReloaded
             GC.Collect();
         }
 
-        private void ServantTreasureDeviceInformationCheck(object svtTDID)
+        private void ServantSkillTask(string svtID)
         {
-            var NPDetail = "unknown";
-            var NPName = "";
-            var NPrank = "";
-            var NPruby = "";
-            var NPtypeText = "";
-            var svtNPDamageType = "";
-            var svtNPCardhit = 1;
-            var svtNPCardhitDamage = "";
-            var svtNPCardType = "";
-            var NPRateTD = 0.0;
-            var NPRateArts = 0.0;
-            var NPRateBuster = 0.0;
-            var NPRateQuick = 0.0;
-            var NPRateEX = 0.0;
-            var NPRateDef = 0.0;
-            foreach (var TDDtmp in GlobalPathsAndDatas.mstTreasureDeviceDetailArray)
-                if (((JObject) TDDtmp)["id"].ToString() == svtTDID.ToString())
-                {
-                    var TDDobjtmp = JObject.Parse(TDDtmp.ToString());
-                    ToggleDetailbr.Dispatcher.Invoke(() =>
-                    {
-                        if (ToggleDetailbr.IsChecked == true)
-                            NPDetail = TDDobjtmp["detail"].ToString().Replace("[{0}]", "[Lv.1 - Lv.5]")
-                                .Replace("[g]", "")
-                                .Replace("[o]", "").Replace("[/g]", "").Replace("[/o]", "").Replace(@"＆", "\r\n ＋")
-                                .Replace(@"＋", "\r\n ＋").Replace("\r\n \r\n", "\r\n");
-                        else
-                            NPDetail = TDDobjtmp["detail"].ToString().Replace("[{0}]", "[Lv.1 - Lv.5]")
-                                .Replace("[g]", "")
-                                .Replace("[o]", "").Replace("[/g]", "").Replace("[/o]", "").Replace(@"＆", " ＋");
-                    });
-                    break;
-                }
-
-            foreach (var TDlvtmp in GlobalPathsAndDatas.mstTreasureDeviceLvArray)
-                if (((JObject) TDlvtmp)["treaureDeviceId"].ToString() == svtTDID.ToString())
-                {
-                    var TDlvobjtmp = JObject.Parse(TDlvtmp.ToString());
-                    NPRateTD = Convert.ToDouble(TDlvobjtmp["tdPoint"].ToString());
-                    NPRateArts = Convert.ToDouble(TDlvobjtmp["tdPointA"].ToString());
-                    NPRateBuster = Convert.ToDouble(TDlvobjtmp["tdPointB"].ToString());
-                    NPRateQuick = Convert.ToDouble(TDlvobjtmp["tdPointQ"].ToString());
-                    NPRateEX = Convert.ToDouble(TDlvobjtmp["tdPointEx"].ToString());
-                    NPRateDef = Convert.ToDouble(TDlvobjtmp["tdPointDef"].ToString());
-                    break;
-                }
-
-            foreach (var TreasureDevicestmp in GlobalPathsAndDatas.mstTreasureDevicedArray)
-            {
-                if (((JObject) TreasureDevicestmp)["id"].ToString() == svtTDID.ToString())
-                {
-                    var mstTDobjtmp = JObject.Parse(TreasureDevicestmp.ToString());
-                    NPName = mstTDobjtmp["name"].ToString();
-                    npname.Dispatcher.Invoke(() => { npname.Text = NPName; });
-                    NPrank = mstTDobjtmp["rank"].ToString();
-                    NPruby = mstTDobjtmp["ruby"].ToString();
-                    npruby.Dispatcher.Invoke(() => { npruby.Text = NPruby; });
-                    NPtypeText = mstTDobjtmp["typeText"].ToString();
-                    nprank.Dispatcher.Invoke(() => { nprank.Text = NPrank + " ( " + NPtypeText + " ) "; });
-                    svtNPDamageType = mstTDobjtmp["effectFlag"].ToString().Replace("0", "辅助宝具")
-                        .Replace("1", "全体宝具").Replace("2", "单体宝具");
-                    nptype.Dispatcher.Invoke(() => { nptype.Text = svtNPDamageType; });
-                    var DSSCL = new Task(() => { DrawServantStrengthenCurveLine(GlobalPathsAndDatas.CurveType); });
-                    DSSCL.Start();
-                    if (svtNPDamageType == "辅助宝具")
-                    {
-                        svtNPCardhit = 0;
-                        svtNPCardhitDamage = "[ - ]";
-                    }
-
-                    foreach (var svtTreasureDevicestmp in GlobalPathsAndDatas.mstSvtTreasureDevicedArray)
-                        if (((JObject) svtTreasureDevicestmp)["treasureDeviceId"].ToString() ==
-                            ((JObject) TreasureDevicestmp)["id"].ToString())
-                        {
-                            var mstsvtTDobjtmp2 = JObject.Parse(svtTreasureDevicestmp.ToString());
-                            svtNPCardhitDamage = mstsvtTDobjtmp2["damage"].ToString().Replace("\n", "")
-                                .Replace("\t", "").Replace("\r", "").Replace(" ", "");
-                            svtNPCardType = mstsvtTDobjtmp2["cardId"].ToString().Replace("2", "Buster")
-                                .Replace("1", "Arts").Replace("3", "Quick");
-                            break;
-                        }
-
-                    break;
-                }
-
-                textbox1.Dispatcher.Invoke(() =>
-                {
-                    if (((JObject) TreasureDevicestmp)["seqId"].ToString() != textbox1.Text ||
-                        ((JObject) TreasureDevicestmp)["ruby"].ToString() != "-" ||
-                        ((JObject) TreasureDevicestmp)["id"].ToString().Length != 3) return;
-                    var mstTDobjtmp2 = JObject.Parse(TreasureDevicestmp.ToString());
-                    NPName = mstTDobjtmp2["name"].ToString();
-                    npname.Dispatcher.Invoke(() => { npname.Text = NPName; });
-                    NPrank = mstTDobjtmp2["rank"].ToString();
-                    NPruby = mstTDobjtmp2["ruby"].ToString();
-                    npruby.Dispatcher.Invoke(() => { npruby.Text = NPruby; });
-                    NPtypeText = mstTDobjtmp2["typeText"].ToString();
-                    nprank.Dispatcher.Invoke(() => { nprank.Text = NPrank + " ( " + NPtypeText + " ) "; });
-                    svtNPDamageType = mstTDobjtmp2["effectFlag"].ToString().Replace("0", "宝具攻击")
-                        .Replace("1", "宝具攻击").Replace("2", "宝具攻击");
-                    nptype.Dispatcher.Invoke(() => { nptype.Text = svtNPDamageType; });
-                    /*if (svtNPDamageType == "辅助宝具")
-                    {
-                        svtNPCardhit = 0;
-                        svtNPCardhitDamage = "[ - ]";
-                    }
-                    */
-                    NPDetail = "该ID的配卡与宝具解析可能不准确,请留意.";
-                    foreach (var svtTreasureDevicestmp in GlobalPathsAndDatas.mstSvtTreasureDevicedArray)
-                        if (((JObject) svtTreasureDevicestmp)["treasureDeviceId"].ToString() ==
-                            ((JObject) TreasureDevicestmp)["id"].ToString())
-                        {
-                            var mstsvtTDobjtmp2 = JObject.Parse(svtTreasureDevicestmp.ToString());
-                            svtNPCardhitDamage = mstsvtTDobjtmp2["damage"].ToString().Replace("\n", "")
-                                .Replace("\t", "").Replace("\r", "").Replace(" ", "");
-                            svtNPCardType = mstsvtTDobjtmp2["cardId"].ToString().Replace("2", "Buster")
-                                .Replace("1", "Arts").Replace("3", "Quick");
-                            break;
-                        }
-                });
-            }
-
-            nprate.Dispatcher.Invoke(() =>
-            {
-                nprate.Text = "Quick: " + (NPRateQuick / 10000).ToString("P") + "   Arts: " +
-                              (NPRateArts / 10000).ToString("P") + "   Buster: " +
-                              (NPRateBuster / 10000).ToString("P") + "\r\nExtra: " +
-                              (NPRateEX / 10000).ToString("P") + "   宝具: " + (NPRateTD / 10000).ToString("P") +
-                              "   受击: " + (NPRateDef / 10000).ToString("P");
-            });
-            treasuredevicescard.Dispatcher.Invoke(() =>
-            {
-                svtNPCardhit += svtNPCardhitDamage.Count(c => c == ',');
-                treasuredevicescard.Text = svtNPCardhit + " hit " + svtNPCardhitDamage;
-            });
-            npcardtype.Dispatcher.Invoke(() => { npcardtype.Text = svtNPCardType; });
-
-            var newtmpid = "";
-            if (NPDetail == "unknown")
-                foreach (var TreasureDevicestmp2 in GlobalPathsAndDatas.mstTreasureDevicedArray)
-                    if (((JObject) TreasureDevicestmp2)["name"].ToString() == NPName)
-                    {
-                        var TreasureDevicesobjtmp2 = JObject.Parse(TreasureDevicestmp2.ToString());
-                        newtmpid = TreasureDevicesobjtmp2["id"].ToString();
-                        switch (newtmpid.Length)
-                        {
-                            case 6:
-                            {
-                                var FinTDID_TMP = newtmpid;
-                                foreach (var TDDtmp2 in GlobalPathsAndDatas.mstTreasureDeviceDetailArray)
-                                    if (((JObject) TDDtmp2)["id"].ToString() == FinTDID_TMP)
-                                    {
-                                        var TDDobjtmp2 = JObject.Parse(TDDtmp2.ToString());
-                                        if (ToggleDetailbr.IsChecked == true)
-                                            NPDetail = TDDobjtmp2["detail"].ToString().Replace("[{0}]", "[Lv.1 - Lv.5]")
-                                                .Replace("[g]", "")
-                                                .Replace("[o]", "").Replace("[/g]", "").Replace("[/o]", "")
-                                                .Replace(@"＆", "\r\n ＋")
-                                                .Replace(@"＋", "\r\n ＋").Replace("\r\n \r\n", "\r\n");
-                                        else
-                                            NPDetail = TDDobjtmp2["detail"].ToString().Replace("[{0}]", "[Lv.1 - Lv.5]")
-                                                .Replace("[g]", "")
-                                                .Replace("[o]", "").Replace("[/g]", "").Replace("[/o]", "")
-                                                .Replace(@"＆", " ＋");
-                                    }
-
-                                break;
-                            }
-                            case 7:
-                            {
-                                if (newtmpid.Substring(0, 2) == "10" || newtmpid.Substring(0, 2) == "11" ||
-                                    newtmpid.Substring(0, 2) == "23" || newtmpid.Substring(0, 2) == "25")
-                                {
-                                    var FinTDID_TMP = newtmpid;
-                                    foreach (var TDDtmp2 in GlobalPathsAndDatas.mstTreasureDeviceDetailArray
-                                    )
-                                        if (((JObject) TDDtmp2)["id"].ToString() == FinTDID_TMP)
-                                        {
-                                            var TDDobjtmp2 = JObject.Parse(TDDtmp2.ToString());
-                                            if (ToggleDetailbr.IsChecked == true)
-                                                NPDetail = TDDobjtmp2["detail"].ToString()
-                                                    .Replace("[{0}]", "[Lv.1 - Lv.5]").Replace("[g]", "")
-                                                    .Replace("[o]", "").Replace("[/g]", "").Replace("[/o]", "")
-                                                    .Replace(@"＆", "\r\n ＋")
-                                                    .Replace(@"＋", "\r\n ＋").Replace("\r\n \r\n", "\r\n");
-                                            else
-                                                NPDetail = TDDobjtmp2["detail"].ToString()
-                                                    .Replace("[{0}]", "[Lv.1 - Lv.5]").Replace("[g]", "")
-                                                    .Replace("[o]", "").Replace("[/g]", "").Replace("[/o]", "")
-                                                    .Replace(@"＆", " ＋");
-                                        }
-                                }
-
-                                break;
-                            }
-                        }
-                    }
-
-            npdetail.Dispatcher.Invoke(() => { npdetail.Text = NPDetail; });
-            if (NPName == "" && NPDetail == "") npdetail.Dispatcher.Invoke(() => { npdetail.Text = "该宝具暂时没有描述."; });
+            var TempSkillBasicJArray = ServantAnalyzeServ.ServantSkillInformation(svtID);
+            var TempSelectedJArray = TempSkillBasicJArray[0];
+            var skill1ID = TempSelectedJArray["skill1ID"].ToString();
+            var skill2ID = TempSelectedJArray["skill2ID"].ToString();
+            var skill3ID = TempSelectedJArray["skill3ID"].ToString();
         }
 
-        private void ServantSkillLevelCheck()
+
+        private void ServantCVandIllustTask(string svtID)
         {
-            SkillLvs.skill1forExcel = "";
-            SkillLvs.skill2forExcel = "";
-            SkillLvs.skill3forExcel = "";
+            var TempValue = ServantAnalyzeServ.ServantCVandIllust(svtID);
             Dispatcher.Invoke(() =>
             {
-                if (skill1ID.Text == "") return;
-                SkillDetailCheck(SkillLvs.skillID1);
-                skill1cdlv1.Text = SkillLvs.skilllv1chargetime;
-                skill1cdlv6.Text = SkillLvs.skilllv6chargetime;
-                skill1cdlv10.Text = SkillLvs.skilllv10chargetime;
-                for (var i = 0; i <= SkillLvs.SKLFuncstrArray.Length - 1; i++)
-                {
-                    if (SkillLvs.SKLFuncstrArray[i] == "" && SkillLvs.skilllv1svalArray[i].Count(c => c == ',') == 1 &&
-                        !SkillLvs.skilllv1svalArray[i].Contains("Hide")) SkillLvs.SKLFuncstrArray[i] = "HP回復";
-                    if (ToggleFuncDiffer.IsChecked == true)
-                    {
-                        SkillLvs.skilllv1svalArray[i] = ModifyFuncSvalDisplay.ModifyFuncStr(SkillLvs.SKLFuncstrArray[i],
-                            SkillLvs.skilllv1svalArray[i]);
-                        SkillLvs.skilllv6svalArray[i] = ModifyFuncSvalDisplay.ModifyFuncStr(SkillLvs.SKLFuncstrArray[i],
-                            SkillLvs.skilllv6svalArray[i]);
-                        SkillLvs.skilllv10svalArray[i] =
-                            ModifyFuncSvalDisplay.ModifyFuncStr(SkillLvs.SKLFuncstrArray[i],
-                                SkillLvs.skilllv10svalArray[i]);
-                    }
-
-                    Skill1FuncList.Items.Add(new SkillListSval(SkillLvs.SKLFuncstrArray[i],
-                        SkillLvs.skilllv1svalArray[i], SkillLvs.skilllv6svalArray[i], SkillLvs.skilllv10svalArray[i]));
-                    SkillLvs.skill1forExcel += SkillLvs.SKLFuncstrArray[i] + " 【{" +
-                                               (SkillLvs.skilllv1svalArray[i].Replace("\r\n", " ") ==
-                                                SkillLvs.skilllv10svalArray[i].Replace("\r\n", " ")
-                                                   ? SkillLvs.skilllv10svalArray[i].Replace("\r\n", " ")
-                                                   : SkillLvs.skilllv1svalArray[i].Replace("\r\n", " ") + "} - {" +
-                                                     SkillLvs.skilllv10svalArray[i].Replace("\r\n", " ")) + "}】\r\n";
-                }
-
-                try
-                {
-                    SkillLvs.skill1forExcel = SkillLvs.skill1forExcel.Substring(0, SkillLvs.skill1forExcel.Length - 2);
-                }
-                catch (Exception)
-                {
-                    // ignored
-                }
-
-                SkillDetailCheck(SkillLvs.skillID2);
-                skill2cdlv1.Text = SkillLvs.skilllv1chargetime;
-                skill2cdlv6.Text = SkillLvs.skilllv6chargetime;
-                skill2cdlv10.Text = SkillLvs.skilllv10chargetime;
-                for (var i = 0; i <= SkillLvs.SKLFuncstrArray.Length - 1; i++)
-                {
-                    if (SkillLvs.SKLFuncstrArray[i] == "" && SkillLvs.skilllv1svalArray[i].Count(c => c == ',') == 1 &&
-                        !SkillLvs.skilllv1svalArray[i].Contains("Hide")) SkillLvs.SKLFuncstrArray[i] = "HP回復";
-                    if (ToggleFuncDiffer.IsChecked == true)
-                    {
-                        SkillLvs.skilllv1svalArray[i] = ModifyFuncSvalDisplay.ModifyFuncStr(SkillLvs.SKLFuncstrArray[i],
-                            SkillLvs.skilllv1svalArray[i]);
-                        SkillLvs.skilllv6svalArray[i] = ModifyFuncSvalDisplay.ModifyFuncStr(SkillLvs.SKLFuncstrArray[i],
-                            SkillLvs.skilllv6svalArray[i]);
-                        SkillLvs.skilllv10svalArray[i] =
-                            ModifyFuncSvalDisplay.ModifyFuncStr(SkillLvs.SKLFuncstrArray[i],
-                                SkillLvs.skilllv10svalArray[i]);
-                    }
-
-                    Skill2FuncList.Items.Add(new SkillListSval(SkillLvs.SKLFuncstrArray[i],
-                        SkillLvs.skilllv1svalArray[i], SkillLvs.skilllv6svalArray[i], SkillLvs.skilllv10svalArray[i]));
-                    SkillLvs.skill2forExcel += SkillLvs.SKLFuncstrArray[i] + " 【{" +
-                                               (SkillLvs.skilllv1svalArray[i].Replace("\r\n", " ") ==
-                                                SkillLvs.skilllv10svalArray[i].Replace("\r\n", " ")
-                                                   ? SkillLvs.skilllv10svalArray[i].Replace("\r\n", " ")
-                                                   : SkillLvs.skilllv1svalArray[i].Replace("\r\n", " ") + "} - {" +
-                                                     SkillLvs.skilllv10svalArray[i].Replace("\r\n", " ")) + "}】\r\n";
-                }
-
-                try
-                {
-                    SkillLvs.skill2forExcel = SkillLvs.skill2forExcel.Substring(0, SkillLvs.skill2forExcel.Length - 2);
-                }
-                catch (Exception)
-                {
-                    // ignored
-                }
-
-                SkillDetailCheck(SkillLvs.skillID3);
-                skill3cdlv1.Text = SkillLvs.skilllv1chargetime;
-                skill3cdlv6.Text = SkillLvs.skilllv6chargetime;
-                skill3cdlv10.Text = SkillLvs.skilllv10chargetime;
-                for (var i = 0; i <= SkillLvs.SKLFuncstrArray.Length - 1; i++)
-                {
-                    if (SkillLvs.SKLFuncstrArray[i] == "" && SkillLvs.skilllv1svalArray[i].Count(c => c == ',') == 1 &&
-                        !SkillLvs.skilllv1svalArray[i].Contains("Hide")) SkillLvs.SKLFuncstrArray[i] = "HP回復";
-                    if (ToggleFuncDiffer.IsChecked == true)
-                    {
-                        SkillLvs.skilllv1svalArray[i] = ModifyFuncSvalDisplay.ModifyFuncStr(SkillLvs.SKLFuncstrArray[i],
-                            SkillLvs.skilllv1svalArray[i]);
-                        SkillLvs.skilllv6svalArray[i] = ModifyFuncSvalDisplay.ModifyFuncStr(SkillLvs.SKLFuncstrArray[i],
-                            SkillLvs.skilllv6svalArray[i]);
-                        SkillLvs.skilllv10svalArray[i] =
-                            ModifyFuncSvalDisplay.ModifyFuncStr(SkillLvs.SKLFuncstrArray[i],
-                                SkillLvs.skilllv10svalArray[i]);
-                    }
-
-                    Skill3FuncList.Items.Add(new SkillListSval(SkillLvs.SKLFuncstrArray[i],
-                        SkillLvs.skilllv1svalArray[i], SkillLvs.skilllv6svalArray[i], SkillLvs.skilllv10svalArray[i]));
-                    SkillLvs.skill3forExcel += SkillLvs.SKLFuncstrArray[i] + " 【{" +
-                                               (SkillLvs.skilllv1svalArray[i].Replace("\r\n", " ") ==
-                                                SkillLvs.skilllv10svalArray[i].Replace("\r\n", " ")
-                                                   ? SkillLvs.skilllv10svalArray[i].Replace("\r\n", " ")
-                                                   : SkillLvs.skilllv1svalArray[i].Replace("\r\n", " ") + "} - {" +
-                                                     SkillLvs.skilllv10svalArray[i].Replace("\r\n", " ")) + "}】\r\n";
-                }
-
-                try
-                {
-                    SkillLvs.skill3forExcel = SkillLvs.skill3forExcel.Substring(0, SkillLvs.skill3forExcel.Length - 2);
-                }
-                catch (Exception)
-                {
-                    // ignored
-                }
+                cv.Text = TempValue[0];
+                illust.Text = TempValue[1];
             });
-            var SCPSSLC = new Task(ServantClassPassiveSkillSvalListCheck);
-            SCPSSLC.Start();
         }
 
-        private void ServantBasicInformationCheck()
+        private void ServantBiographyTask(string svtID)
         {
+            var TempBiographyJArray = ServantAnalyzeServ.ServantBiography(svtID);
+            var TempSelectedJArray = TempBiographyJArray[0];
             Dispatcher.Invoke(() =>
             {
-                var RankString = new string[100];
-                RankString[11] = "A";
-                RankString[12] = "A+";
-                RankString[13] = "A++";
-                RankString[14] = "A-";
-                RankString[15] = "A+++";
-                RankString[21] = "B";
-                RankString[22] = "B+";
-                RankString[23] = "B++";
-                RankString[24] = "B-";
-                RankString[25] = "B+++";
-                RankString[31] = "C";
-                RankString[32] = "C+";
-                RankString[33] = "C++";
-                RankString[34] = "C-";
-                RankString[35] = "C+++";
-                RankString[41] = "D";
-                RankString[42] = "D+";
-                RankString[43] = "D++";
-                RankString[44] = "D-";
-                RankString[45] = "D+++";
-                RankString[51] = "E";
-                RankString[52] = "E+";
-                RankString[53] = "E++";
-                RankString[54] = "E-";
-                RankString[55] = "E+++";
-                RankString[61] = "EX";
-                RankString[98] = "?";
-                RankString[0] = "-";
-                RankString[99] = "?";
-                var svtName = "";
-                var svtNameDisplay = "unknown";
-                var ClassName = new string[1500];
-                ClassName[1] = "Saber";
-                ClassName[2] = "Archer";
-                ClassName[3] = "Lancer";
-                ClassName[4] = "Rider";
-                ClassName[5] = "Caster";
-                ClassName[6] = "Assassin";
-                ClassName[7] = "Berserker";
-                ClassName[8] = "Shielder";
-                ClassName[9] = "Ruler";
-                ClassName[10] = "Alterego";
-                ClassName[11] = "Avenger";
-                ClassName[23] = "MoonCancer";
-                ClassName[25] = "Foreigner";
-                ClassName[20] = "Beast II";
-                ClassName[22] = "Beast I";
-                ClassName[24] = "Beast III/R";
-                ClassName[26] = "Beast III/L";
-                ClassName[27] = "Beast ?";
-                ClassName[97] = "不明";
-                ClassName[1001] = "礼装";
-                ClassName[107] = "Berserker";
-                ClassName[21] = "?";
-                ClassName[19] = "?";
-                ClassName[18] = "?";
-                ClassName[17] = "GrandCaster";
-                ClassName[16] = "?";
-                ClassName[15] = "?";
-                ClassName[14] = "?";
-                ClassName[13] = "?";
-                ClassName[12] = "?";
-                SkillLvs.TDFuncstr = "";
-                var svtClass = "unknown"; //ClassID
-                var svtgender = "unknown";
-                var gender = new string[4];
-                gender[1] = "男性";
-                gender[2] = "女性";
-                gender[3] = "其他";
-                var nprateclassbase = new double[150];
-                nprateclassbase[1] = 1.5;
-                nprateclassbase[2] = 1.55;
-                nprateclassbase[3] = 1.45;
-                nprateclassbase[4] = 1.55;
-                nprateclassbase[5] = 1.6;
-                nprateclassbase[6] = 1.45;
-                nprateclassbase[7] = 1.4;
-                nprateclassbase[8] = 1.5;
-                nprateclassbase[9] = 1.5;
-                nprateclassbase[10] = 1.55;
-                nprateclassbase[11] = 1.45;
-                nprateclassbase[23] = 1.6;
-                nprateclassbase[25] = 1.5;
-                nprateclassbase[20] = 0.0;
-                nprateclassbase[22] = 0.0;
-                nprateclassbase[24] = 0.0;
-                nprateclassbase[26] = 0.0;
-                nprateclassbase[27] = 0.0;
-                nprateclassbase[97] = 0.0;
-                nprateclassbase[107] = 0.0;
-                nprateclassbase[21] = 0.0;
-                nprateclassbase[19] = 0.0;
-                nprateclassbase[18] = 0.0;
-                nprateclassbase[17] = 1.6;
-                nprateclassbase[16] = 0.0;
-                nprateclassbase[15] = 0.0;
-                nprateclassbase[14] = 0.0;
-                nprateclassbase[13] = 0.0;
-                nprateclassbase[12] = 0.0;
-                var nprateartscount = new double[4];
-                nprateartscount[1] = 1.5;
-                nprateartscount[2] = 1.125;
-                nprateartscount[3] = 1;
-                var npratemagicbase = new double[100];
-                npratemagicbase[11] = 1.02;
-                npratemagicbase[12] = 1.025;
-                npratemagicbase[13] = 1.03;
-                npratemagicbase[14] = 1.015;
-                npratemagicbase[15] = 1.035;
-                npratemagicbase[21] = 1;
-                npratemagicbase[22] = 1.005;
-                npratemagicbase[23] = 1.01;
-                npratemagicbase[24] = 0.995;
-                npratemagicbase[25] = 1.015;
-                npratemagicbase[31] = 0.99;
-                npratemagicbase[32] = 0.9925;
-                npratemagicbase[33] = 0.995;
-                npratemagicbase[34] = 0.985;
-                npratemagicbase[35] = 0.9975;
-                npratemagicbase[41] = 0.98;
-                npratemagicbase[42] = 0.9825;
-                npratemagicbase[43] = 0.985;
-                npratemagicbase[44] = 0.975;
-                npratemagicbase[45] = 0.9875;
-                npratemagicbase[51] = 0.97;
-                npratemagicbase[52] = 0.9725;
-                npratemagicbase[53] = 0.975;
-                npratemagicbase[54] = 0.965;
-                npratemagicbase[55] = 0.9775;
-                npratemagicbase[61] = 1.04;
-                npratemagicbase[0] = 0.0;
-                npratemagicbase[99] = 0.0;
-                npratemagicbase[98] = 0.0;
-                npratemagicbase[97] = 0.0;
-                var svtstarrate = "";
-                double NPrate = 0;
-                float starrate = 0;
-                float deathrate = 0;
-                var svtdeathrate = "";
-                var svtillust = "unknown"; //illustID 不输出
-                var svtcv = "unknown"; //CVID 不输出
-                var svtcollectionid = "";
-                var svtCVName = "unknown";
-                var svtILLUSTName = "unknown";
-                var svtrarity = "";
-                var svthpBase = "";
-                var svthpMax = "";
-                var svtatkBase = "";
-                var svtatkMax = "";
-                GlobalPathsAndDatas.basicatk = 0;
-                GlobalPathsAndDatas.basichp = 0;
-                GlobalPathsAndDatas.CurveType = "";
-                GlobalPathsAndDatas.maxatk = 0;
-                GlobalPathsAndDatas.maxhp = 0;
-                var svtcriticalWeight = "";
-                var svtpower = "";
-                var svtdefense = "";
-                var svtagility = "";
-                var svtmagic = "";
-                var svtluck = "";
-                var svttreasureDevice = "";
-                var svtHideAttri = "";
-                string svtClassPassiveID;
-                var classData = 0;
-                var powerData = 0;
-                var defenseData = 0;
-                var agilityData = 0;
-                var magicData = 0;
-                var luckData = 0;
-                var TreasureData = 0;
-                var genderData = 0;
-                var CardArrange = "[A,B,C,D,E]";
-                var svtIndividualityInput = "";
-                GlobalPathsAndDatas.askxlsx = true;
-                foreach (var svtIDtmp in GlobalPathsAndDatas.mstSvtArray)
-                    if (((JObject) svtIDtmp)["id"].ToString() == JB.svtid)
-                    {
-                        var mstSvtobjtmp = JObject.Parse(svtIDtmp.ToString());
-                        svtName = mstSvtobjtmp["name"].ToString();
-                        Svtname.Text = svtName;
-                        JB.svtnme = svtName;
-                        svtNameDisplay = mstSvtobjtmp["battleName"].ToString();
-                        SvtBattlename.Text = svtNameDisplay;
-                        Title += " - " + svtNameDisplay;
-                        svtClass = mstSvtobjtmp["classId"].ToString();
-                        svtgender = mstSvtobjtmp["genderType"].ToString();
-                        svtstarrate = mstSvtobjtmp["starRate"].ToString();
-                        svtdeathrate = mstSvtobjtmp["deathRate"].ToString();
-                        svtcollectionid = mstSvtobjtmp["collectionNo"].ToString();
-                        GlobalPathsAndDatas.CurveType = mstSvtobjtmp["expType"].ToString();
-                        svtIndividualityInput = mstSvtobjtmp["individuality"].ToString().Replace("\n", "")
-                            .Replace("\t", "")
-                            .Replace("\r", "").Replace(" ", "").Replace("[", "").Replace("]", "");
-                        collection.Text = svtcollectionid;
-                        svtHideAttri = mstSvtobjtmp["attri"].ToString().Replace("1", "人").Replace("2", "天")
-                            .Replace("3", "地").Replace("4", "星").Replace("5", "兽");
-                        CardArrange = mstSvtobjtmp["cardIds"].ToString().Replace("\n", "").Replace("\t", "")
-                            .Replace("\r", "").Replace(" ", "").Replace("2", "B").Replace("1", "A").Replace("3", "Q");
-                        if (CardArrange == "[Q,Q,Q,Q,Q]") GlobalPathsAndDatas.askxlsx = false;
-                        var SISI = new Task(() => { CheckSvtIndividuality(svtIndividualityInput); });
-                        if (ToggleDispIndi.IsChecked == true)
-                            SISI.Start();
-                        else
-                            svtIndividuality.Text = svtIndividualityInput;
-                        cards.Text = CardArrange;
-                        svtClassPassiveID = mstSvtobjtmp["classPassive"].ToString().Replace("\n", "").Replace("\t", "")
-                            .Replace("\r", "").Replace(" ", "").Replace("[", "").Replace("]", "");
-                        SkillLvs.ClassPassiveID = svtClassPassiveID;
-                        var SCPSC = new Task(ServantClassPassiveSkillCheck);
-                        SCPSC.Start();
-                        hiddenattri.Text = svtHideAttri;
-                        classData = int.Parse(svtClass);
-                        try
-                        {
-                            svtclass.Text = ClassName[classData];
-                        }
-                        catch (Exception)
-                        {
-                            svtclass.Text = ReadClassName.ReadClassOriginName(classData);
-                        }
-
-                        var CheckShiZhuang = new Task(() => { CheckSvtIsFullinGame(classData); });
-                        CheckShiZhuang.Start();
-                        genderData = int.Parse(svtgender);
-                        gendle.Text = gender[genderData];
-                        starrate = float.Parse(svtstarrate) / 10;
-                        ssvtstarrate.Text = starrate + "%";
-                        deathrate = float.Parse(svtdeathrate) / 10;
-                        ssvtdeathrate.Text = deathrate + "%";
-                        break;
-                    }
-
-                foreach (var svtLimittmp in GlobalPathsAndDatas.mstSvtLimitArray)
-                    if (((JObject) svtLimittmp)["svtId"].ToString() == JB.svtid)
-                    {
-                        var mstsvtLimitobjtmp = JObject.Parse(svtLimittmp.ToString());
-                        svtrarity = mstsvtLimitobjtmp["rarity"].ToString();
-                        rarity.Text = svtrarity + " ☆";
-                        svthpBase = mstsvtLimitobjtmp["hpBase"].ToString();
-                        basichp.Text = svthpBase;
-                        svthpMax = mstsvtLimitobjtmp["hpMax"].ToString();
-                        maxhp.Text = svthpMax;
-                        svtatkBase = mstsvtLimitobjtmp["atkBase"].ToString();
-                        basicatk.Text = svtatkBase;
-                        svtatkMax = mstsvtLimitobjtmp["atkMax"].ToString();
-                        maxatk.Text = svtatkMax;
-                        GlobalPathsAndDatas.basicatk = Convert.ToInt32(svtatkBase);
-                        GlobalPathsAndDatas.basichp = Convert.ToInt32(svthpBase);
-                        GlobalPathsAndDatas.maxatk = Convert.ToInt32(svtatkMax);
-                        GlobalPathsAndDatas.maxhp = Convert.ToInt32(svthpMax);
-                        svtcriticalWeight = mstsvtLimitobjtmp["criticalWeight"].ToString();
-                        jixing.Text = svtcriticalWeight;
-                        svtpower = mstsvtLimitobjtmp["power"].ToString();
-                        svtdefense = mstsvtLimitobjtmp["defense"].ToString();
-                        svtagility = mstsvtLimitobjtmp["agility"].ToString();
-                        svtmagic = mstsvtLimitobjtmp["magic"].ToString();
-                        svtluck = mstsvtLimitobjtmp["luck"].ToString();
-                        svttreasureDevice = mstsvtLimitobjtmp["treasureDevice"].ToString();
-                        powerData = int.Parse(svtpower);
-                        defenseData = int.Parse(svtdefense);
-                        agilityData = int.Parse(svtagility);
-                        magicData = int.Parse(svtmagic);
-                        luckData = int.Parse(svtluck);
-                        TreasureData = int.Parse(svttreasureDevice);
-                        sixwei.Content = "筋力: " + RankString[powerData] + "        耐久: " + RankString[defenseData] +
-                                         "\n敏捷: " +
-                                         RankString[agilityData] +
-                                         "        魔力: " + RankString[magicData] + "\n幸运: " + RankString[luckData] +
-                                         "        宝具: " +
-                                         RankString[TreasureData];
-                        break;
-                    }
-
-                var svtArtsCardQuantity = CardArrange.Count(c => c == 'A');
-                if (svtArtsCardQuantity == 0)
-                {
-                    NPrate = 0;
-                    notrealnprate.Text = NPrate.ToString("P");
-                }
-                else
-                {
-                    NPrate = nprateclassbase[classData] * nprateartscount[svtArtsCardQuantity] *
-                        npratemagicbase[magicData] / GlobalPathsAndDatas.svtArtsCardhit / 100;
-                    NPrate = Math.Floor(NPrate * 10000) / 10000;
-                    notrealnprate.Text = NPrate.ToString("P");
-                }
-
-                switch (classData)
-                {
-                    case 1:
-                    case 4:
-                    case 8:
-                    case 10:
-                    case 20:
-                    case 22:
-                    case 24:
-                    case 26:
-                    case 23:
-                    case 25:
-                    case 17:
-                        atkbalance1.Content = "( x 1.0 -)";
-                        atkbalance2.Content = "( x 1.0 -)";
-                        if (ToggleMsgboxOutputCheck.IsChecked != true || !GlobalPathsAndDatas.askxlsx) return;
-                        Thread.Sleep(500);
-                        Dispatcher.Invoke(() =>
-                        {
-                            GlobalPathsAndDatas.SuperMsgBoxRes = MessageBox.Show(
-                                Application.Current.MainWindow,
-                                "是否需要以xlsx的形式导出该从者的基础数据?",
-                                "导出?", MessageBoxButton.OKCancel, MessageBoxImage.Information);
-                        });
-                        if (GlobalPathsAndDatas.SuperMsgBoxRes == MessageBoxResult.OK)
-                            ExcelFileOutput();
-                        break;
-                    case 3:
-                        atkbalance1.Content = "( x 1.05 △)";
-                        atkbalance2.Content = "( x 1.05 △)";
-                        if (ToggleMsgboxOutputCheck.IsChecked != true || !GlobalPathsAndDatas.askxlsx) return;
-                        Thread.Sleep(500);
-                        Dispatcher.Invoke(() =>
-                        {
-                            GlobalPathsAndDatas.SuperMsgBoxRes = MessageBox.Show(
-                                Application.Current.MainWindow,
-                                "是否需要以xlsx的形式导出该从者的基础数据?",
-                                "导出?", MessageBoxButton.OKCancel, MessageBoxImage.Information);
-                        });
-                        if (GlobalPathsAndDatas.SuperMsgBoxRes == MessageBoxResult.OK)
-                            ExcelFileOutput();
-                        break;
-                    case 5:
-                    case 6:
-                        atkbalance1.Content = "( x 0.9 ▽)";
-                        atkbalance2.Content = "( x 0.9 ▽)";
-                        if (ToggleMsgboxOutputCheck.IsChecked != true || !GlobalPathsAndDatas.askxlsx) return;
-                        Thread.Sleep(500);
-                        Dispatcher.Invoke(() =>
-                        {
-                            GlobalPathsAndDatas.SuperMsgBoxRes = MessageBox.Show(
-                                Application.Current.MainWindow,
-                                "是否需要以xlsx的形式导出该从者的基础数据?",
-                                "导出?", MessageBoxButton.OKCancel, MessageBoxImage.Information);
-                        });
-                        if (GlobalPathsAndDatas.SuperMsgBoxRes == MessageBoxResult.OK)
-                            ExcelFileOutput();
-                        break;
-                    case 2:
-                        atkbalance1.Content = "( x 0.95 ▽)";
-                        atkbalance2.Content = "( x 0.95 ▽)";
-                        if (ToggleMsgboxOutputCheck.IsChecked != true || !GlobalPathsAndDatas.askxlsx) return;
-                        Thread.Sleep(500);
-                        Dispatcher.Invoke(() =>
-                        {
-                            GlobalPathsAndDatas.SuperMsgBoxRes = MessageBox.Show(
-                                Application.Current.MainWindow,
-                                "是否需要以xlsx的形式导出该从者的基础数据?",
-                                "导出?", MessageBoxButton.OKCancel, MessageBoxImage.Information);
-                        });
-                        if (GlobalPathsAndDatas.SuperMsgBoxRes == MessageBoxResult.OK)
-                            ExcelFileOutput();
-                        break;
-                    case 7:
-                    case 9:
-                    case 11:
-                        atkbalance1.Content = "( x 1.1 △)";
-                        atkbalance2.Content = "( x 1.1 △)";
-                        if (ToggleMsgboxOutputCheck.IsChecked != true || !GlobalPathsAndDatas.askxlsx) return;
-                        Thread.Sleep(500);
-                        Dispatcher.Invoke(() =>
-                        {
-                            GlobalPathsAndDatas.SuperMsgBoxRes = MessageBox.Show(
-                                Application.Current.MainWindow,
-                                "是否需要以xlsx的形式导出该从者的基础数据?",
-                                "导出?", MessageBoxButton.OKCancel, MessageBoxImage.Information);
-                        });
-                        if (GlobalPathsAndDatas.SuperMsgBoxRes == MessageBoxResult.OK)
-                            ExcelFileOutput();
-                        break;
-                    case 1001:
-                        RemindText.Text = "此ID为礼装ID,图鉴编号为礼装的图鉴编号.礼装描述在羁绊文本的文本1处.";
-                        break;
-                    default:
-                        atkbalance1.Content = "( x 1.0 -)";
-                        atkbalance2.Content = "( x 1.0 -)";
-                        break;
-                }
+                Biography1.Text = TempSelectedJArray["Biography1"].ToString();
+                Biography2.Text = TempSelectedJArray["Biography2"].ToString();
+                Biography3.Text = TempSelectedJArray["Biography3"].ToString();
+                Biography4.Text = TempSelectedJArray["Biography4"].ToString();
+                Biography5.Text = TempSelectedJArray["Biography5"].ToString();
+                Biography6.Text = TempSelectedJArray["Biography6"].ToString();
+                Biography7.Text = TempSelectedJArray["Biography7"].ToString();
             });
         }
 
-        private void ServantJibanTextCheck()
+        private void ServantSkillSvalsTask(string sklid,int skillNumber,bool buffTransfer) //参数未填
         {
-            foreach (var SCTMP in GlobalPathsAndDatas.mstSvtCommentArray)
+
+        }
+
+        private void ServantBasicInformationTask(string svtID)
+        {
+
+        }
+
+        private void ServantBasicInformationLimitTask(string svtID)
+        {
+
+        }
+
+        private void ServantCardArrangementTask(string svtID)
+        {
+            var TempCardJArray = ServantAnalyzeServ.ServantCardArrange(svtID);
+            var TempSelectedJArray = TempCardJArray[0];
+            Dispatcher.Invoke(() =>
             {
-                if (((JObject) SCTMP)["svtId"].ToString() == JB.svtid && ((JObject) SCTMP)["id"].ToString() == "1")
-                {
-                    var SCobjtmp = JObject.Parse(SCTMP.ToString());
-                    jibantext1.Dispatcher.Invoke(() =>
-                    {
-                        jibantext1.Text = SCobjtmp["comment"].ToString().Replace("\n", "\r\n");
-                        if (jibantext1.Text != "")
-                            JBOutput.Dispatcher.Invoke(() => { JBOutput.IsEnabled = true; });
-                    });
-                    JB.JB1 = SCobjtmp["comment"].ToString().Replace("\n", "\r\n");
-                }
-
-                if (((JObject) SCTMP)["svtId"].ToString() == JB.svtid && ((JObject) SCTMP)["id"].ToString() == "2")
-                {
-                    var SCobjtmp = JObject.Parse(SCTMP.ToString());
-                    jibantext2.Dispatcher.Invoke(() =>
-                    {
-                        jibantext2.Text = SCobjtmp["comment"].ToString().Replace("\n", "\r\n");
-                    });
-                    JB.JB2 = SCobjtmp["comment"].ToString().Replace("\n", "\r\n");
-                }
-
-                if (((JObject) SCTMP)["svtId"].ToString() == JB.svtid && ((JObject) SCTMP)["id"].ToString() == "3")
-                {
-                    var SCobjtmp = JObject.Parse(SCTMP.ToString());
-                    jibantext3.Dispatcher.Invoke(() =>
-                    {
-                        jibantext3.Text = SCobjtmp["comment"].ToString().Replace("\n", "\r\n");
-                    });
-                    JB.JB3 = SCobjtmp["comment"].ToString().Replace("\n", "\r\n");
-                }
-
-                if (((JObject) SCTMP)["svtId"].ToString() == JB.svtid && ((JObject) SCTMP)["id"].ToString() == "4")
-                {
-                    var SCobjtmp = JObject.Parse(SCTMP.ToString());
-                    jibantext4.Dispatcher.Invoke(() =>
-                    {
-                        jibantext4.Text = SCobjtmp["comment"].ToString().Replace("\n", "\r\n");
-                    });
-                    JB.JB4 = SCobjtmp["comment"].ToString().Replace("\n", "\r\n");
-                }
-
-                if (((JObject) SCTMP)["svtId"].ToString() == JB.svtid && ((JObject) SCTMP)["id"].ToString() == "5")
-                {
-                    var SCobjtmp = JObject.Parse(SCTMP.ToString());
-                    jibantext5.Dispatcher.Invoke(() =>
-                    {
-                        jibantext5.Text = SCobjtmp["comment"].ToString().Replace("\n", "\r\n");
-                    });
-                    JB.JB5 = SCobjtmp["comment"].ToString().Replace("\n", "\r\n");
-                }
-
-                if (((JObject) SCTMP)["svtId"].ToString() == JB.svtid && ((JObject) SCTMP)["id"].ToString() == "6")
-                {
-                    var SCobjtmp = JObject.Parse(SCTMP.ToString());
-                    jibantext6.Dispatcher.Invoke(() =>
-                    {
-                        jibantext6.Text = SCobjtmp["comment"].ToString().Replace("\n", "\r\n");
-                    });
-                    JB.JB6 = SCobjtmp["comment"].ToString().Replace("\n", "\r\n");
-                }
-
-                if (((JObject) SCTMP)["svtId"].ToString() != JB.svtid ||
-                    ((JObject) SCTMP)["id"].ToString() != "7") continue;
-                {
-                    var SCobjtmp = JObject.Parse(SCTMP.ToString());
-                    jibantext7.Dispatcher.Invoke(() =>
-                    {
-                        jibantext7.Text = SCobjtmp["comment"].ToString().Replace("\n", "\r\n");
-                    });
-                    JB.JB7 = SCobjtmp["comment"].ToString().Replace("\n", "\r\n");
-                }
-            }
+                bustercard.Text = TempSelectedJArray["buster"].ToString();
+                artscard.Text = TempSelectedJArray["arts"].ToString();
+                quickcard.Text = TempSelectedJArray["quick"].ToString();
+                extracard.Text = TempSelectedJArray["extra"].ToString();
+            });
         }
 
         private void ServantCombineLimitItemsCheck()
@@ -989,109 +261,6 @@ namespace FGOSBIAReloaded
             }
 
             return "未知材料" + ID;
-        }
-
-        private void ServantCVandIllustCheck()
-        {
-            var svtillust = "unknown"; //illustID 不输出
-            var svtcv = "unknown"; //CVID 不输出
-            var svtCVName = "unknown";
-            var svtILLUSTName = "unknown";
-            foreach (var svtIDtmp in GlobalPathsAndDatas.mstSvtArray)
-                if (((JObject) svtIDtmp)["id"].ToString() == JB.svtid)
-                {
-                    var mstSvtobjtmp = JObject.Parse(svtIDtmp.ToString());
-                    svtillust = mstSvtobjtmp["illustratorId"].ToString(); //illustID
-                    svtcv = mstSvtobjtmp["cvId"].ToString(); //CVID
-                    break;
-                }
-
-            foreach (var cvidtmp in GlobalPathsAndDatas.mstCvArray)
-                if (((JObject) cvidtmp)["id"].ToString() == svtcv)
-                {
-                    var mstCVobjtmp = JObject.Parse(cvidtmp.ToString());
-                    svtCVName = mstCVobjtmp["name"].ToString();
-                    cv.Dispatcher.Invoke(() => { cv.Text = svtCVName; });
-                    break;
-                }
-
-            foreach (var illustidtmp in GlobalPathsAndDatas.mstIllustratorArray)
-                if (((JObject) illustidtmp)["id"].ToString() == svtillust)
-                {
-                    var mstillustobjtmp = JObject.Parse(illustidtmp.ToString());
-                    svtILLUSTName = mstillustobjtmp["name"].ToString();
-                    illust.Dispatcher.Invoke(() => { illust.Text = svtILLUSTName; });
-                    break;
-                }
-        }
-
-        private void ServantCardsArrangementCheck() //必须比basic先解析
-        {
-            var svtArtsCardhit = 1;
-            var svtArtsCardhitDamage = "unknown";
-            var svtArtsCardQuantity = 0;
-            var svtBustersCardhit = 1;
-            var svtBustersCardhitDamage = "unknown";
-            var svtQuicksCardhit = 1;
-            var svtQuicksCardhitDamage = "unknown";
-            var svtExtraCardhit = 1;
-            var svtExtraCardhitDamage = "unknown";
-            GlobalPathsAndDatas.svtArtsCardhit = 1;
-            foreach (var svtCardtmp in GlobalPathsAndDatas.mstSvtCardArray)
-            {
-                if (((JObject) svtCardtmp)["svtId"].ToString() == JB.svtid &&
-                    ((JObject) svtCardtmp)["cardId"].ToString() == "1")
-                {
-                    var mstSvtCardobjtmp = JObject.Parse(svtCardtmp.ToString());
-                    svtArtsCardhitDamage = mstSvtCardobjtmp["normalDamage"].ToString().Replace("\n", "")
-                        .Replace("\t", "").Replace("\r", "").Replace(" ", "");
-                    svtArtsCardhit += svtArtsCardhitDamage.Count(c => c == ',');
-                    GlobalPathsAndDatas.svtArtsCardhit = svtArtsCardhit;
-                    artscard.Dispatcher.Invoke(() =>
-                    {
-                        artscard.Text = svtArtsCardhit + " hit " + svtArtsCardhitDamage;
-                    });
-                }
-
-                if (((JObject) svtCardtmp)["svtId"].ToString() == JB.svtid &&
-                    ((JObject) svtCardtmp)["cardId"].ToString() == "2")
-                {
-                    var mstSvtCardobjtmp = JObject.Parse(svtCardtmp.ToString());
-                    svtBustersCardhitDamage = mstSvtCardobjtmp["normalDamage"].ToString().Replace("\n", "")
-                        .Replace("\t", "").Replace("\r", "").Replace(" ", "");
-                    svtBustersCardhit += svtBustersCardhitDamage.Count(c => c == ',');
-                    bustercard.Dispatcher.Invoke(() =>
-                    {
-                        bustercard.Text = svtBustersCardhit + " hit " + svtBustersCardhitDamage;
-                    });
-                }
-
-                if (((JObject) svtCardtmp)["svtId"].ToString() == JB.svtid &&
-                    ((JObject) svtCardtmp)["cardId"].ToString() == "3")
-                {
-                    var mstSvtCardobjtmp = JObject.Parse(svtCardtmp.ToString());
-                    svtQuicksCardhitDamage = mstSvtCardobjtmp["normalDamage"].ToString().Replace("\n", "")
-                        .Replace("\t", "").Replace("\r", "").Replace(" ", "");
-                    svtQuicksCardhit += svtQuicksCardhitDamage.Count(c => c == ',');
-                    quickcard.Dispatcher.Invoke(() =>
-                    {
-                        quickcard.Text = svtQuicksCardhit + " hit " + svtQuicksCardhitDamage;
-                    });
-                }
-
-                if (((JObject) svtCardtmp)["svtId"].ToString() != JB.svtid ||
-                    ((JObject) svtCardtmp)["cardId"].ToString() != "4") continue;
-                {
-                    var mstSvtCardobjtmp = JObject.Parse(svtCardtmp.ToString());
-                    svtExtraCardhitDamage = mstSvtCardobjtmp["normalDamage"].ToString().Replace("\n", "")
-                        .Replace("\t", "").Replace("\r", "").Replace(" ", "");
-                    svtExtraCardhit += svtExtraCardhitDamage.Count(c => c == ',');
-                    extracard.Dispatcher.Invoke(() =>
-                    {
-                        extracard.Text = svtExtraCardhit + " hit " + svtExtraCardhitDamage;
-                    });
-                }
-            }
         }
 
         private void ServantTreasureDeviceSvalCheck(string svtTDID)
@@ -1303,32 +472,6 @@ namespace FGOSBIAReloaded
             }
         }
 
-        private void CheckSvtIsFullinGame(object classid)
-        {
-            Dispatcher.Invoke(() =>
-            {
-                if (collection.Text != "0" || cards.Text == "[Q,Q,Q,Q,Q]") return;
-                switch (Convert.ToInt64(classid))
-                {
-                    case 1:
-                    case 2:
-                    case 3:
-                    case 4:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 23:
-                    case 25:
-                        RemindText.Text = "该从者尚未实装或为敌方数据,故最终实装的数据可能会与目前的解析结果不同,请以实装之后的数据为准!望知悉.";
-                        break;
-                }
-            });
-        }
-
         private void ServantClassPassiveSkillCheck()
         {
             try
@@ -1415,215 +558,6 @@ namespace FGOSBIAReloaded
             }
         }
 
-        private void ServantSkillInformationCheck()
-        {
-            var skill1Name = string.Empty;
-            var skill2Name = string.Empty;
-            var skill3Name = string.Empty;
-            var skill1detail = string.Empty;
-            var skill2detail = string.Empty;
-            var skill3detail = string.Empty;
-            var sk1IsStrengthened = false;
-            var sk2IsStrengthened = false;
-            var sk3IsStrengthened = false;
-            IsSk1Strengthened.Dispatcher.Invoke(() => { IsSk1Strengthened.Text = "×"; });
-            IsSk2Strengthened.Dispatcher.Invoke(() => { IsSk2Strengthened.Text = "×"; });
-            IsSk3Strengthened.Dispatcher.Invoke(() => { IsSk3Strengthened.Text = "×"; });
-            foreach (var svtskill in GlobalPathsAndDatas.mstSvtSkillArray)
-            {
-                if (((JObject) svtskill)["svtId"].ToString() == JB.svtid &&
-                    ((JObject) svtskill)["num"].ToString() == "1" &&
-                    ((JObject) svtskill)["priority"].ToString() == "1")
-                {
-                    var mstsvtskillobjtmp = JObject.Parse(svtskill.ToString());
-                    SkillLvs.skillID1 = mstsvtskillobjtmp["skillId"].ToString();
-                }
-
-                if (((JObject) svtskill)["svtId"].ToString() == JB.svtid &&
-                    ((JObject) svtskill)["num"].ToString() == "1" &&
-                    ((JObject) svtskill)["priority"].ToString() == "2")
-                {
-                    var mstsvtskillobjtmp = JObject.Parse(svtskill.ToString());
-                    SkillLvs.skillID1 = mstsvtskillobjtmp["skillId"].ToString();
-                    IsSk1Strengthened.Dispatcher.Invoke(() => { IsSk1Strengthened.Text = "√"; });
-                    sk1IsStrengthened = true;
-                }
-
-                if (((JObject) svtskill)["svtId"].ToString() == JB.svtid &&
-                    ((JObject) svtskill)["num"].ToString() == "1" &&
-                    ((JObject) svtskill)["priority"].ToString() == "3")
-                {
-                    var mstsvtskillobjtmp = JObject.Parse(svtskill.ToString());
-                    SkillLvs.skillID1 = mstsvtskillobjtmp["skillId"].ToString();
-                    IsSk1Strengthened.Dispatcher.Invoke(() => { IsSk1Strengthened.Text = "√(2)"; });
-                    sk1IsStrengthened = true;
-                }
-
-                if (((JObject) svtskill)["svtId"].ToString() == JB.svtid &&
-                    ((JObject) svtskill)["num"].ToString() == "2" &&
-                    ((JObject) svtskill)["priority"].ToString() == "1")
-                {
-                    var mstsvtskillobjtmp = JObject.Parse(svtskill.ToString());
-                    SkillLvs.skillID2 = mstsvtskillobjtmp["skillId"].ToString();
-                }
-
-                if (((JObject) svtskill)["svtId"].ToString() == JB.svtid &&
-                    ((JObject) svtskill)["num"].ToString() == "2" &&
-                    ((JObject) svtskill)["priority"].ToString() == "2")
-                {
-                    var mstsvtskillobjtmp = JObject.Parse(svtskill.ToString());
-                    SkillLvs.skillID2 = mstsvtskillobjtmp["skillId"].ToString();
-                    IsSk2Strengthened.Dispatcher.Invoke(() => { IsSk2Strengthened.Text = "√"; });
-                    sk2IsStrengthened = true;
-                }
-
-                if (((JObject) svtskill)["svtId"].ToString() == JB.svtid &&
-                    ((JObject) svtskill)["num"].ToString() == "2" &&
-                    ((JObject) svtskill)["priority"].ToString() == "3")
-                {
-                    var mstsvtskillobjtmp = JObject.Parse(svtskill.ToString());
-                    SkillLvs.skillID2 = mstsvtskillobjtmp["skillId"].ToString();
-                    IsSk2Strengthened.Dispatcher.Invoke(() => { IsSk2Strengthened.Text = "√(2)"; });
-                    sk2IsStrengthened = true;
-                }
-
-                if (((JObject) svtskill)["svtId"].ToString() == JB.svtid &&
-                    ((JObject) svtskill)["num"].ToString() == "3" &&
-                    ((JObject) svtskill)["priority"].ToString() == "1")
-                {
-                    var mstsvtskillobjtmp = JObject.Parse(svtskill.ToString());
-                    SkillLvs.skillID3 = mstsvtskillobjtmp["skillId"].ToString();
-                }
-
-                if (((JObject) svtskill)["svtId"].ToString() == JB.svtid &&
-                    ((JObject) svtskill)["num"].ToString() == "3" &&
-                    ((JObject) svtskill)["priority"].ToString() == "2")
-                {
-                    var mstsvtskillobjtmp = JObject.Parse(svtskill.ToString());
-                    SkillLvs.skillID3 = mstsvtskillobjtmp["skillId"].ToString();
-                    IsSk3Strengthened.Dispatcher.Invoke(() => { IsSk3Strengthened.Text = "√"; });
-                    sk3IsStrengthened = true;
-                }
-
-                if (((JObject) svtskill)["svtId"].ToString() != JB.svtid ||
-                    ((JObject) svtskill)["num"].ToString() != "3" ||
-                    ((JObject) svtskill)["priority"].ToString() != "3") continue;
-                {
-                    var mstsvtskillobjtmp = JObject.Parse(svtskill.ToString());
-                    SkillLvs.skillID3 = mstsvtskillobjtmp["skillId"].ToString();
-                    IsSk3Strengthened.Dispatcher.Invoke(() => { IsSk3Strengthened.Text = "√(2)"; });
-                    sk3IsStrengthened = true;
-                }
-            }
-
-            if (SkillLvs.skillID1 == "" || SkillLvs.skillID2 == "" || SkillLvs.skillID3 == "")
-            {
-                SkillLvs.skillID1 = FindSkillIDinNPCSvt(JB.svtid, 1);
-                SkillLvs.skillID2 = FindSkillIDinNPCSvt(JB.svtid, 2);
-                SkillLvs.skillID3 = FindSkillIDinNPCSvt(JB.svtid, 3);
-            }
-
-            var SSLC = new Task(() => { ServantSkillLevelCheck(); });
-            SSLC.Start();
-
-            Dispatcher.Invoke(() =>
-            {
-                skill1ID.Text = SkillLvs.skillID1;
-                skill2ID.Text = SkillLvs.skillID2;
-                skill3ID.Text = SkillLvs.skillID3;
-                foreach (var skilltmp in GlobalPathsAndDatas.mstSkillArray)
-                {
-                    if (((JObject) skilltmp)["id"].ToString() == SkillLvs.skillID1)
-                    {
-                        var skillobjtmp = JObject.Parse(skilltmp.ToString());
-                        skill1Name = skillobjtmp["name"].ToString();
-                        skill1name.Text = skill1Name;
-                        if (sk1IsStrengthened) skill1name.Text += " ▲";
-                    }
-
-                    if (((JObject) skilltmp)["id"].ToString() == SkillLvs.skillID2)
-                    {
-                        var skillobjtmp = JObject.Parse(skilltmp.ToString());
-                        skill2Name = skillobjtmp["name"].ToString();
-                        skill2name.Text = skill2Name;
-                        if (sk2IsStrengthened) skill2name.Text += " ▲";
-                    }
-
-                    if (((JObject) skilltmp)["id"].ToString() != SkillLvs.skillID3) continue;
-                    {
-                        var skillobjtmp = JObject.Parse(skilltmp.ToString());
-                        skill3Name = skillobjtmp["name"].ToString();
-                        skill3name.Text = skill3Name;
-                        if (sk3IsStrengthened) skill3name.Text += " ▲";
-                    }
-                }
-
-                foreach (var skillDetailtmp in GlobalPathsAndDatas.mstSkillDetailArray)
-                {
-                    if (((JObject) skillDetailtmp)["id"].ToString() == SkillLvs.skillID1)
-                    {
-                        var skillDetailobjtmp = JObject.Parse(skillDetailtmp.ToString());
-                        if (ToggleDetailbr.IsChecked == true)
-                            skill1detail = skillDetailobjtmp["detail"].ToString().Replace("[{0}]", "[Lv.1 - Lv.10]")
-                                .Replace("[g]", "").Replace("[o]", "").Replace("[/g]", "").Replace("[/o]", "")
-                                .Replace(@"＆", "\r\n ＋").Replace(@"＋", "\r\n ＋").Replace("\r\n \r\n", "\r\n");
-                        else
-                            skill1detail = skillDetailobjtmp["detail"].ToString().Replace("[{0}]", "[Lv.1 - Lv.10]")
-                                .Replace("[g]", "").Replace("[o]", "").Replace("[/g]", "").Replace("[/o]", "")
-                                .Replace(@"＆", " ＋");
-                        skill1details.Text = skill1detail;
-                    }
-
-                    if (((JObject) skillDetailtmp)["id"].ToString() == SkillLvs.skillID2)
-                    {
-                        var skillDetailobjtmp = JObject.Parse(skillDetailtmp.ToString());
-                        if (ToggleDetailbr.IsChecked == true)
-                            skill2detail = skillDetailobjtmp["detail"].ToString().Replace("[{0}]", "[Lv.1 - Lv.10]")
-                                .Replace("[g]", "").Replace("[o]", "").Replace("[/g]", "").Replace("[/o]", "")
-                                .Replace(@"＆", "\r\n ＋").Replace(@"＋", "\r\n ＋").Replace("\r\n \r\n", "\r\n");
-                        else
-                            skill2detail = skillDetailobjtmp["detail"].ToString().Replace("[{0}]", "[Lv.1 - Lv.10]")
-                                .Replace("[g]", "").Replace("[o]", "").Replace("[/g]", "").Replace("[/o]", "")
-                                .Replace(@"＆", " ＋");
-                        skill2details.Text = skill2detail;
-                    }
-
-                    if (((JObject) skillDetailtmp)["id"].ToString() != SkillLvs.skillID3) continue;
-                    {
-                        var skillDetailobjtmp = JObject.Parse(skillDetailtmp.ToString());
-                        if (ToggleDetailbr.IsChecked == true)
-                            skill3detail = skillDetailobjtmp["detail"].ToString().Replace("[{0}]", "[Lv.1 - Lv.10]")
-                                .Replace("[g]", "").Replace("[o]", "").Replace("[/g]", "").Replace("[/o]", "")
-                                .Replace(@"＆", "\r\n ＋").Replace(@"＋", "\r\n ＋").Replace("\r\n \r\n", "\r\n");
-                        else
-                            skill3detail = skillDetailobjtmp["detail"].ToString().Replace("[{0}]", "[Lv.1 - Lv.10]")
-                                .Replace("[g]", "").Replace("[o]", "").Replace("[/g]", "").Replace("[/o]", "")
-                                .Replace(@"＆", " ＋");
-                        skill3details.Text = skill3detail;
-                    }
-                }
-            });
-        }
-
-        private string FindSkillIDinNPCSvt(string svtid, int skillnum)
-        {
-            foreach (var npcSvtFollowertmp in GlobalPathsAndDatas.npcSvtFollowerArray)
-            {
-                if (((JObject) npcSvtFollowertmp)["svtId"].ToString() != svtid) continue;
-                var npcSvtFollowerobjtmp = JObject.Parse(npcSvtFollowertmp.ToString());
-                switch (skillnum)
-                {
-                    case 1:
-                        return npcSvtFollowerobjtmp["skillId1"].ToString();
-                    case 2:
-                        return npcSvtFollowerobjtmp["skillId2"].ToString();
-                    case 3:
-                        return npcSvtFollowerobjtmp["skillId3"].ToString();
-                }
-            }
-
-            return "";
-        }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
@@ -2892,13 +1826,13 @@ namespace FGOSBIAReloaded
                 TDFuncList.Items.Add(new TDlistSval("NP获得量下降", "1000,1,-1,400", "1000,1,-1,400", "1000,1,-1,400",
                     "1000,1,-1,400", "1000,1,-1,400"));
                 RemindText.Text = "注意,您触发了彩蛋,此处显示的为软件作者自己捏造的自制从者.并非游戏内实际内容!";
-                jibantext1.Text = "一名初学C#的辣鸡,这个是我随便瞎诌的自设orz.\r\n有很多地方根本就不合理233.";
-                jibantext2.Text = "〇 迷乱代码 B：\r\n因为自己写的代码不仅自己看着麻烦给我朋友看也觉得极其繁琐和复杂.";
-                jibantext3.Text = "〇 危险代码注入 EX：\r\n为了规避掉一些奇怪的问题就写了很多奇怪的代码(我自己也看不太懂,直接百度233).";
-                jibantext4.Text = "〇 共享安乐 B+：\r\n这个就没啥好解释了((((\r\n胡诌的技能.";
-                jibantext5.Text = "兜率天·極楽曼荼羅 (トゥシタ·ヘブンズフィールド):\r\n自己比较喜欢杀生院的宝具名,于是查了Wiki随便按样式编了一个名字.(好中二啊orz)";
-                jibantext6.Text = "为什么选择Foreigner是因为感觉逼格比较高(WinForm版程序的一设是Caster).\r\n或许可以给自己设置一个3破改变宝具名称x.";
-                jibantext7.Text = "希望有缘人能够重写本烂程序.\r\n                           ---作者记";
+                Biography1.Text = "一名初学C#的辣鸡,这个是我随便瞎诌的自设orz.\r\n有很多地方根本就不合理233.";
+                Biography2.Text = "〇 迷乱代码 B：\r\n因为自己写的代码不仅自己看着麻烦给我朋友看也觉得极其繁琐和复杂.";
+                Biography3.Text = "〇 危险代码注入 EX：\r\n为了规避掉一些奇怪的问题就写了很多奇怪的代码(我自己也看不太懂,直接百度233).";
+                Biography4.Text = "〇 共享安乐 B+：\r\n这个就没啥好解释了((((\r\n胡诌的技能.";
+                Biography5.Text = "兜率天·極楽曼荼羅 (トゥシタ·ヘブンズフィールド):\r\n自己比较喜欢杀生院的宝具名,于是查了Wiki随便按样式编了一个名字.(好中二啊orz)";
+                Biography6.Text = "为什么选择Foreigner是因为感觉逼格比较高(WinForm版程序的一设是Caster).\r\n或许可以给自己设置一个3破改变宝具名称x.";
+                Biography7.Text = "希望有缘人能够重写本烂程序.\r\n                           ---作者记";
             });
         }
 
