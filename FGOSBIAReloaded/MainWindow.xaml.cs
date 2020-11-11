@@ -1734,7 +1734,7 @@ namespace FGOSBIAReloaded
 
         private void OutputSVTIDs()
         {
-            Dispatcher.Invoke(async() =>
+            Dispatcher.Invoke(async () =>
             {
                 try
                 {
@@ -2151,10 +2151,7 @@ namespace FGOSBIAReloaded
             updatestatus.Dispatcher.Invoke(() => { updatestatus.Content = "下载完成，可以开始解析."; });
 
             progressbar.Dispatcher.Invoke(() => { progressbar.Value = progressbar.Maximum; });
-            Dispatcher.Invoke(async () =>
-            {
-                await this.ShowMessageAsync("完成", "下载完成，可以开始解析.");
-            });
+            Dispatcher.Invoke(async () => { await this.ShowMessageAsync("完成", "下载完成，可以开始解析."); });
             updatestatus.Dispatcher.Invoke(() => { updatestatus.Content = ""; });
             updatestatus.Dispatcher.Invoke(() => { updatesign.Content = ""; });
             progressbar.Dispatcher.Invoke(() =>
@@ -2196,7 +2193,7 @@ namespace FGOSBIAReloaded
                                                   "羁绊文本_" + JB.svtid + "_" + JB.svtnme +
                                                   ".txt");
             });
-           
+
             Process.Start(GlobalPathsAndDatas.outputdir.FullName + "/" + "羁绊文本_" + JB.svtid + "_" + JB.svtnme + ".txt");
         }
 
@@ -2238,7 +2235,7 @@ namespace FGOSBIAReloaded
                     {
                         await this.ShowMessageAsync("温馨提示:", "游戏数据损坏,请重新下载游戏数据(位于\"设置\"选项卡).");
                     });
-                    
+
                     Button1.IsEnabled = false;
                 }
             }
@@ -2352,11 +2349,13 @@ namespace FGOSBIAReloaded
             {
                 Dispatcher.Invoke(async () =>
                 {
-                    await this.ShowMessageAsync("网络连接异常", "网络连接异常,请检查网络连接并重试.\r\n" + e); ;
+                    await this.ShowMessageAsync("网络连接异常", "网络连接异常,请检查网络连接并重试.\r\n" + e);
+                    ;
                 });
                 CheckUpdate.Dispatcher.Invoke(() => { CheckUpdate.IsEnabled = true; });
                 return;
             }
+
             if (CommonStrings.VersionTag != VerChk["tag_name"].ToString())
             {
                 Dispatcher.Invoke(() =>
@@ -2734,7 +2733,7 @@ namespace FGOSBIAReloaded
             }
             else
             {
-                Dispatcher.Invoke(async() =>
+                Dispatcher.Invoke(async () =>
                 {
                     await this.ShowMessageAsync("温馨提示:", "游戏数据损坏,请重新下载游戏数据(位于\"设置\"选项卡).");
                 });
