@@ -15,6 +15,7 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 using FGOSBIAReloaded.Properties;
 using MahApps.Metro.Controls;
+using MahApps.Metro.Controls.Dialogs;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using OfficeOpenXml;
@@ -35,7 +36,7 @@ namespace FGOSBIAReloaded
             InitializeComponent();
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private async void Button_Click(object sender, RoutedEventArgs e)
         {
             Button1.IsEnabled = false;
             textbox1.Text = Regex.Replace(textbox1.Text, @"\s", "");
@@ -50,12 +51,7 @@ namespace FGOSBIAReloaded
 
             if (!Regex.IsMatch(textbox1.Text, "^\\d+$"))
             {
-                Dispatcher.Invoke(() =>
-                {
-                    MessageBox.Show(
-                        Application.Current.MainWindow, "从者ID输入错误,请检查.", "温馨提示:", MessageBoxButton.OK,
-                        MessageBoxImage.Error);
-                });
+                await this.ShowMessageAsync("温馨提示:", "从者ID输入错误,请检查.");
                 ClearTexts();
                 Button1.Dispatcher.Invoke(() => { Button1.IsEnabled = true; });
                 return;
@@ -181,13 +177,11 @@ namespace FGOSBIAReloaded
             SSIC.Start();
             Task.WaitAll(STDSC, SSIC);
             Button1.Dispatcher.Invoke(() => { Button1.IsEnabled = true; });
-            Dispatcher.Invoke(() =>
+            Dispatcher.Invoke(async () =>
             {
                 if (rarity.Text == "")
                 {
-                    MessageBox.Show(
-                        Application.Current.MainWindow, "从者ID不存在或未实装,请重试.", "温馨提示:", MessageBoxButton.OK,
-                        MessageBoxImage.Information);
+                    await this.ShowMessageAsync("温馨提示:", "从者ID不存在或未实装,请重试.");
                     ClearTexts();
                     Button1.IsEnabled = true;
                     return;
@@ -1740,7 +1734,7 @@ namespace FGOSBIAReloaded
 
         private void OutputSVTIDs()
         {
-            Dispatcher.Invoke(() =>
+            Dispatcher.Invoke(async() =>
             {
                 try
                 {
@@ -1748,9 +1742,10 @@ namespace FGOSBIAReloaded
                         (current, svtIDtmp) => current + "ID: " + ((JObject) svtIDtmp)["id"] + "    " + "名称: " +
                                                ((JObject) svtIDtmp)["name"] + "\r\n");
                     File.WriteAllText(GlobalPathsAndDatas.path + "/SearchIDList.txt", output);
-                    MessageBox.Show(Application.Current.MainWindow, "导出成功,文件名为 SearchIDList.txt", "完成",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Information);
+                    Dispatcher.Invoke(async () =>
+                    {
+                        await this.ShowMessageAsync("完成", "导出成功, 文件名为 SearchIDList.txt");
+                    });
                     Process.Start(GlobalPathsAndDatas.path + "/SearchIDList.txt");
                 }
                 catch (Exception)
@@ -1927,7 +1922,7 @@ namespace FGOSBIAReloaded
             if (sender is Hyperlink source) Process.Start(source.NavigateUri.ToString());
         }
 
-        private void HttpRequestData()
+        private async void HttpRequestData()
         {
             var path = Directory.GetCurrentDirectory();
             var gamedata = new DirectoryInfo(path + @"\Android\masterdata\");
@@ -2156,10 +2151,9 @@ namespace FGOSBIAReloaded
             updatestatus.Dispatcher.Invoke(() => { updatestatus.Content = "下载完成，可以开始解析."; });
 
             progressbar.Dispatcher.Invoke(() => { progressbar.Value = progressbar.Maximum; });
-            Dispatcher.Invoke(() =>
+            Dispatcher.Invoke(async () =>
             {
-                MessageBox.Show(Application.Current.MainWindow, "下载完成，可以开始解析.", "完成", MessageBoxButton.OK,
-                    MessageBoxImage.Information);
+                await this.ShowMessageAsync("完成", "下载完成，可以开始解析.");
             });
             updatestatus.Dispatcher.Invoke(() => { updatestatus.Content = ""; });
             updatestatus.Dispatcher.Invoke(() => { updatesign.Content = ""; });
@@ -2182,7 +2176,7 @@ namespace FGOSBIAReloaded
             UpgradeMasterData.Start();
         }
 
-        private void JBOut()
+        private async void JBOut()
         {
             var output = "";
             output = "文本1:\n\r" + JB.JB1 + "\n\r" +
@@ -2196,14 +2190,13 @@ namespace FGOSBIAReloaded
                 Directory.CreateDirectory(GlobalPathsAndDatas.outputdir.FullName);
             File.WriteAllText(GlobalPathsAndDatas.outputdir.FullName + "羁绊文本_" + JB.svtid + "_" + JB.svtnme + ".txt",
                 output);
-            Dispatcher.Invoke(() =>
+            Dispatcher.Invoke(async () =>
             {
-                MessageBox.Show(
-                    Application.Current.MainWindow, "导出完成.\n\r文件名为: " + GlobalPathsAndDatas.outputdir.FullName +
-                                                    "羁绊文本_" + JB.svtid + "_" + JB.svtnme +
-                                                    ".txt",
-                    "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                await this.ShowMessageAsync("完成", "导出完成.\n\r文件名为: " + GlobalPathsAndDatas.outputdir.FullName +
+                                                  "羁绊文本_" + JB.svtid + "_" + JB.svtnme +
+                                                  ".txt");
             });
+           
             Process.Start(GlobalPathsAndDatas.outputdir.FullName + "/" + "羁绊文本_" + JB.svtid + "_" + JB.svtnme + ".txt");
         }
 
@@ -2218,7 +2211,7 @@ namespace FGOSBIAReloaded
             if (sender is Hyperlink source) Process.Start(source.NavigateUri.ToString());
         }
 
-        private void Form_Load(object sender, RoutedEventArgs e)
+        private async void Form_Load(object sender, RoutedEventArgs e)
         {
             var path = Directory.GetCurrentDirectory();
             var gamedata = new DirectoryInfo(path + @"\Android\masterdata\");
@@ -2227,11 +2220,9 @@ namespace FGOSBIAReloaded
             DrawScale();
             if (!Directory.Exists(gamedata.FullName))
             {
-                Dispatcher.Invoke(() =>
+                Dispatcher.Invoke(async () =>
                 {
-                    MessageBox.Show(
-                        Application.Current.MainWindow, "没有游戏数据,请先下载游戏数据(位于\"设置\"选项卡).", "温馨提示:", MessageBoxButton.OK,
-                        MessageBoxImage.Information);
+                    await this.ShowMessageAsync("温馨提示:", "没有游戏数据,请先下载游戏数据(位于\"设置\"选项卡).");
                 });
                 Button1.IsEnabled = false;
             }
@@ -2243,13 +2234,11 @@ namespace FGOSBIAReloaded
                 }
                 catch (Exception)
                 {
-                    Dispatcher.Invoke(() =>
+                    Dispatcher.Invoke(async () =>
                     {
-                        MessageBox.Show(
-                            Application.Current.MainWindow, "游戏数据损坏,请重新下载游戏数据(位于\"设置\"选项卡).", "温馨提示:",
-                            MessageBoxButton.OK,
-                            MessageBoxImage.Error);
+                        await this.ShowMessageAsync("温馨提示:", "游戏数据损坏,请重新下载游戏数据(位于\"设置\"选项卡).");
                     });
+                    
                     Button1.IsEnabled = false;
                 }
             }
@@ -2347,7 +2336,7 @@ namespace FGOSBIAReloaded
             }
         }
 
-        private void VersionCheckEvent()
+        private async void VersionCheckEvent()
         {
             string VerChkRaw;
             JObject VerChk;
@@ -2361,16 +2350,13 @@ namespace FGOSBIAReloaded
             }
             catch (Exception e)
             {
-                Dispatcher.Invoke(() =>
+                Dispatcher.Invoke(async () =>
                 {
-                    MessageBox.Show(
-                        Application.Current.MainWindow, "网络连接异常,请检查网络连接并重试.\r\n" + e, "网络连接异常", MessageBoxButton.OK,
-                        MessageBoxImage.Error);
+                    await this.ShowMessageAsync("网络连接异常", "网络连接异常,请检查网络连接并重试.\r\n" + e); ;
                 });
                 CheckUpdate.Dispatcher.Invoke(() => { CheckUpdate.IsEnabled = true; });
                 return;
             }
-
             if (CommonStrings.VersionTag != VerChk["tag_name"].ToString())
             {
                 Dispatcher.Invoke(() =>
@@ -2397,6 +2383,7 @@ namespace FGOSBIAReloaded
                                 MessageBoxButton.OK,
                                 MessageBoxImage.Error);
                         });
+                        await this.ShowMessageAsync("获取Url失败", "确认到新版本更新,但是获取下载Url失败.\r\n");
                         CheckUpdate.Dispatcher.Invoke(() => { CheckUpdate.IsEnabled = true; });
                         return;
                     }
@@ -2411,12 +2398,9 @@ namespace FGOSBIAReloaded
             }
             else
             {
-                Dispatcher.Invoke(() =>
+                Dispatcher.Invoke(async () =>
                 {
-                    MessageBox.Show(
-                        Application.Current.MainWindow, "当前版本为:  " + CommonStrings.VersionTag + "\r\n\r\n无需更新.", "检查更新",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Information);
+                    await this.ShowMessageAsync("检查更新", "当前版本为:  " + CommonStrings.VersionTag + "\r\n\r\n无需更新.");
                 });
                 CheckUpdate.Dispatcher.Invoke(() => { CheckUpdate.IsEnabled = true; });
             }
@@ -2510,7 +2494,7 @@ namespace FGOSBIAReloaded
             LPQL.Start();
         }
 
-        private void LoadPickUPQuestList()
+        private async void LoadPickUPQuestList()
         {
             var path = Directory.GetCurrentDirectory();
             var gamedata = new DirectoryInfo(path + @"\Android\masterdata\");
@@ -2543,11 +2527,9 @@ namespace FGOSBIAReloaded
             }
             else
             {
-                Dispatcher.Invoke(() =>
+                Dispatcher.Invoke(async () =>
                 {
-                    MessageBox.Show(
-                        Application.Current.MainWindow, "游戏数据损坏,请重新下载游戏数据(位于\"设置\"选项卡).", "温馨提示:", MessageBoxButton.OK,
-                        MessageBoxImage.Error);
+                    await this.ShowMessageAsync("温馨提示:", "游戏数据损坏,请重新下载游戏数据(位于\"设置\"选项卡).");
                 });
                 ButtonQuest.Dispatcher.Invoke(() => { ButtonQuest.IsEnabled = true; });
             }
@@ -2629,7 +2611,7 @@ namespace FGOSBIAReloaded
             LCAR.Start();
         }
 
-        private void LoadClassAndRelations()
+        private async void LoadClassAndRelations()
         {
             var path = Directory.GetCurrentDirectory();
             var gamedata = new DirectoryInfo(path + @"\Android\masterdata\");
@@ -2684,11 +2666,9 @@ namespace FGOSBIAReloaded
             }
             else
             {
-                Dispatcher.Invoke(() =>
+                Dispatcher.Invoke(async () =>
                 {
-                    MessageBox.Show(
-                        Application.Current.MainWindow, "游戏数据损坏,请重新下载游戏数据(位于\"设置\"选项卡).", "温馨提示:", MessageBoxButton.OK,
-                        MessageBoxImage.Error);
+                    await this.ShowMessageAsync("温馨提示:", "游戏数据损坏,请重新下载游戏数据(位于\"设置\"选项卡).");
                 });
                 ButtonClass.Dispatcher.Invoke(() => { ButtonClass.IsEnabled = true; });
             }
@@ -2707,7 +2687,7 @@ namespace FGOSBIAReloaded
             return ClassName;
         }
 
-        private void LoadEventList()
+        private async void LoadEventList()
         {
             var path = Directory.GetCurrentDirectory();
             var gamedata = new DirectoryInfo(path + @"\Android\masterdata\");
@@ -2754,11 +2734,9 @@ namespace FGOSBIAReloaded
             }
             else
             {
-                Dispatcher.Invoke(() =>
+                Dispatcher.Invoke(async() =>
                 {
-                    MessageBox.Show(
-                        Application.Current.MainWindow, "游戏数据损坏,请重新下载游戏数据(位于\"设置\"选项卡).", "温馨提示:", MessageBoxButton.OK,
-                        MessageBoxImage.Error);
+                    await this.ShowMessageAsync("温馨提示:", "游戏数据损坏,请重新下载游戏数据(位于\"设置\"选项卡).");
                 });
                 ButtonEvent.Dispatcher.Invoke(() => { ButtonEvent.IsEnabled = true; });
             }
