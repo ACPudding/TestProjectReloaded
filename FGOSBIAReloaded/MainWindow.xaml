@@ -1191,21 +1191,25 @@
                         <SolidColorBrush Color="#FF333333" Opacity="0.2" />
                     </TabItem.Background>
                     <Grid Margin="0,0,0,0">
-                        <Label Content="资源文件(*.bin)解密" HorizontalAlignment="Left" Height="40" VerticalAlignment="Top" Width="383" FontFamily="Microsoft JhengHei UI"
+                        <Label Content="资源文件(*.bin)解密" HorizontalAlignment="Left" Height="40" VerticalAlignment="Top"
+                               Width="383" FontFamily="Microsoft JhengHei UI"
                                FontSize="16" Foreground="#FF333333" FontWeight="Bold" Margin="0,5,0,0" />
                         <Button x:Name="ButtonBinSelectFolder" Content="选择文件夹" HorizontalAlignment="Left" Height="26"
                                 Margin="401,5,0,0"
                                 VerticalAlignment="Top" Width="81" Click="Button_DecryptBinFolder"
                                 FontFamily="Microsoft JhengHei UI"
                                 FontWeight="Bold" Foreground="#FF333333" />
-                        <ProgressBar x:Name="decryptprogress" HorizontalAlignment="Left" Height="19" Margin="10,145,0,0"
+                        <ProgressBar x:Name="decryptprogress" HorizontalAlignment="Left" Height="19"
+                                     Margin="10,145,0,0"
                                      VerticalAlignment="Top" Width="472" Maximum="10000" Foreground="#FF8BFFC7"
                                      Background="#FFB9B9B9" Visibility="Hidden" />
                         <Label x:Name="decryptstatus" Content="" Height="51"
                                Margin="10,164,10,0"
                                VerticalAlignment="Top" FontFamily="Microsoft JhengHei UI" FontSize="12"
                                Foreground="#FF333333" />
-                        <Label Content="使用说明:&#13;点击按钮后选择完输入和输出文件夹后程序会自动进行资源的解密与改名操作.&#13;需保证源文件夹有cfb1d36393fd67385e046b084b7cf7ed文件即AssetStorage.txt,&#13;无需对该文件进行改名.&#13;解密完成后输出文件夹中会生成Assets,Audio,Movie三个文件夹分别存储不同类型&#13;的资源." Height="109"
+                        <Label
+                            Content="使用说明:&#13;点击按钮后选择完输入和输出文件夹后程序会自动进行资源的解密与改名操作.&#13;需保证源文件夹有cfb1d36393fd67385e046b084b7cf7ed文件即AssetStorage.txt,&#13;无需对该文件进行改名.&#13;解密完成后输出文件夹中会生成Assets,Audio,Movie三个文件夹分别存储不同类型&#13;的资源."
+                            Height="109"
                             Margin="0,36,0,0"
                             VerticalAlignment="Top" FontFamily="Microsoft JhengHei UI" FontSize="12"
                             Foreground="#FF333333" FontWeight="Bold" />
