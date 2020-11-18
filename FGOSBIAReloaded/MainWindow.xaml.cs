@@ -2994,14 +2994,9 @@ namespace FGOSBIAReloaded
             LEL.Start();
         }
 
-        private void Button_DecryptBinFiles(object sender, RoutedEventArgs e)
-        {
-            
-        }
-
         private async void Button_DecryptBinFolder(object sender, RoutedEventArgs e)
         {
-            var inputdialog = new CommonOpenFileDialog { IsFolderPicker = true, Title = "bin文件目录:" };
+            var inputdialog = new CommonOpenFileDialog { IsFolderPicker = true, Title = "需要解密的bin文件目录" };
             var resultinput = inputdialog.ShowDialog();
             var inputfolder = "";
             if (resultinput == CommonFileDialogResult.Ok)
@@ -3009,13 +3004,14 @@ namespace FGOSBIAReloaded
                 inputfolder = inputdialog.FileName;
             }
             if (inputfolder == "") return;
-            var outputdialog = new CommonOpenFileDialog { IsFolderPicker = true,Title = "输出目录:"};
+            var outputdialog = new CommonOpenFileDialog { IsFolderPicker = true,Title = "输出目录"};
             var resultoutput = outputdialog.ShowDialog();
             var outputfolder = "";
             if (resultoutput == CommonFileDialogResult.Ok)
             {
                 outputfolder = outputdialog.FileName;
             }
+            if (outputfolder == "") return;
             var input = new DirectoryInfo(inputfolder);
             var output = new DirectoryInfo(outputfolder);
             ButtonBinSelectFolder.IsEnabled = false;
