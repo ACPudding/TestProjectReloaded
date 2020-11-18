@@ -16,6 +16,7 @@ using System.Windows.Shapes;
 using FGOSBIAReloaded.Properties;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
+using Microsoft.WindowsAPICodePack.Dialogs;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using OfficeOpenXml;
@@ -1742,7 +1743,7 @@ namespace FGOSBIAReloaded
                         (current, svtIDtmp) => current + "ID: " + ((JObject) svtIDtmp)["id"] + "    " + "名称: " +
                                                ((JObject) svtIDtmp)["name"] + "\r\n");
                     File.WriteAllText(GlobalPathsAndDatas.path + "/SearchIDList.txt", output);
-                    Dispatcher.Invoke(async () =>
+                    await Dispatcher.Invoke(async () =>
                     {
                         await this.ShowMessageAsync("完成", "导出成功, 文件名为 SearchIDList.txt");
                     });
@@ -2151,7 +2152,7 @@ namespace FGOSBIAReloaded
             updatestatus.Dispatcher.Invoke(() => { updatestatus.Content = "下载完成，可以开始解析."; });
 
             progressbar.Dispatcher.Invoke(() => { progressbar.Value = progressbar.Maximum; });
-            Dispatcher.Invoke(async () => { await this.ShowMessageAsync("完成", "下载完成，可以开始解析."); });
+            await Dispatcher.Invoke(async () => { await this.ShowMessageAsync("完成", "下载完成，可以开始解析."); });
             updatestatus.Dispatcher.Invoke(() => { updatestatus.Content = ""; });
             updatestatus.Dispatcher.Invoke(() => { updatesign.Content = ""; });
             progressbar.Dispatcher.Invoke(() =>
@@ -2187,7 +2188,7 @@ namespace FGOSBIAReloaded
                 Directory.CreateDirectory(GlobalPathsAndDatas.outputdir.FullName);
             File.WriteAllText(GlobalPathsAndDatas.outputdir.FullName + "羁绊文本_" + JB.svtid + "_" + JB.svtnme + ".txt",
                 output);
-            Dispatcher.Invoke(async () =>
+            await Dispatcher.Invoke(async () =>
             {
                 await this.ShowMessageAsync("完成", "导出完成.\n\r文件名为: " + GlobalPathsAndDatas.outputdir.FullName +
                                                   "羁绊文本_" + JB.svtid + "_" + JB.svtnme +
@@ -2217,7 +2218,7 @@ namespace FGOSBIAReloaded
             DrawScale();
             if (!Directory.Exists(gamedata.FullName))
             {
-                Dispatcher.Invoke(async () =>
+                await Dispatcher.Invoke(async () =>
                 {
                     await this.ShowMessageAsync("温馨提示:", "没有游戏数据,请先下载游戏数据(位于\"设置\"选项卡).");
                 });
@@ -2231,7 +2232,7 @@ namespace FGOSBIAReloaded
                 }
                 catch (Exception)
                 {
-                    Dispatcher.Invoke(async () =>
+                    await Dispatcher.Invoke(async () =>
                     {
                         await this.ShowMessageAsync("温馨提示:", "游戏数据损坏,请重新下载游戏数据(位于\"设置\"选项卡).");
                     });
@@ -2347,7 +2348,7 @@ namespace FGOSBIAReloaded
             }
             catch (Exception e)
             {
-                Dispatcher.Invoke(async () =>
+                await Dispatcher.Invoke(async () =>
                 {
                     await this.ShowMessageAsync("网络连接异常", "网络连接异常,请检查网络连接并重试.\r\n" + e);
                     ;
@@ -2397,7 +2398,7 @@ namespace FGOSBIAReloaded
             }
             else
             {
-                Dispatcher.Invoke(async () =>
+                await Dispatcher.Invoke(async () =>
                 {
                     await this.ShowMessageAsync("检查更新", "当前版本为:  " + CommonStrings.VersionTag + "\r\n\r\n无需更新.");
                 });
@@ -2526,7 +2527,7 @@ namespace FGOSBIAReloaded
             }
             else
             {
-                Dispatcher.Invoke(async () =>
+                await Dispatcher.Invoke(async () =>
                 {
                     await this.ShowMessageAsync("温馨提示:", "游戏数据损坏,请重新下载游戏数据(位于\"设置\"选项卡).");
                 });
@@ -2665,7 +2666,7 @@ namespace FGOSBIAReloaded
             }
             else
             {
-                Dispatcher.Invoke(async () =>
+                await Dispatcher.Invoke(async () =>
                 {
                     await this.ShowMessageAsync("温馨提示:", "游戏数据损坏,请重新下载游戏数据(位于\"设置\"选项卡).");
                 });
@@ -2733,7 +2734,7 @@ namespace FGOSBIAReloaded
             }
             else
             {
-                Dispatcher.Invoke(async () =>
+                await Dispatcher.Invoke(async () =>
                 {
                     await this.ShowMessageAsync("温馨提示:", "游戏数据损坏,请重新下载游戏数据(位于\"设置\"选项卡).");
                 });
@@ -2991,6 +2992,261 @@ namespace FGOSBIAReloaded
             ButtonEvent.IsEnabled = false;
             var LEL = new Task(LoadEventList);
             LEL.Start();
+        }
+
+        private void Button_DecryptBinFiles(object sender, RoutedEventArgs e)
+        {
+            
+        }
+
+        private async void Button_DecryptBinFolder(object sender, RoutedEventArgs e)
+        {
+            var inputdialog = new CommonOpenFileDialog { IsFolderPicker = true, Title = "bin文件目录:" };
+            var resultinput = inputdialog.ShowDialog();
+            var inputfolder = "";
+            if (resultinput == CommonFileDialogResult.Ok)
+            {
+                inputfolder = inputdialog.FileName;
+            }
+            if (inputfolder == "") return;
+            var outputdialog = new CommonOpenFileDialog { IsFolderPicker = true,Title = "输出目录:"};
+            var resultoutput = outputdialog.ShowDialog();
+            var outputfolder = "";
+            if (resultoutput == CommonFileDialogResult.Ok)
+            {
+                outputfolder = outputdialog.FileName;
+            }
+            var input = new DirectoryInfo(inputfolder);
+            var output = new DirectoryInfo(outputfolder);
+            ButtonBinSelectFolder.IsEnabled = false;
+            decryptprogress.Visibility = Visibility.Visible;
+            decryptprogress.Value = 0;
+            await Task.Run(() =>
+            {
+                DecryptBinFileFolder(input, output);
+            });
+            ButtonBinSelectFolder.IsEnabled = true;
+            decryptstatus.Content = "";
+            decryptprogress.Visibility = Visibility.Hidden;
+        }
+
+        private void DecryptBinfileSub(string[] assetStore,DirectoryInfo outputdest)
+        {
+            var decrypt = outputdest;
+            var AudioArray = new JArray();
+            var MovieArray = new JArray();
+            var AssetArray = new JArray();
+            for (var i = 2; i < assetStore.Length; ++i)
+            {
+                var tmp = assetStore[i].Split(',');
+                string assetName;
+                string fileName;
+                if (tmp[4].Contains("Audio"))
+                {
+                    assetName = tmp[tmp.Length - 1].Replace('/', '@');
+                    fileName = CatAndMouseGame.GetMD5String(assetName);
+                    AudioArray.Add(new JObject(new JProperty("audioName", assetName),
+                        new JProperty("fileName", fileName)));
+                }
+                else if (tmp[4].Contains("Movie"))
+                {
+                    assetName = tmp[tmp.Length - 1].Replace('/', '@');
+                    fileName = CatAndMouseGame.GetMD5String(assetName);
+                    MovieArray.Add(new JObject(new JProperty("movieName", assetName),
+                        new JProperty("fileName", fileName)));
+                }
+                else if (!tmp[4].Contains("Movie"))
+                {
+                    assetName = tmp[tmp.Length - 1].Replace('/', '@') + ".unity3d";
+                    fileName = CatAndMouseGame.GetShaName(assetName);
+                    AssetArray.Add(new JObject(new JProperty("assetName", assetName),
+                        new JProperty("fileName", fileName)));
+                }
+            }
+            var serializerSettings = new JsonSerializerSettings();
+            var AudioArrayConverter = JsonConvert.SerializeObject(AudioArray, serializerSettings);
+            var MovieArrayConverter = JsonConvert.SerializeObject(MovieArray, serializerSettings);
+            var AssetArrayConverter = JsonConvert.SerializeObject(AssetArray, serializerSettings);
+            File.WriteAllText(decrypt.FullName + @"\AudioName.json", AudioArrayConverter);
+            File.WriteAllText(decrypt.FullName + @"\MovieName.json", MovieArrayConverter);
+            File.WriteAllText(decrypt.FullName + @"\AssetName.json", AssetArrayConverter);
+        }
+
+        private void DecryptBinFileFolder(DirectoryInfo inputdest, DirectoryInfo outputdest)
+        {
+            var folder = inputdest;
+            var decrypt = outputdest;
+            var renamedAudio = new DirectoryInfo(outputdest.FullName + @"\Audio\");
+            var renamedMovie = new DirectoryInfo(outputdest.FullName + @"\Movie\");
+            var renamedAssets = new DirectoryInfo(outputdest.FullName + @"\Assets\");
+            byte[] raw;
+            byte[] output;
+            if (File.Exists(folder.FullName + @"\cfb1d36393fd67385e046b084b7cf7ed"))
+            {
+                if (File.Exists(decrypt.FullName + @"\AssetStorage.txt"))
+                {
+                    File.Delete(decrypt.FullName + @"\AssetStorage.txt");
+                }
+                File.Copy(folder.FullName + @"\cfb1d36393fd67385e046b084b7cf7ed", decrypt.FullName + @"\AssetStorage.txt");
+            }
+            else
+            {
+                Dispatcher.Invoke(async () =>
+                {
+                    await this.ShowMessageAsync("错误:", "AssetStorage.txt文件不存在\r\n请检查输入文件夹内是否存在\"cfb1d36393fd67385e046b084b7cf7ed\"\r\n或者\"AssetStorage.txt\"文件.");
+                });
+                return;
+            }
+            if (File.Exists(folder.FullName + @"\4fb2705e743f2eed610a17b9eaba5541"))
+            {
+                if (File.Exists(decrypt.FullName + @"\AssetStorageBack.txt"))
+                {
+                    File.Delete(decrypt.FullName + @"\AssetStorageBack.txt");
+                }
+                File.Copy(folder.FullName + @"\4fb2705e743f2eed610a17b9eaba5541",
+                    decrypt.FullName + @"\AssetStorageBack.txt");
+            }
+            var data = File.ReadAllText(decrypt.FullName + @"\AssetStorage.txt");
+            var loadData = CatAndMouseGame.MouseGame8(data);
+            File.WriteAllText(decrypt.FullName + @"\AssetStorage_dec.txt", loadData);
+            var RemindLog = "写入: " + decrypt.FullName + @"\AssetStorage_dec.txt";
+            Dispatcher.Invoke(() =>
+            {
+                decryptstatus.Content = RemindLog;
+            });
+            var assetStore = File.ReadAllLines(decrypt.FullName + @"\AssetStorage_dec.txt");
+            var Sub1 = new Task(() => { DecryptBinfileSub(assetStore, decrypt); });
+            Sub1.Start();
+            Thread.Sleep(1500);
+            Dispatcher.Invoke(() =>
+            {
+                decryptstatus.Content = "开始解密bin.";
+            });
+            var fileCount = Directory.GetFiles(folder.FullName).Length;
+            var progressValue = Convert.ToDouble(10000 / fileCount);
+            foreach (var file in folder.GetFiles("*.bin"))
+            {
+                try
+                {
+                    RemindLog = "解密: " + file.FullName;
+                    Dispatcher.Invoke(() =>
+                    {
+                        decryptstatus.Content = RemindLog;
+                    });
+                    raw = File.ReadAllBytes(file.FullName);
+                    output = CatAndMouseGame.MouseGame4(raw);
+                    if (!Directory.Exists(renamedAssets.FullName))
+                        Directory.CreateDirectory(renamedAssets.FullName);
+                    File.WriteAllBytes(renamedAssets.FullName + @"\" + file.Name, output);
+                    Dispatcher.Invoke(() =>
+                    {
+                        decryptprogress.Value += progressValue;
+                    });
+                    Thread.Sleep(100);
+                }
+                catch (Exception)
+                {
+                    Dispatcher.Invoke(async () =>
+                    {
+                        await this.ShowMessageAsync("错误:", "解密时遇到错误.\r\n");
+                    });
+                    return;
+                }
+            }
+            Dispatcher.Invoke(() =>
+            {
+                decryptprogress.Value=decryptprogress.Maximum;
+                decryptstatus.Content = "解密完成.现在开始重命名所有文件.\r\n读取json中...";
+            });
+            Thread.Sleep(1500);
+            Task.WaitAll(Sub1);
+            Dispatcher.Invoke(() =>
+            {
+                decryptprogress.Value = 0;
+            });
+            var AssetJsonName = File.ReadAllText(decrypt.FullName + @"\AssetName.json");
+            var AssetJsonNameArray = (JArray)JsonConvert.DeserializeObject(AssetJsonName);
+            foreach (var file in renamedAssets.GetFiles("*.bin"))
+                foreach (var FileNametmp in AssetJsonNameArray) //查找某个字段与值
+                    if (((JObject)FileNametmp)["fileName"].ToString() == file.Name)
+                    {
+                        var FileNameObjtmp = JObject.Parse(FileNametmp.ToString());
+                        var FileAssetNametmp = FileNameObjtmp["assetName"].ToString();
+                        RemindLog = "重命名: " + file.Name + " → \r\n" + FileAssetNametmp + "\n";
+                        Dispatcher.Invoke(() =>
+                        {
+                            decryptstatus.Content = RemindLog;
+                        });
+                        if (File.Exists(renamedAssets.FullName + @"\" + FileAssetNametmp))
+                        {
+                            File.Delete(renamedAssets.FullName + @"\" + FileAssetNametmp);
+                        }
+                        File.Move(renamedAssets.FullName  + @"\"+ file.Name, renamedAssets.FullName + @"\" + FileAssetNametmp);
+                        Dispatcher.Invoke(() =>
+                        {
+                            decryptprogress.Value += progressValue;
+                        });
+                        Thread.Sleep(100);
+                    }
+            var AudioAssetJsonName = File.ReadAllText(decrypt.FullName + @"\AudioName.json");
+            var AudioAssetJsonNameArray = (JArray)JsonConvert.DeserializeObject(AudioAssetJsonName);
+            foreach (var file in folder.GetFiles("*."))
+                foreach (var FileNametmp2 in AudioAssetJsonNameArray) //查找某个字段与值
+                    if (((JObject)FileNametmp2)["fileName"].ToString() == file.Name)
+                    {
+                        var FileNameObjtmp2 = JObject.Parse(FileNametmp2.ToString());
+                        var FileAssetNametmp2 = FileNameObjtmp2["audioName"].ToString();
+                        RemindLog = "重命名: " + file.Name + " → \r\n" + FileAssetNametmp2 + "\n";
+                        Dispatcher.Invoke(() =>
+                        {
+                            decryptstatus.Content = RemindLog;
+                        });
+                        if (!Directory.Exists(renamedAudio.FullName))
+                            Directory.CreateDirectory(renamedAudio.FullName);
+                        if (File.Exists(renamedAudio.FullName + @"\" + FileAssetNametmp2))
+                        {
+                            File.Delete(renamedAudio.FullName + @"\" + FileAssetNametmp2);
+                        }
+                        File.Copy(folder.FullName + @"\" + file.Name, renamedAudio.FullName + @"\" + FileAssetNametmp2);
+                        Dispatcher.Invoke(() =>
+                        {
+                            decryptprogress.Value += progressValue;
+                        });
+                        Thread.Sleep(100);
+                    }
+            var MovieAssetJsonName = File.ReadAllText(decrypt.FullName + @"\MovieName.json");
+            var MovieAssetJsonNameArray = (JArray)JsonConvert.DeserializeObject(MovieAssetJsonName);
+            foreach (var file in folder.GetFiles("*."))
+                foreach (var FileNametmp3 in MovieAssetJsonNameArray) //查找某个字段与值
+                    if (((JObject)FileNametmp3)["fileName"].ToString() == file.Name)
+                    {
+                        var FileNameObjtmp3 = JObject.Parse(FileNametmp3.ToString());
+                        var FileAssetNametmp3 = FileNameObjtmp3["movieName"].ToString();
+                        RemindLog = "重命名: " + file.Name + " → \r\n" + FileAssetNametmp3 + "\n";
+                        Dispatcher.Invoke(() =>
+                        {
+                            decryptstatus.Content = RemindLog;
+                        });
+                        if (!Directory.Exists(renamedMovie.FullName))
+                            Directory.CreateDirectory(renamedMovie.FullName);
+                        if (File.Exists(renamedMovie.FullName + @"\" + FileAssetNametmp3))
+                        {
+                            File.Delete(renamedMovie.FullName + @"\" + FileAssetNametmp3);
+                        }
+                        File.Copy(folder.FullName + @"\" + file.Name, renamedMovie.FullName + @"\" + FileAssetNametmp3);
+                        Dispatcher.Invoke(() =>
+                        {
+                            decryptprogress.Value += progressValue;
+                        });
+                        Thread.Sleep(100);
+                    }
+            Dispatcher.Invoke(() =>
+            {
+                decryptprogress.Value = decryptprogress.Maximum;
+                decryptstatus.Content = "解密完成.";
+            });
+            Thread.Sleep(2000);
+            Process.Start(decrypt.FullName);
         }
 
         private struct SkillListSval
