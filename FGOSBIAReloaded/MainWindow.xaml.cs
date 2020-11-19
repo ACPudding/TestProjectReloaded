@@ -2118,7 +2118,7 @@ namespace FGOSBIAReloaded
                     updatestatus.Content = "写入: " + gamedata.FullName +
                                            "decrypted__masterdata\\" + item.Key;
                 });
-                progressbar.Dispatcher.Invoke(() => { progressbar.Value = progressbar.Value + 40; });
+                progressbar.Dispatcher.Invoke(() => { progressbar.Value += 40; });
             }
 
             var data2 = File.ReadAllText(gamedata.FullName + "assetbundle");
@@ -3006,12 +3006,19 @@ namespace FGOSBIAReloaded
             var outputfolder = "";
             if (resultoutput == CommonFileDialogResult.Ok) outputfolder = outputdialog.FileName;
             if (outputfolder == "") return;
+            var isDeleteFile = false;
+            GlobalPathsAndDatas.SuperMsgBoxRes = MessageBox.Show(
+                Application.Current.MainWindow,
+                "是否删除源文件夹内的所有文件?(全部移动至输出文件夹)",
+                "提示", MessageBoxButton.OKCancel, MessageBoxImage.Information);
+            if (GlobalPathsAndDatas.SuperMsgBoxRes == MessageBoxResult.OK)
+                isDeleteFile = true;
             var input = new DirectoryInfo(inputfolder);
             var output = new DirectoryInfo(outputfolder);
             ButtonBinSelectFolder.IsEnabled = false;
             decryptprogress.Visibility = Visibility.Visible;
             decryptprogress.Value = 0;
-            await Task.Run(() => { DecryptBinFileFolder(input, output); });
+            await Task.Run(() => { DecryptBinFileFolder(input, output, isDeleteFile); });
             ButtonBinSelectFolder.IsEnabled = true;
             decryptstatus.Content = "";
             decryptprogress.Visibility = Visibility.Hidden;
@@ -3060,7 +3067,7 @@ namespace FGOSBIAReloaded
             File.WriteAllText(decrypt.FullName + @"\AssetName.json", AssetArrayConverter);
         }
 
-        private void DecryptBinFileFolder(DirectoryInfo inputdest, DirectoryInfo outputdest)
+        private void DecryptBinFileFolder(DirectoryInfo inputdest, DirectoryInfo outputdest, bool isDeleteFile)
         {
             var folder = inputdest;
             var decrypt = outputdest;
@@ -3073,8 +3080,12 @@ namespace FGOSBIAReloaded
             {
                 if (File.Exists(decrypt.FullName + @"\AssetStorage.txt"))
                     File.Delete(decrypt.FullName + @"\AssetStorage.txt");
-                File.Copy(folder.FullName + @"\cfb1d36393fd67385e046b084b7cf7ed",
-                    decrypt.FullName + @"\AssetStorage.txt");
+                if (isDeleteFile)
+                    File.Move(folder.FullName + @"\cfb1d36393fd67385e046b084b7cf7ed",
+                        decrypt.FullName + @"\AssetStorage.txt");
+                else
+                    File.Copy(folder.FullName + @"\cfb1d36393fd67385e046b084b7cf7ed",
+                        decrypt.FullName + @"\AssetStorage.txt");
             }
             else
             {
@@ -3090,8 +3101,12 @@ namespace FGOSBIAReloaded
             {
                 if (File.Exists(decrypt.FullName + @"\AssetStorageBack.txt"))
                     File.Delete(decrypt.FullName + @"\AssetStorageBack.txt");
-                File.Copy(folder.FullName + @"\4fb2705e743f2eed610a17b9eaba5541",
-                    decrypt.FullName + @"\AssetStorageBack.txt");
+                if (isDeleteFile)
+                    File.Move(folder.FullName + @"\4fb2705e743f2eed610a17b9eaba5541",
+                        decrypt.FullName + @"\AssetStorageBack.txt");
+                else
+                    File.Copy(folder.FullName + @"\4fb2705e743f2eed610a17b9eaba5541",
+                        decrypt.FullName + @"\AssetStorageBack.txt");
             }
 
             var data = File.ReadAllText(decrypt.FullName + @"\AssetStorage.txt");
@@ -3104,9 +3119,12 @@ namespace FGOSBIAReloaded
             Sub1.Start();
             Thread.Sleep(1500);
             Dispatcher.Invoke(() => { decryptstatus.Content = "开始解密bin."; });
-            var fileCount = Directory.GetFiles(folder.FullName).Length;
-            var progressValue = Convert.ToDouble(10000 / fileCount);
-            foreach (var file in folder.GetFiles("*.bin"))
+            var fileCountbin = Directory.GetFiles(folder.FullName, "*.bin").Length;
+            var fileCountall = Directory.GetFiles(folder.FullName).Length;
+            var progressValuebin = Convert.ToDouble(100000 / fileCountbin);
+            var progressValueall = Convert.ToDouble(100000 / fileCountall);
+            Parallel.ForEach(folder.GetFiles("*.bin"), file =>
+            {
                 try
                 {
                     RemindLog = "解密: " + file.FullName;
@@ -3116,15 +3134,16 @@ namespace FGOSBIAReloaded
                     if (!Directory.Exists(renamedAssets.FullName))
                         Directory.CreateDirectory(renamedAssets.FullName);
                     File.WriteAllBytes(renamedAssets.FullName + @"\" + file.Name, output);
-                    Dispatcher.Invoke(() => { decryptprogress.Value += progressValue; });
-                    if (fileCount <= 200) Thread.Sleep(25);
+                    Dispatcher.Invoke(() => { decryptprogress.Value += progressValuebin; });
+                    if (isDeleteFile)
+                        File.Delete(file.FullName);
+                    Thread.Sleep(10);
                 }
                 catch (Exception)
                 {
                     Dispatcher.Invoke(async () => { await this.ShowMessageAsync("错误:", "解密时遇到错误.\r\n"); });
-                    return;
                 }
-
+            });
             Dispatcher.Invoke(() =>
             {
                 decryptprogress.Value = decryptprogress.Maximum;
@@ -3135,10 +3154,11 @@ namespace FGOSBIAReloaded
             Dispatcher.Invoke(() => { decryptprogress.Value = 0; });
             var AssetJsonName = File.ReadAllText(decrypt.FullName + @"\AssetName.json");
             var AssetJsonNameArray = (JArray) JsonConvert.DeserializeObject(AssetJsonName);
-            foreach (var file in renamedAssets.GetFiles("*.bin"))
-            foreach (var FileNametmp in AssetJsonNameArray) //查找某个字段与值
-                if (((JObject) FileNametmp)["fileName"].ToString() == file.Name)
+            Parallel.ForEach(renamedAssets.GetFiles("*.bin"), file =>
+            {
+                Parallel.ForEach(AssetJsonNameArray, FileNametmp =>
                 {
+                    if (((JObject) FileNametmp)["fileName"].ToString() != file.Name) return;
                     var FileNameObjtmp = JObject.Parse(FileNametmp.ToString());
                     var FileAssetNametmp = FileNameObjtmp["assetName"].ToString();
                     RemindLog = "重命名: " + file.Name + " → \r\n" + FileAssetNametmp + "\n";
@@ -3147,16 +3167,17 @@ namespace FGOSBIAReloaded
                         File.Delete(renamedAssets.FullName + @"\" + FileAssetNametmp);
                     File.Move(renamedAssets.FullName + @"\" + file.Name,
                         renamedAssets.FullName + @"\" + FileAssetNametmp);
-                    Dispatcher.Invoke(() => { decryptprogress.Value += progressValue; });
-                    if (fileCount <= 200) Thread.Sleep(25);
-                }
-
+                    Dispatcher.Invoke(() => { decryptprogress.Value += progressValueall; });
+                    Thread.Sleep(10);
+                });
+            });
             var AudioAssetJsonName = File.ReadAllText(decrypt.FullName + @"\AudioName.json");
             var AudioAssetJsonNameArray = (JArray) JsonConvert.DeserializeObject(AudioAssetJsonName);
-            foreach (var file in folder.GetFiles("*."))
-            foreach (var FileNametmp2 in AudioAssetJsonNameArray) //查找某个字段与值
-                if (((JObject) FileNametmp2)["fileName"].ToString() == file.Name)
+            Parallel.ForEach(folder.GetFiles("*."), file =>
+            {
+                Parallel.ForEach(AudioAssetJsonNameArray, FileNametmp2 =>
                 {
+                    if (((JObject) FileNametmp2)["fileName"].ToString() != file.Name) return;
                     var FileNameObjtmp2 = JObject.Parse(FileNametmp2.ToString());
                     var FileAssetNametmp2 = FileNameObjtmp2["audioName"].ToString();
                     RemindLog = "重命名: " + file.Name + " → \r\n" + FileAssetNametmp2 + "\n";
@@ -3165,17 +3186,21 @@ namespace FGOSBIAReloaded
                         Directory.CreateDirectory(renamedAudio.FullName);
                     if (File.Exists(renamedAudio.FullName + @"\" + FileAssetNametmp2))
                         File.Delete(renamedAudio.FullName + @"\" + FileAssetNametmp2);
-                    File.Copy(folder.FullName + @"\" + file.Name, renamedAudio.FullName + @"\" + FileAssetNametmp2);
-                    Dispatcher.Invoke(() => { decryptprogress.Value += progressValue; });
-                    if (fileCount <= 200) Thread.Sleep(25);
-                }
-
+                    if (isDeleteFile)
+                        File.Move(folder.FullName + @"\" + file.Name, renamedAudio.FullName + @"\" + FileAssetNametmp2);
+                    else
+                        File.Copy(folder.FullName + @"\" + file.Name, renamedAudio.FullName + @"\" + FileAssetNametmp2);
+                    Dispatcher.Invoke(() => { decryptprogress.Value += progressValueall; });
+                    Thread.Sleep(10);
+                });
+            });
             var MovieAssetJsonName = File.ReadAllText(decrypt.FullName + @"\MovieName.json");
             var MovieAssetJsonNameArray = (JArray) JsonConvert.DeserializeObject(MovieAssetJsonName);
-            foreach (var file in folder.GetFiles("*."))
-            foreach (var FileNametmp3 in MovieAssetJsonNameArray) //查找某个字段与值
-                if (((JObject) FileNametmp3)["fileName"].ToString() == file.Name)
+            Parallel.ForEach(folder.GetFiles("*."), file =>
+            {
+                Parallel.ForEach(MovieAssetJsonNameArray, FileNametmp3 =>
                 {
+                    if (((JObject) FileNametmp3)["fileName"].ToString() != file.Name) return;
                     var FileNameObjtmp3 = JObject.Parse(FileNametmp3.ToString());
                     var FileAssetNametmp3 = FileNameObjtmp3["movieName"].ToString();
                     RemindLog = "重命名: " + file.Name + " → \r\n" + FileAssetNametmp3 + "\n";
@@ -3184,10 +3209,14 @@ namespace FGOSBIAReloaded
                         Directory.CreateDirectory(renamedMovie.FullName);
                     if (File.Exists(renamedMovie.FullName + @"\" + FileAssetNametmp3))
                         File.Delete(renamedMovie.FullName + @"\" + FileAssetNametmp3);
-                    File.Copy(folder.FullName + @"\" + file.Name, renamedMovie.FullName + @"\" + FileAssetNametmp3);
-                    Dispatcher.Invoke(() => { decryptprogress.Value += progressValue; });
-                    if (fileCount <= 200) Thread.Sleep(25);
-                }
+                    if (isDeleteFile)
+                        File.Move(folder.FullName + @"\" + file.Name, renamedMovie.FullName + @"\" + FileAssetNametmp3);
+                    else
+                        File.Copy(folder.FullName + @"\" + file.Name, renamedMovie.FullName + @"\" + FileAssetNametmp3);
+                    Dispatcher.Invoke(() => { decryptprogress.Value += progressValueall; });
+                    Thread.Sleep(10);
+                });
+            });
 
             Dispatcher.Invoke(() =>
             {

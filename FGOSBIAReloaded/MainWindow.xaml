@@ -1201,7 +1201,7 @@
                                 FontWeight="Bold" Foreground="#FF333333" />
                         <ProgressBar x:Name="decryptprogress" HorizontalAlignment="Left" Height="19"
                                      Margin="10,145,0,0"
-                                     VerticalAlignment="Top" Width="472" Maximum="10000" Foreground="#FF8BFFC7"
+                                     VerticalAlignment="Top" Width="472" Maximum="100000" Foreground="#FF8BFFC7"
                                      Background="#FFB9B9B9" Visibility="Hidden" />
                         <Label x:Name="decryptstatus" Content="" Height="51"
                                Margin="10,164,10,0"
