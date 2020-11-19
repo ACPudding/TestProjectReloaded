@@ -2996,16 +2996,12 @@ namespace FGOSBIAReloaded
 
         private async void Button_DecryptBinFolder(object sender, RoutedEventArgs e)
         {
-            var inputdialog = new CommonOpenFileDialog {IsFolderPicker = true, Title = "需要解密的bin文件目录"};
+            var inputdialog = new CommonOpenFileDialog {IsFolderPicker = true, Title = "需要解密的资源文件目录"};
             var resultinput = inputdialog.ShowDialog();
             var inputfolder = "";
             if (resultinput == CommonFileDialogResult.Ok) inputfolder = inputdialog.FileName;
             if (inputfolder == "") return;
-            var outputdialog = new CommonOpenFileDialog {IsFolderPicker = true, Title = "输出目录"};
-            var resultoutput = outputdialog.ShowDialog();
-            var outputfolder = "";
-            if (resultoutput == CommonFileDialogResult.Ok) outputfolder = outputdialog.FileName;
-            if (outputfolder == "") return;
+            var outputfolder = inputfolder + @"\DecryptedResources";
             var isDeleteFile = false;
             GlobalPathsAndDatas.SuperMsgBoxRes = MessageBox.Show(
                 Application.Current.MainWindow,
@@ -3071,6 +3067,8 @@ namespace FGOSBIAReloaded
         {
             var folder = inputdest;
             var decrypt = outputdest;
+            if (!Directory.Exists(decrypt.FullName))
+                Directory.CreateDirectory(decrypt.FullName);
             var renamedAudio = new DirectoryInfo(outputdest.FullName + @"\Audio\");
             var renamedMovie = new DirectoryInfo(outputdest.FullName + @"\Movie\");
             var renamedAssets = new DirectoryInfo(outputdest.FullName + @"\Assets\");
@@ -3147,7 +3145,7 @@ namespace FGOSBIAReloaded
             Dispatcher.Invoke(() =>
             {
                 decryptprogress.Value = decryptprogress.Maximum;
-                decryptstatus.Content = "解密完成.现在开始重命名所有文件.\r\n读取json中...";
+                decryptstatus.Content = "解密完成.现在开始重命名所有资源文件.\r\n读取json中...";
             });
             Thread.Sleep(1500);
             Task.WaitAll(Sub1);
@@ -3221,7 +3219,7 @@ namespace FGOSBIAReloaded
             Dispatcher.Invoke(() =>
             {
                 decryptprogress.Value = decryptprogress.Maximum;
-                decryptstatus.Content = "解密完成.";
+                decryptstatus.Content = "完成.";
             });
             Thread.Sleep(2000);
             Process.Start(decrypt.FullName);
