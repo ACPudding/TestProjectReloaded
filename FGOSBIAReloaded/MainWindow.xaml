@@ -1201,16 +1201,16 @@
                                 FontFamily="Microsoft JhengHei UI"
                                 FontWeight="Bold" Foreground="#FF333333" />
                         <ProgressBar x:Name="decryptprogress" HorizontalAlignment="Left" Height="19"
-                                     Margin="10,145,0,0"
+                                     Margin="10,214,0,0"
                                      VerticalAlignment="Top" Width="472" Maximum="100000" Foreground="#FF8BFFC7"
                                      Background="#FFB9B9B9" Visibility="Hidden" />
                         <Label x:Name="decryptstatus" Content="" Height="51"
-                               Margin="10,164,10,0"
+                               Margin="10,233,10,0"
                                VerticalAlignment="Top" FontFamily="Microsoft JhengHei UI" FontSize="12"
                                Foreground="#FF333333" />
                         <Label
-                            Content="使用说明:&#13;点击按钮后选择完源文件夹后程序会自动进行资源的解密与改名操作.&#13;需保证源文件夹有cfb1d36393fd67385e046b084b7cf7ed文件即AssetStorage.txt,&#13;无需对该文件进行改名.输出文件夹为同目录下的DecryptedResources文件夹.&#13;解密完成后输出文件夹中会生成Assets,Audio,Movie三个文件夹分别存储不同类型&#13;的资源.(音频和视频资源本程序不会进行任何解密操作,仅进行重命名便于分辨和另行解包)"
-                            Height="109"
+                            Content="使用说明:&#13;点击按钮后选择完源文件夹后程序会自动进行资源的解密与改名操作.&#13;需保证源文件夹有cfb1d36393fd67385e046b084b7cf7ed文件即AssetStorage.txt,&#13;无需对该文件进行改名.输出文件夹为同目录下的DecryptedResources文件夹.&#13;解密完成后输出文件夹中会生成Assets,Audio,Movie三个文件夹分别存储不同类型&#13;的资源.&#13;如果解包中有音频资源会在重命名过后提示是否继续音频解包.(本项功能使用CriPakTools&#13;以及DeleTore中的部分代码与类库实现cpk2wav的一步到位)&#13;解包后的音频输出文件夹为/Audio/DecodedWavs.&#13;(视频资源本程序不会进行任何解密操作,仅进行重命名便于分辨和另行解包)"
+                            Height="173"
                             Margin="0,36,0,0"
                             VerticalAlignment="Top" FontFamily="Microsoft JhengHei UI" FontSize="12"
                             Foreground="#FF333333" FontWeight="Bold" />

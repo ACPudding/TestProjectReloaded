@@ -3014,7 +3014,7 @@ namespace FGOSBIAReloaded
             ButtonBinSelectFolder.IsEnabled = false;
             decryptprogress.Visibility = Visibility.Visible;
             decryptprogress.Value = 0;
-            await Task.Run(() => { DecryptBinFileFolder(input, output, isDeleteFile); });
+            await Task.Run(async () => { await DecryptBinFileFolderAsync(input, output, isDeleteFile); });
             ButtonBinSelectFolder.IsEnabled = true;
             decryptstatus.Content = "";
             decryptprogress.Visibility = Visibility.Hidden;
@@ -3063,7 +3063,8 @@ namespace FGOSBIAReloaded
             File.WriteAllText(decrypt.FullName + @"\AssetName.json", AssetArrayConverter);
         }
 
-        private void DecryptBinFileFolder(DirectoryInfo inputdest, DirectoryInfo outputdest, bool isDeleteFile)
+        private async Task DecryptBinFileFolderAsync(DirectoryInfo inputdest, DirectoryInfo outputdest,
+            bool isDeleteFile)
         {
             var folder = inputdest;
             var decrypt = outputdest;
@@ -3087,7 +3088,7 @@ namespace FGOSBIAReloaded
             }
             else
             {
-                Dispatcher.Invoke(async () =>
+                await Dispatcher.Invoke(async () =>
                 {
                     await this.ShowMessageAsync("错误:",
                         "AssetStorage.txt文件不存在\r\n请检查输入文件夹内是否存在\"cfb1d36393fd67385e046b084b7cf7ed\"\r\n或者\"AssetStorage.txt\"文件.");
@@ -3215,6 +3216,42 @@ namespace FGOSBIAReloaded
                     Thread.Sleep(10);
                 });
             });
+            try
+            {
+                var AudioFileQuantityCheck = Directory.GetFiles(renamedAudio.FullName).Length;
+                var acbFilename = "";
+                if (AudioFileQuantityCheck > 0)
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        GlobalPathsAndDatas.SuperMsgBoxRes = MessageBox.Show(
+                            Application.Current.MainWindow,
+                            "解密完成,是否需要尝试解包音频文件?",
+                            "提示", MessageBoxButton.OKCancel, MessageBoxImage.Information);
+                    });
+                    if (GlobalPathsAndDatas.SuperMsgBoxRes == MessageBoxResult.OK)
+                    {
+                        Dispatcher.Invoke(() => { decryptprogress.Value = 0; });
+                        var AudioDecodeStatusVision =
+                            (double) 100000 / Directory.GetFiles(renamedAudio.FullName).Length;
+                        foreach (var file in renamedAudio.GetFiles("*.cpk.bytes"))
+                        {
+                            RemindLog = "解包音频: " + file.Name;
+                            Dispatcher.Invoke(() => { decryptstatus.Content = RemindLog; });
+                            await Task.Run(() => { acbFilename = FGOAudioDecoder.UnpackCpkFiles(file, renamedAudio); });
+                            await Task.Run(() =>
+                            {
+                                FGOAudioDecoder.DecodeAcbFiles(new FileInfo(acbFilename), renamedAudio);
+                            });
+                            Dispatcher.Invoke(() => { decryptprogress.Value += AudioDecodeStatusVision; });
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                await Dispatcher.Invoke(async () => { await this.ShowMessageAsync("错误:", "解密时遇到错误.\r\n" + ex); });
+            }
 
             Dispatcher.Invoke(() =>
             {
