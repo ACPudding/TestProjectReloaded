@@ -353,6 +353,21 @@
                             <TextBlock x:Name="o_label" Text="0" Canvas.Left="-15" Canvas.Top="346"
                                        FontFamily="Microsoft JhengHei UI" FontSize="14" />
                         </Canvas>
+                        <ListView x:Name="HpAtkListView" Margin="21,67,262,222" Foreground="#FF737373" FontSize="10.5">
+                            <ListView.Background>
+                                <SolidColorBrush Color="White" Opacity="0.4" />
+                            </ListView.Background>
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Header="等级" Width="40"
+                                                    DisplayMemberBinding="{Binding SvtLevel}" />
+                                    <GridViewColumn Header="HP" Width="83"
+                                                    DisplayMemberBinding="{Binding SvtHp}" />
+                                    <GridViewColumn Header="ATK" Width="83"
+                                                    DisplayMemberBinding="{Binding SvtAtk}" />
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
                     </Grid>
                 </TabItem>
                 <TabItem Header="升级材料" FontFamily="Microsoft JhengHei UI">

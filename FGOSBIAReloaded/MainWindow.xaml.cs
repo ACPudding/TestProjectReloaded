@@ -1803,6 +1803,7 @@ namespace FGOSBIAReloaded
                 Skill3FuncList.Items.Clear();
                 LimitCombineItems.Items.Clear();
                 SkillCombineItems.Items.Clear();
+                HpAtkListView.Items.Clear();
                 TDFuncList.Items.Clear();
                 ClassPassiveFuncList.Items.Clear();
                 RemindText.Text = "";
@@ -2761,6 +2762,9 @@ namespace FGOSBIAReloaded
                                         Array[lv] * (GlobalPathsAndDatas.maxhp - GlobalPathsAndDatas.basichp) / 1000;
                     AdjustATKCurve[lv] = GlobalPathsAndDatas.basicatk +
                                          Array[lv] * (GlobalPathsAndDatas.maxatk - GlobalPathsAndDatas.basicatk) / 1000;
+                    if (lv == 0) continue;
+                    HpAtkListView.Items.Add(new HpAtkList(lv.ToString(), AdjustHPCurve[lv].ToString(),
+                        AdjustATKCurve[lv].ToString()));
                 }
 
                 chartCanvas.Children.Remove(plhp);
@@ -3369,6 +3373,20 @@ namespace FGOSBIAReloaded
                 ClassName = v1;
                 WeakClass = v2;
                 ResistClass = v3;
+            }
+        }
+
+        private struct HpAtkList
+        {
+            public string SvtLevel { get; }
+            public string SvtHp { get; }
+            public string SvtAtk { get; }
+
+            public HpAtkList(string v1, string v2, string v3) : this()
+            {
+                SvtLevel = v1;
+                SvtHp = v2;
+                SvtAtk = v3;
             }
         }
     }
