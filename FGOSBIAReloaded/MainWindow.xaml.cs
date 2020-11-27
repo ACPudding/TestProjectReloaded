@@ -1810,6 +1810,8 @@ namespace FGOSBIAReloaded
                 Title = "FGO从者基础信息解析";
                 chartCanvas.Children.Remove(plhp);
                 chartCanvas.Children.Remove(platk);
+                PickupEventList.Items.Clear();
+                PickupEndedEventList.Items.Clear();
             });
             IsSk1Strengthened.Dispatcher.Invoke(() => { IsSk1Strengthened.Text = "×"; });
             IsSk2Strengthened.Dispatcher.Invoke(() => { IsSk2Strengthened.Text = "×"; });
@@ -2107,10 +2109,11 @@ namespace FGOSBIAReloaded
             var masterData =
                 (Dictionary<string, byte[]>) MasterDataUnpacker.MouseGame2Unpacker(
                     Convert.FromBase64String(data));
-            var job = new JObject();
             var miniMessagePacker = new MiniMessagePacker();
             foreach (var item in masterData)
             {
+                var DataCount = masterData.Count;
+                var ProgressValue = (double) 9800 / DataCount;
                 var unpackeditem = (List<object>) miniMessagePacker.Unpack(item.Value);
                 var json = JsonConvert.SerializeObject(unpackeditem, Formatting.Indented);
                 File.WriteAllText(gamedata.FullName + "decrypted_masterdata/" + item.Key, json);
@@ -2119,7 +2122,7 @@ namespace FGOSBIAReloaded
                     updatestatus.Content = "写入: " + gamedata.FullName +
                                            "decrypted__masterdata\\" + item.Key;
                 });
-                progressbar.Dispatcher.Invoke(() => { progressbar.Value += 40; });
+                progressbar.Dispatcher.Invoke(() => { progressbar.Value += ProgressValue; });
             }
 
             var data2 = File.ReadAllText(gamedata.FullName + "assetbundle");
@@ -2702,7 +2705,6 @@ namespace FGOSBIAReloaded
                 foreach (var mstEventtmp in GlobalPathsAndDatas.mstEventArray)
                 {
                     var EventEndTimeStamp = Convert.ToInt32(((JObject) mstEventtmp)["endedAt"]);
-                    if (EventEndTimeStamp == 1893423600) continue;
                     var TimeMinus = (DateTime.Now.Ticks - dateTimeStart.Ticks) / 10000000;
                     EventName = ((JObject) mstEventtmp)["name"].ToString();
                     if (EventName.Length > 40) EventName = EventName.Insert(40, "\r\n");
@@ -2713,6 +2715,16 @@ namespace FGOSBIAReloaded
                     {
                         RemindText.Text = "查看: " + EventName + " (" + Eventid + ").";
                     });
+                    if (EventEndTimeStamp == 1893423600)
+                    {
+                        PickupEndedEventList.Dispatcher.Invoke(() =>
+                        {
+                            PickupEndedEventList.Items.Add(
+                                new EventList(Eventid, EventName + "\r\n - 永久活动", EndStr));
+                        });
+                        continue;
+                    }
+
                     if (TimeMinus > EventEndTimeStamp)
                         PickupEndedEventList.Dispatcher.Invoke(() =>
                         {
@@ -2740,6 +2752,79 @@ namespace FGOSBIAReloaded
                     await this.ShowMessageAsync("温馨提示:", "游戏数据损坏,请重新下载游戏数据(位于\"设置\"选项卡).");
                 });
                 ButtonEvent.Dispatcher.Invoke(() => { ButtonEvent.IsEnabled = true; });
+            }
+
+            GC.Collect();
+        }
+
+        private void Button_Click_Gacha(object sender, RoutedEventArgs e)
+        {
+            ButtonGacha.IsEnabled = false;
+            var LG = new Task(LoadGacha);
+            LG.Start();
+        }
+
+        private async void LoadGacha()
+        {
+            var path = Directory.GetCurrentDirectory();
+            var gamedata = new DirectoryInfo(path + @"\Android\masterdata\");
+            var dateTimeStart = TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1));
+            var EventName = "";
+            var Eventid = "";
+            PickupGachaList.Dispatcher.Invoke(() => { PickupEventList.Items.Clear(); });
+            PickupEndedGachaList.Dispatcher.Invoke(() => { PickupEndedEventList.Items.Clear(); });
+            if (File.Exists(gamedata.FullName + "decrypted_masterdata/" + "mstGacha"))
+            {
+                foreach (var mstGachatmp in GlobalPathsAndDatas.mstGachaArray)
+                {
+                    var EventEndTimeStamp = Convert.ToInt32(((JObject) mstGachatmp)["closedAt"]);
+                    var TimeMinus = (DateTime.Now.Ticks - dateTimeStart.Ticks) / 10000000;
+                    EventName = ((JObject) mstGachatmp)["name"].ToString();
+                    if (EventName.Length > 40) EventName = EventName.Insert(40, "\r\n");
+                    Eventid = ((JObject) mstGachatmp)["id"].ToString();
+                    var EventEndTime = new TimeSpan(long.Parse(EventEndTimeStamp + "0000000"));
+                    var EndStr = Convert.ToString(dateTimeStart + EventEndTime);
+                    RemindText.Dispatcher.Invoke(() =>
+                    {
+                        RemindText.Text = "查看: " + EventName + " (" + Eventid + ").";
+                    });
+                    if (EventEndTimeStamp == 1911653999)
+                    {
+                        PickupEndedEventList.Dispatcher.Invoke(() =>
+                        {
+                            PickupEndedGachaList.Items.Add(
+                                new EventList(Eventid, EventName + "\r\n - 永久卡池", EndStr));
+                        });
+                        continue;
+                    }
+
+                    if (TimeMinus > EventEndTimeStamp)
+                        PickupEndedEventList.Dispatcher.Invoke(() =>
+                        {
+                            PickupEndedGachaList.Items.Add(new EventList(Eventid, EventName, EndStr));
+                        });
+                    else
+                        PickupEventList.Dispatcher.Invoke(() =>
+                        {
+                            PickupGachaList.Items.Add(new EventList(Eventid, EventName, EndStr));
+                        });
+                }
+
+                ButtonGacha.Dispatcher.Invoke(() => { ButtonGacha.IsEnabled = true; });
+                RemindText.Dispatcher.Invoke(() => { RemindText.Text = "显示完毕."; });
+                Thread.Sleep(1500);
+                RemindText.Dispatcher.Invoke(() =>
+                {
+                    if (RemindText.Text != "") RemindText.Text = "";
+                });
+            }
+            else
+            {
+                await Dispatcher.Invoke(async () =>
+                {
+                    await this.ShowMessageAsync("温馨提示:", "游戏数据损坏,请重新下载游戏数据(位于\"设置\"选项卡).");
+                });
+                ButtonGacha.Dispatcher.Invoke(() => { ButtonGacha.IsEnabled = true; });
             }
 
             GC.Collect();

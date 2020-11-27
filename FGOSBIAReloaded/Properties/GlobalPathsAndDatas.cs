@@ -36,6 +36,7 @@ namespace FGOSBIAReloaded.Properties
         public static JArray mstSvtSkillArray = null;
         public static JArray mstSkillDetailArray = null;
         public static JArray mstFuncArray = null;
+        public static JArray mstGachaArray = null;
         public static JArray mstTreasureDeviceLvArray = null;
         public static int svtArtsCardhit;
         public static bool askxlsx = true;
@@ -44,7 +45,7 @@ namespace FGOSBIAReloaded.Properties
         public static string NewerVersion;
         public static MessageBoxResult SuperMsgBoxRes;
         public static string TranslationList;
-        public static string[] TranslationListArray=null;
+        public static string[] TranslationListArray = null;
         public static int basichp;
         public static int basicatk;
         public static int maxhp;

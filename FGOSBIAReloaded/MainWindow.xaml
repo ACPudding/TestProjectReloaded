@@ -1087,6 +1087,56 @@
                         </TextBox>
                     </Grid>
                 </TabItem>
+                <TabItem Header="卡池列表" FontFamily="Microsoft JhengHei UI">
+                    <TabItem.Background>
+                        <SolidColorBrush Color="#FF333333" Opacity="0.2" />
+                    </TabItem.Background>
+                    <Grid Margin="0,0,0,0">
+                        <Label Content="正在PickUp的限时卡池:"
+                               HorizontalAlignment="Left" Height="31" VerticalAlignment="Top"
+                               Width="248" FontFamily="Microsoft JhengHei UI" FontSize="16" Foreground="#FF333333"
+                               FontWeight="Bold" />
+                        <ListView x:Name="PickupGachaList" Margin="5,31,5,225" Foreground="#FF737373" FontSize="11">
+                            <ListView.Background>
+                                <SolidColorBrush Color="White" Opacity="0.4" />
+                            </ListView.Background>
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Header="卡池编号" Width="55"
+                                                    DisplayMemberBinding="{Binding EventNumber}" />
+                                    <GridViewColumn Header="卡池名称" Width="289"
+                                                    DisplayMemberBinding="{Binding EventName}" />
+                                    <GridViewColumn Header="结束时间" Width="137"
+                                                    DisplayMemberBinding="{Binding EventEndTime}" />
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
+                        <Button x:Name="ButtonGacha" Content="显示" HorizontalAlignment="Left" Height="26"
+                                Margin="399,152,0,0"
+                                VerticalAlignment="Top" Width="81" Click="Button_Click_Gacha"
+                                FontFamily="Microsoft JhengHei UI"
+                                FontWeight="Bold" Foreground="#FF333333" />
+                        <Label Content="已经结束的限时卡池:"
+                               HorizontalAlignment="Left" Height="31" VerticalAlignment="Top"
+                               Width="248" FontFamily="Microsoft JhengHei UI" FontSize="16" Foreground="#FF333333"
+                               FontWeight="Bold" Margin="0,152,0,0" />
+                        <ListView x:Name="PickupEndedGachaList" Margin="5,183,5,5" Foreground="#FF737373" FontSize="11">
+                            <ListView.Background>
+                                <SolidColorBrush Color="White" Opacity="0.4" />
+                            </ListView.Background>
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Header="卡池编号" Width="55"
+                                                    DisplayMemberBinding="{Binding EventNumber}" />
+                                    <GridViewColumn Header="卡池名称" Width="289"
+                                                    DisplayMemberBinding="{Binding EventName}" />
+                                    <GridViewColumn Header="结束时间" Width="137"
+                                                    DisplayMemberBinding="{Binding EventEndTime}" />
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
+                    </Grid>
+                </TabItem>
                 <TabItem Header="活动列表" FontFamily="Microsoft JhengHei UI">
                     <TabItem.Background>
                         <SolidColorBrush Color="#FF333333" Opacity="0.2" />
@@ -1201,7 +1251,7 @@
                                 FontWeight="Bold" Foreground="#FF333333" />
                     </Grid>
                 </TabItem>
-                <TabItem Header="其他功能" FontFamily="Microsoft JhengHei UI">
+                <TabItem Header="资源解包" FontFamily="Microsoft JhengHei UI">
                     <TabItem.Background>
                         <SolidColorBrush Color="#FF333333" Opacity="0.2" />
                     </TabItem.Background>

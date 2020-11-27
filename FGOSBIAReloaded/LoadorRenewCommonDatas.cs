@@ -65,8 +65,12 @@ namespace FGOSBIAReloaded
                 File.ReadAllText(GlobalPathsAndDatas.gamedata.FullName + "decrypted_masterdata/" + "mstGift");
             var mstSvtExp =
                 File.ReadAllText(GlobalPathsAndDatas.gamedata.FullName + "decrypted_masterdata/" + "mstSvtExp");
+            var mstGacha =
+                File.ReadAllText(GlobalPathsAndDatas.gamedata.FullName + "decrypted_masterdata/" + "mstGacha");
             GlobalPathsAndDatas.mstSvtExpArray =
                 (JArray) JsonConvert.DeserializeObject(mstSvtExp);
+            GlobalPathsAndDatas.mstGachaArray =
+                (JArray) JsonConvert.DeserializeObject(mstGacha);
             GlobalPathsAndDatas.mstGiftArray =
                 (JArray) JsonConvert.DeserializeObject(mstGift);
             GlobalPathsAndDatas.mstClassArray =
