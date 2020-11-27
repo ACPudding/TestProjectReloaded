@@ -3083,6 +3083,52 @@ namespace FGOSBIAReloaded
             LEL.Start();
         }
 
+        private async void Button_DecryptBinFile(object sender, RoutedEventArgs e)
+        {
+            var inputdialog = new CommonOpenFileDialog {Title = "选择cpk文件"};
+            var resultinput = inputdialog.ShowDialog();
+            var inputfile = "";
+            if (resultinput == CommonFileDialogResult.Ok) inputfile = inputdialog.FileName;
+            if (inputfile == "") return;
+            var file = new FileInfo(inputfile);
+            var outputfolder = file.DirectoryName;
+            var output = new DirectoryInfo(outputfolder);
+            ButtonCpkSelect.IsEnabled = false;
+            ButtonBinSelectFolder.IsEnabled = false;
+            await Task.Run(async () => { await DecryptCpkFile(file, output); });
+            ButtonCpkSelect.IsEnabled = true;
+            ButtonBinSelectFolder.IsEnabled = true;
+            Thread.Sleep(1500);
+            decryptstatus.Content = "";
+        }
+
+        private async Task DecryptCpkFile(FileInfo file, DirectoryInfo outputfolder)
+        {
+            var RemindLog = "解包音频: " + file.Name;
+            Dispatcher.Invoke(() => { decryptstatus.Content = RemindLog; });
+            var acbFilename = "";
+            await Task.Run(() =>
+            {
+                try
+                {
+                    acbFilename = FGOAudioDecoder.UnpackCpkFiles(file, outputfolder);
+                }
+                catch (Exception)
+                {
+                    //ignore
+                }
+            });
+            if (acbFilename == "")
+            {
+                await this.ShowMessageAsync("错误:", "该文件不是cpk文件类型.");
+                decryptstatus.Content = "完成.";
+                return;
+            }
+
+            await Task.Run(() => { FGOAudioDecoder.DecodeAcbFiles(new FileInfo(acbFilename), outputfolder); });
+            Dispatcher.Invoke(() => { decryptstatus.Content = "完成."; });
+        }
+
         private async void Button_DecryptBinFolder(object sender, RoutedEventArgs e)
         {
             var inputdialog = new CommonOpenFileDialog {IsFolderPicker = true, Title = "需要解密的资源文件目录"};
@@ -3101,10 +3147,12 @@ namespace FGOSBIAReloaded
             var input = new DirectoryInfo(inputfolder);
             var output = new DirectoryInfo(outputfolder);
             ButtonBinSelectFolder.IsEnabled = false;
+            ButtonCpkSelect.IsEnabled = false;
             decryptprogress.Visibility = Visibility.Visible;
             decryptprogress.Value = 0;
             await Task.Run(async () => { await DecryptBinFileFolderAsync(input, output, isDeleteFile); });
             ButtonBinSelectFolder.IsEnabled = true;
+            ButtonCpkSelect.IsEnabled = true;
             decryptstatus.Content = "";
             decryptprogress.Visibility = Visibility.Hidden;
         }
@@ -3305,42 +3353,46 @@ namespace FGOSBIAReloaded
                     Thread.Sleep(10);
                 });
             });
-            try
-            {
-                var AudioFileQuantityCheck = Directory.GetFiles(renamedAudio.FullName).Length;
-                var acbFilename = "";
-                if (AudioFileQuantityCheck > 0)
+            if (Directory.Exists(renamedAudio.FullName))
+                try
                 {
-                    Dispatcher.Invoke(() =>
+                    var AudioFileQuantityCheck = Directory.GetFiles(renamedAudio.FullName).Length;
+                    var acbFilename = "";
+                    if (AudioFileQuantityCheck > 0)
                     {
-                        GlobalPathsAndDatas.SuperMsgBoxRes = MessageBox.Show(
-                            Application.Current.MainWindow,
-                            "解密完成,是否需要尝试解包音频文件?",
-                            "提示", MessageBoxButton.OKCancel, MessageBoxImage.Information);
-                    });
-                    if (GlobalPathsAndDatas.SuperMsgBoxRes == MessageBoxResult.OK)
-                    {
-                        Dispatcher.Invoke(() => { decryptprogress.Value = 0; });
-                        var AudioDecodeStatusVision =
-                            (double) 100000 / Directory.GetFiles(renamedAudio.FullName).Length;
-                        foreach (var file in renamedAudio.GetFiles("*.cpk.bytes"))
+                        Dispatcher.Invoke(() =>
                         {
-                            RemindLog = "解包音频: " + file.Name;
-                            Dispatcher.Invoke(() => { decryptstatus.Content = RemindLog; });
-                            await Task.Run(() => { acbFilename = FGOAudioDecoder.UnpackCpkFiles(file, renamedAudio); });
-                            await Task.Run(() =>
+                            GlobalPathsAndDatas.SuperMsgBoxRes = MessageBox.Show(
+                                Application.Current.MainWindow,
+                                "解密完成,是否需要尝试解包音频文件?",
+                                "提示", MessageBoxButton.OKCancel, MessageBoxImage.Information);
+                        });
+                        if (GlobalPathsAndDatas.SuperMsgBoxRes == MessageBoxResult.OK)
+                        {
+                            Dispatcher.Invoke(() => { decryptprogress.Value = 0; });
+                            var AudioDecodeStatusVision =
+                                (double) 100000 / Directory.GetFiles(renamedAudio.FullName).Length;
+                            foreach (var file in renamedAudio.GetFiles("*.cpk.bytes"))
                             {
-                                FGOAudioDecoder.DecodeAcbFiles(new FileInfo(acbFilename), renamedAudio);
-                            });
-                            Dispatcher.Invoke(() => { decryptprogress.Value += AudioDecodeStatusVision; });
+                                RemindLog = "解包音频: " + file.Name;
+                                Dispatcher.Invoke(() => { decryptstatus.Content = RemindLog; });
+                                await Task.Run(() =>
+                                {
+                                    acbFilename = FGOAudioDecoder.UnpackCpkFiles(file, renamedAudio);
+                                });
+                                await Task.Run(() =>
+                                {
+                                    FGOAudioDecoder.DecodeAcbFiles(new FileInfo(acbFilename), renamedAudio);
+                                });
+                                Dispatcher.Invoke(() => { decryptprogress.Value += AudioDecodeStatusVision; });
+                            }
                         }
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                await Dispatcher.Invoke(async () => { await this.ShowMessageAsync("错误:", "解密时遇到错误.\r\n" + ex); });
-            }
+                catch (Exception ex)
+                {
+                    await Dispatcher.Invoke(async () => { await this.ShowMessageAsync("错误:", "解密时遇到错误.\r\n" + ex); });
+                }
 
             Dispatcher.Invoke(() =>
             {

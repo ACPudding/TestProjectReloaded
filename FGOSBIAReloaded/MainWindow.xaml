@@ -1279,6 +1279,20 @@
                             Margin="0,36,0,0"
                             VerticalAlignment="Top" FontFamily="Microsoft JhengHei UI" FontSize="12"
                             Foreground="#FF333333" FontWeight="Bold" />
+                        <Label
+                            Content="------------------------------------------------------------------------------------------"
+                            HorizontalAlignment="Left" Height="27" Margin="0,284,0,0" VerticalAlignment="Top"
+                            Width="492"
+                            FontFamily="Microsoft JhengHei UI" FontSize="14" Foreground="LightGray" />
+                        <Label Content="音频文件(单文件)转wav" HorizontalAlignment="Left" Height="40"
+                            VerticalAlignment="Top"
+                            Width="383" FontFamily="Microsoft JhengHei UI"
+                            FontSize="16" Foreground="#FF333333" FontWeight="Bold" Margin="0,301,0,0" />
+                        <Button x:Name="ButtonCpkSelect" Content="选择文件" HorizontalAlignment="Left" Height="26"
+                            Margin="401,305,0,0"
+                            VerticalAlignment="Top" Width="81" Click="Button_DecryptBinFile"
+                            FontFamily="Microsoft JhengHei UI"
+                            FontWeight="Bold" Foreground="#FF333333" />
                     </Grid>
                 </TabItem>
                 <TabItem Header="设置" FontFamily="Microsoft JhengHei UI">

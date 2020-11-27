@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DereTore.Exchange.Audio.HCA;
-using Newtonsoft.Json.Linq;
 using VGMToolbox.format;
 using static System.String;
 
@@ -37,13 +36,12 @@ namespace FGOSBIAReloaded
                     chunk = cpk.DecompressCRILAYLA(chunk, size);
                 }
 
-                File.WriteAllBytes(AudioFolder.FullName + t.FileName, chunk);
+                File.WriteAllBytes(AudioFolder.FullName + @"\" + t.FileName, chunk);
                 if (t.FileName.ToString().Contains(".acb"))
-                    filefullname = AudioFolder.FullName + t.FileName;
+                    filefullname = AudioFolder.FullName + @"\" + t.FileName;
             }
 
             oldFile.Close();
-            //File.Delete(filename.FullName);
             return filefullname;
         }
 
