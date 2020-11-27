@@ -1284,7 +1284,7 @@
                             HorizontalAlignment="Left" Height="27" Margin="0,284,0,0" VerticalAlignment="Top"
                             Width="492"
                             FontFamily="Microsoft JhengHei UI" FontSize="14" Foreground="LightGray" />
-                        <Label Content="音频文件(单文件)转wav" HorizontalAlignment="Left" Height="40"
+                        <Label Content="单音频文件转wav(cpk2wav)" HorizontalAlignment="Left" Height="40"
                             VerticalAlignment="Top"
                             Width="383" FontFamily="Microsoft JhengHei UI"
                             FontSize="16" Foreground="#FF333333" FontWeight="Bold" Margin="0,301,0,0" />

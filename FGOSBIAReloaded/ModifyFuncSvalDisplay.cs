@@ -245,7 +245,7 @@ namespace FGOSBIAReloaded
                     {
                         try
                         {
-                            output = Tempsval[3] + "段階" + 
+                            output = Tempsval[3] + "段階" +
                                      (Tempsval[0] == "1000" ? "" : "(" + Convert.ToDouble(Tempsval[0]) / 10 + "%成功率)") +
                                      (Tempsval[1] == "-1" ? "" : " - " + Tempsval[1] + "回合") +
                                      (Tempsval[2] == "-1" ? "" : " · " + Tempsval[2] + "次");
@@ -464,6 +464,29 @@ namespace FGOSBIAReloaded
                         output = Funcsval;
                         break;
                     }
+                case "幻惑":
+                    Tempsval = Funcsval.Split(',');
+                    if (Tempsval.Length == 4)
+                    {
+                        try
+                        {
+                            output = Convert.ToDouble(Tempsval[3]) / 10 + "%" +
+                                     (Tempsval[0] == "1000" ? "" : "(" + Convert.ToDouble(Tempsval[0]) / 10 + "%成功率)") +
+                                     (Tempsval[1] == "-1" ? "" : " - " + Tempsval[1] + "回合") +
+                                     (Tempsval[2] == "-1" ? "" : " · " + Tempsval[2] + "次");
+                            break;
+                        }
+                        catch (Exception)
+                        {
+                            output = Funcsval;
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        output = Funcsval;
+                        break;
+                    }
             }
 
             if (Funcname.Contains("強力攻撃") || Funcname.Contains("防御無視攻撃"))
@@ -498,7 +521,7 @@ namespace FGOSBIAReloaded
             }
 
             if (Funcname == "強化解除" || Funcname == "防御強化解除" || Funcname == "攻撃強化解除" || Funcname == "攻撃弱体解除" ||
-                Funcname == "防御弱体解除" || Funcname == "弱体解除")
+                Funcname == "防御弱体解除" || Funcname == "弱体解除" || Funcname == "必中解除" || Funcname == "回避状態解除")
             {
                 Tempsval = Funcsval.Split(',');
                 if (Tempsval.Length == 1)

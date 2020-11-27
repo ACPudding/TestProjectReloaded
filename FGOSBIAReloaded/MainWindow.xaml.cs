@@ -2896,12 +2896,14 @@ namespace FGOSBIAReloaded
         {
             for (var i = 0; i < 101; i++)
             {
-                var x_scale = new Line();
-                x_scale.StrokeEndLineCap = PenLineCap.Triangle;
-                x_scale.StrokeThickness = 1;
-                x_scale.Stroke = new SolidColorBrush(Color.FromRgb(0, 0, 0));
+                var x_scale = new Line
+                {
+                    StrokeEndLineCap = PenLineCap.Triangle,
+                    StrokeThickness = 1,
+                    Stroke = new SolidColorBrush(Color.FromRgb(0, 0, 0)),
+                    X1 = 0 + i * 4.5
+                };
 
-                x_scale.X1 = 0 + i * 4.5;
                 x_scale.X2 = x_scale.X1;
 
                 x_scale.Y1 = 352;
@@ -3098,7 +3100,7 @@ namespace FGOSBIAReloaded
             await Task.Run(async () => { await DecryptCpkFile(file, output); });
             ButtonCpkSelect.IsEnabled = true;
             ButtonBinSelectFolder.IsEnabled = true;
-            Thread.Sleep(1500);
+            Thread.Sleep(1000);
             decryptstatus.Content = "";
         }
 
@@ -3120,13 +3122,18 @@ namespace FGOSBIAReloaded
             });
             if (acbFilename == "")
             {
-                await this.ShowMessageAsync("错误:", "该文件不是cpk文件类型.");
-                decryptstatus.Content = "完成.";
+                await Dispatcher.Invoke(async () =>
+                 {
+                     decryptstatus.Content = "该文件不是cpk类型文件.请重试.";
+                     await this.ShowMessageAsync("错误:", "该文件不是cpk类型文件.");
+                 });
                 return;
             }
 
             await Task.Run(() => { FGOAudioDecoder.DecodeAcbFiles(new FileInfo(acbFilename), outputfolder); });
             Dispatcher.Invoke(() => { decryptstatus.Content = "完成."; });
+            Thread.Sleep(1500);
+            Process.Start(outputfolder.FullName + @"\DecodedWavs");
         }
 
         private async void Button_DecryptBinFolder(object sender, RoutedEventArgs e)
