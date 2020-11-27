@@ -1810,8 +1810,6 @@ namespace FGOSBIAReloaded
                 Title = "FGO从者基础信息解析";
                 chartCanvas.Children.Remove(plhp);
                 chartCanvas.Children.Remove(platk);
-                PickupEventList.Items.Clear();
-                PickupEndedEventList.Items.Clear();
             });
             IsSk1Strengthened.Dispatcher.Invoke(() => { IsSk1Strengthened.Text = "×"; });
             IsSk2Strengthened.Dispatcher.Invoke(() => { IsSk2Strengthened.Text = "×"; });
@@ -1828,6 +1826,8 @@ namespace FGOSBIAReloaded
                 PickupEndedEventList.Items.Clear();
                 ClassList.Items.Clear();
                 PickupQuestList.Items.Clear();
+                PickupGachaList.Items.Clear();
+                PickupEndedGachaList.Items.Clear();
             });
         }
 
