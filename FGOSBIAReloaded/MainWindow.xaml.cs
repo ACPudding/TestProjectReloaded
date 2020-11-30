@@ -28,8 +28,27 @@ namespace FGOSBIAReloaded
     /// </summary>
     public partial class MainWindow : MetroWindow
     {
+        private readonly string BuffTranslationListLinkA =
+            "https://raw.githubusercontent.com/ACPudding/ACPudding.github.io/master/fileserv/BuffTranslation";
+
+        private readonly string BuffTranslationListLinkB =
+            "https://gitee.com/ACPudding/ACPudding.github.io/raw/master/fileserv/BuffTranslation";
+
+        private readonly string IndividualListLinkA =
+            "https://raw.githubusercontent.com/ACPudding/ACPudding.github.io/master/fileserv/IndividualityList";
+
+        private readonly string IndividualListLinkB =
+            "https://gitee.com/ACPudding/ACPudding.github.io/raw/master/fileserv/IndividualityList";
+
+        private readonly string TDAttackNameTranslationListLinkA =
+            "https://raw.githubusercontent.com/ACPudding/ACPudding.github.io/master/fileserv/TDAttackName";
+
+        private readonly string TDAttackNameTranslationListLinkB =
+            "https://gitee.com/ACPudding/ACPudding.github.io/raw/master/fileserv/TDAttackName";
+
         private Polyline platk;
         private Polyline plhp;
+
 
         public MainWindow()
         {
@@ -71,7 +90,7 @@ namespace FGOSBIAReloaded
             var SCIC = new Task(ServantCVandIllustCheck);
             var SJTC = new Task(ServantJibanTextCheck);
             var STDI = new Task(() => { ServantTreasureDeviceInformationCheck(svtTDID); });
-            var SSIC = new Task(ServantSkillInformationCheck);
+            var SSIC = new Task(() => { ServantSkillInformationCheck(svtID); });
             var SCLIC = new Task(ServantCombineLimitItemsCheck);
             var SCSIC = new Task(ServantCombineSkillItemsCheck);
             SkillLvs.skillID1 = "";
@@ -88,6 +107,53 @@ namespace FGOSBIAReloaded
             JB.JB6 = "";
             JB.JB7 = "";
             ClearTexts();
+            var TDStringBar = GetSvtTDID(svtID);
+            if (TDStringBar[1] == "true") IsNPStrengthened.Dispatcher.Invoke(() => { IsNPStrengthened.Text = "√"; });
+            svtTDID = TDStringBar[0];
+            textbox1.Dispatcher.Invoke(() => { textbox1.Text = svtID; });
+
+            ToggleBuffFuncTranslate.Dispatcher.Invoke(() =>
+            {
+                if (ToggleBuffFuncTranslate.IsChecked == true)
+                    GlobalPathsAndDatas.TranslationList =
+                        HttpRequest.GetList(BuffTranslationListLinkA, BuffTranslationListLinkB);
+            });
+            SCAC.Start();
+            SBIC.Start();
+            SCIC.Start();
+            SJTC.Start();
+            SCLIC.Start();
+            SCSIC.Start();
+            STDI.Start();
+            Task.WaitAny(SCLIC);
+            var STDSC = new Task(() => { ServantTreasureDeviceSvalCheck(svtTDID); });
+            STDSC.Start();
+            SSIC.Start();
+            Task.WaitAll(STDSC, SSIC);
+            Button1.Dispatcher.Invoke(() => { Button1.IsEnabled = true; });
+            Dispatcher.Invoke(async () =>
+            {
+                if (rarity.Text == "")
+                {
+                    await this.ShowMessageAsync("温馨提示:", "从者ID不存在或未实装,请重试.");
+                    ClearTexts();
+                    Button1.IsEnabled = true;
+                    return;
+                }
+
+                if (cards.Text == "[Q,Q,Q,Q,Q]" && svtclass.Text != "礼装")
+                    RemindText.Text = "此ID为小怪(或部分boss以及种火芙芙),配卡、技能、宝具信息解析并不准确,请知悉.";
+            });
+            GC.Collect();
+        }
+
+        private string[] GetSvtTDID(string svtID)
+        {
+            var svtTDID = "";
+            var isNPStrengthen = "false";
+            var result = new string[2];
+            result[0] = svtTDID;
+            result[1] = isNPStrengthen;
             try
             {
                 foreach (var svtTreasureDevicestmp in GlobalPathsAndDatas.mstSvtTreasureDevicedArray)
@@ -120,7 +186,7 @@ namespace FGOSBIAReloaded
                     {
                         var mstsvtTDobjtmp = JObject.Parse(svtTreasureDevicestmp.ToString());
                         svtTDID = mstsvtTDobjtmp["treasureDeviceId"].ToString();
-                        IsNPStrengthened.Dispatcher.Invoke(() => { IsNPStrengthened.Text = "√"; });
+                        isNPStrengthen = "true";
                     }
 
                     if (((JObject) svtTreasureDevicestmp)["svtId"].ToString() == svtID &&
@@ -145,53 +211,52 @@ namespace FGOSBIAReloaded
                         break;
                     }
                 }
+
+                result[0] = svtTDID;
+                result[1] = isNPStrengthen;
             }
             catch (Exception e)
             {
-                Dispatcher.Invoke(() =>
+                Dispatcher.Invoke(async () =>
                 {
-                    MessageBox.Show(
-                        Application.Current.MainWindow, "您太心急了,稍等一下再解析吧!\r\n" + e, "温馨提示:", MessageBoxButton.OK,
-                        MessageBoxImage.Information);
+                    await this.ShowMessageAsync("温馨提示:", "您太心急了,稍等一下再解析吧!\r\n" + e);
                     Button1.IsEnabled = true;
                 });
-                return;
+                return result;
             }
 
-            textbox1.Dispatcher.Invoke(() => { textbox1.Text = svtID; });
+            return result;
+        }
 
-            ToggleBuffFuncTranslate.Dispatcher.Invoke(() =>
-            {
-                if (ToggleBuffFuncTranslate.IsChecked == true)
-                    GlobalPathsAndDatas.TranslationList = HttpRequest.GetBuffTranslationList();
-            });
-            SCAC.Start();
-            SBIC.Start();
-            SCIC.Start();
-            SJTC.Start();
-            SCLIC.Start();
-            SCSIC.Start();
-            STDI.Start();
-            Task.WaitAny(SCLIC);
-            var STDSC = new Task(() => { ServantTreasureDeviceSvalCheck(svtTDID); });
-            STDSC.Start();
-            SSIC.Start();
-            Task.WaitAll(STDSC, SSIC);
-            Button1.Dispatcher.Invoke(() => { Button1.IsEnabled = true; });
-            Dispatcher.Invoke(async () =>
-            {
-                if (rarity.Text == "")
+        private void DisplayNPRate(string svtTDID)
+        {
+            var NPRateTD = 0.0;
+            var NPRateArts = 0.0;
+            var NPRateBuster = 0.0;
+            var NPRateQuick = 0.0;
+            var NPRateEX = 0.0;
+            var NPRateDef = 0.0;
+            foreach (var TDlvtmp in GlobalPathsAndDatas.mstTreasureDeviceLvArray)
+                if (((JObject) TDlvtmp)["treaureDeviceId"].ToString() == svtTDID)
                 {
-                    await this.ShowMessageAsync("温馨提示:", "从者ID不存在或未实装,请重试.");
-                    ClearTexts();
-                    Button1.IsEnabled = true;
-                    return;
+                    var TDlvobjtmp = JObject.Parse(TDlvtmp.ToString());
+                    NPRateTD = Convert.ToDouble(TDlvobjtmp["tdPoint"].ToString());
+                    NPRateArts = Convert.ToDouble(TDlvobjtmp["tdPointA"].ToString());
+                    NPRateBuster = Convert.ToDouble(TDlvobjtmp["tdPointB"].ToString());
+                    NPRateQuick = Convert.ToDouble(TDlvobjtmp["tdPointQ"].ToString());
+                    NPRateEX = Convert.ToDouble(TDlvobjtmp["tdPointEx"].ToString());
+                    NPRateDef = Convert.ToDouble(TDlvobjtmp["tdPointDef"].ToString());
+                    break;
                 }
 
-                if (cards.Text == "[Q,Q,Q,Q,Q]" && svtclass.Text != "礼装")
-                    RemindText.Text = "此ID为小怪(或部分boss以及种火芙芙),配卡、技能、宝具信息解析并不准确,请知悉.";
+            nprate.Dispatcher.Invoke(() =>
+            {
+                nprate.Text = "Quick: " + (NPRateQuick / 10000).ToString("P") + "   Arts: " +
+                              (NPRateArts / 10000).ToString("P") + "   Buster: " +
+                              (NPRateBuster / 10000).ToString("P") + "\r\nExtra: " +
+                              (NPRateEX / 10000).ToString("P") + "   宝具: " + (NPRateTD / 10000).ToString("P") +
+                              "   受击: " + (NPRateDef / 10000).ToString("P");
             });
-            GC.Collect();
         }
 
         private void ServantTreasureDeviceInformationCheck(object svtTDID)
@@ -205,12 +270,8 @@ namespace FGOSBIAReloaded
             var svtNPCardhit = 1;
             var svtNPCardhitDamage = "";
             var svtNPCardType = "";
-            var NPRateTD = 0.0;
-            var NPRateArts = 0.0;
-            var NPRateBuster = 0.0;
-            var NPRateQuick = 0.0;
-            var NPRateEX = 0.0;
-            var NPRateDef = 0.0;
+            var DNR = new Task(() => { DisplayNPRate(svtTDID.ToString()); });
+            DNR.Start();
             foreach (var TDDtmp in GlobalPathsAndDatas.mstTreasureDeviceDetailArray)
                 if (((JObject) TDDtmp)["id"].ToString() == svtTDID.ToString())
                 {
@@ -230,102 +291,41 @@ namespace FGOSBIAReloaded
                     break;
                 }
 
-            foreach (var TDlvtmp in GlobalPathsAndDatas.mstTreasureDeviceLvArray)
-                if (((JObject) TDlvtmp)["treaureDeviceId"].ToString() == svtTDID.ToString())
-                {
-                    var TDlvobjtmp = JObject.Parse(TDlvtmp.ToString());
-                    NPRateTD = Convert.ToDouble(TDlvobjtmp["tdPoint"].ToString());
-                    NPRateArts = Convert.ToDouble(TDlvobjtmp["tdPointA"].ToString());
-                    NPRateBuster = Convert.ToDouble(TDlvobjtmp["tdPointB"].ToString());
-                    NPRateQuick = Convert.ToDouble(TDlvobjtmp["tdPointQ"].ToString());
-                    NPRateEX = Convert.ToDouble(TDlvobjtmp["tdPointEx"].ToString());
-                    NPRateDef = Convert.ToDouble(TDlvobjtmp["tdPointDef"].ToString());
-                    break;
-                }
-
             foreach (var TreasureDevicestmp in GlobalPathsAndDatas.mstTreasureDevicedArray)
             {
-                if (((JObject) TreasureDevicestmp)["id"].ToString() == svtTDID.ToString())
+                if (((JObject) TreasureDevicestmp)["id"].ToString() != svtTDID.ToString()) continue;
+                var mstTDobjtmp = JObject.Parse(TreasureDevicestmp.ToString());
+                NPName = mstTDobjtmp["name"].ToString();
+                npname.Dispatcher.Invoke(() => { npname.Text = NPName; });
+                NPrank = mstTDobjtmp["rank"].ToString();
+                NPruby = mstTDobjtmp["ruby"].ToString();
+                npruby.Dispatcher.Invoke(() => { npruby.Text = NPruby; });
+                NPtypeText = mstTDobjtmp["typeText"].ToString();
+                nprank.Dispatcher.Invoke(() => { nprank.Text = NPrank + " ( " + NPtypeText + " ) "; });
+                svtNPDamageType = mstTDobjtmp["effectFlag"].ToString().Replace("0", "辅助宝具")
+                    .Replace("1", "全体宝具").Replace("2", "单体宝具");
+                nptype.Dispatcher.Invoke(() => { nptype.Text = svtNPDamageType; });
+                cards.Dispatcher.Invoke(() =>
                 {
-                    var mstTDobjtmp = JObject.Parse(TreasureDevicestmp.ToString());
-                    NPName = mstTDobjtmp["name"].ToString();
-                    npname.Dispatcher.Invoke(() => { npname.Text = NPName; });
-                    NPrank = mstTDobjtmp["rank"].ToString();
-                    NPruby = mstTDobjtmp["ruby"].ToString();
-                    npruby.Dispatcher.Invoke(() => { npruby.Text = NPruby; });
-                    NPtypeText = mstTDobjtmp["typeText"].ToString();
-                    nprank.Dispatcher.Invoke(() => { nprank.Text = NPrank + " ( " + NPtypeText + " ) "; });
-                    svtNPDamageType = mstTDobjtmp["effectFlag"].ToString().Replace("0", "辅助宝具")
-                        .Replace("1", "全体宝具").Replace("2", "单体宝具");
-                    nptype.Dispatcher.Invoke(() => { nptype.Text = svtNPDamageType; });
-                    var DSSCL = new Task(() => { DrawServantStrengthenCurveLine(GlobalPathsAndDatas.CurveType); });
-                    DSSCL.Start();
-                    if (svtNPDamageType == "辅助宝具")
-                    {
-                        svtNPCardhit = 0;
-                        svtNPCardhitDamage = "[ - ]";
-                    }
-
-                    foreach (var svtTreasureDevicestmp in GlobalPathsAndDatas.mstSvtTreasureDevicedArray)
-                        if (((JObject) svtTreasureDevicestmp)["treasureDeviceId"].ToString() ==
-                            ((JObject) TreasureDevicestmp)["id"].ToString())
-                        {
-                            var mstsvtTDobjtmp2 = JObject.Parse(svtTreasureDevicestmp.ToString());
-                            svtNPCardhitDamage = mstsvtTDobjtmp2["damage"].ToString().Replace("\n", "")
-                                .Replace("\t", "").Replace("\r", "").Replace(" ", "");
-                            svtNPCardType = mstsvtTDobjtmp2["cardId"].ToString().Replace("2", "Buster")
-                                .Replace("1", "Arts").Replace("3", "Quick");
-                            break;
-                        }
-
-                    break;
-                }
-
-                textbox1.Dispatcher.Invoke(() =>
-                {
-                    if (((JObject) TreasureDevicestmp)["seqId"].ToString() != textbox1.Text ||
-                        ((JObject) TreasureDevicestmp)["ruby"].ToString() != "-" ||
-                        ((JObject) TreasureDevicestmp)["id"].ToString().Length != 3) return;
-                    var mstTDobjtmp2 = JObject.Parse(TreasureDevicestmp.ToString());
-                    NPName = mstTDobjtmp2["name"].ToString();
-                    npname.Dispatcher.Invoke(() => { npname.Text = NPName; });
-                    NPrank = mstTDobjtmp2["rank"].ToString();
-                    NPruby = mstTDobjtmp2["ruby"].ToString();
-                    npruby.Dispatcher.Invoke(() => { npruby.Text = NPruby; });
-                    NPtypeText = mstTDobjtmp2["typeText"].ToString();
-                    nprank.Dispatcher.Invoke(() => { nprank.Text = NPrank + " ( " + NPtypeText + " ) "; });
-                    svtNPDamageType = mstTDobjtmp2["effectFlag"].ToString().Replace("0", "宝具攻击")
-                        .Replace("1", "宝具攻击").Replace("2", "宝具攻击");
-                    nptype.Dispatcher.Invoke(() => { nptype.Text = svtNPDamageType; });
-                    /*if (svtNPDamageType == "辅助宝具")
-                    {
-                        svtNPCardhit = 0;
-                        svtNPCardhitDamage = "[ - ]";
-                    }
-                    */
-                    NPDetail = "该ID的配卡与宝具解析可能不准确,请留意.";
-                    foreach (var svtTreasureDevicestmp in GlobalPathsAndDatas.mstSvtTreasureDevicedArray)
-                        if (((JObject) svtTreasureDevicestmp)["treasureDeviceId"].ToString() ==
-                            ((JObject) TreasureDevicestmp)["id"].ToString())
-                        {
-                            var mstsvtTDobjtmp2 = JObject.Parse(svtTreasureDevicestmp.ToString());
-                            svtNPCardhitDamage = mstsvtTDobjtmp2["damage"].ToString().Replace("\n", "")
-                                .Replace("\t", "").Replace("\r", "").Replace(" ", "");
-                            svtNPCardType = mstsvtTDobjtmp2["cardId"].ToString().Replace("2", "Buster")
-                                .Replace("1", "Arts").Replace("3", "Quick");
-                            break;
-                        }
+                    if (svtNPDamageType != "辅助宝具" || cards.Text == "[Q,Q,Q,Q,Q]") return;
+                    svtNPCardhit = 0;
+                    svtNPCardhitDamage = "[ - ]";
                 });
+                foreach (var svtTreasureDevicestmp in GlobalPathsAndDatas.mstSvtTreasureDevicedArray)
+                    if (((JObject) svtTreasureDevicestmp)["treasureDeviceId"].ToString() ==
+                        ((JObject) TreasureDevicestmp)["id"].ToString())
+                    {
+                        var mstsvtTDobjtmp2 = JObject.Parse(svtTreasureDevicestmp.ToString());
+                        svtNPCardhitDamage = mstsvtTDobjtmp2["damage"].ToString().Replace("\n", "")
+                            .Replace("\t", "").Replace("\r", "").Replace(" ", "");
+                        svtNPCardType = mstsvtTDobjtmp2["cardId"].ToString().Replace("2", "Buster")
+                            .Replace("1", "Arts").Replace("3", "Quick");
+                        break;
+                    }
+
+                break;
             }
 
-            nprate.Dispatcher.Invoke(() =>
-            {
-                nprate.Text = "Quick: " + (NPRateQuick / 10000).ToString("P") + "   Arts: " +
-                              (NPRateArts / 10000).ToString("P") + "   Buster: " +
-                              (NPRateBuster / 10000).ToString("P") + "\r\nExtra: " +
-                              (NPRateEX / 10000).ToString("P") + "   宝具: " + (NPRateTD / 10000).ToString("P") +
-                              "   受击: " + (NPRateDef / 10000).ToString("P");
-            });
             treasuredevicescard.Dispatcher.Invoke(() =>
             {
                 svtNPCardhit += svtNPCardhitDamage.Count(c => c == ',');
@@ -395,133 +395,8 @@ namespace FGOSBIAReloaded
                     }
 
             npdetail.Dispatcher.Invoke(() => { npdetail.Text = NPDetail; });
-            if (NPName == "" && NPDetail == "") npdetail.Dispatcher.Invoke(() => { npdetail.Text = "该宝具暂时没有描述."; });
-        }
-
-        private void ServantSkillLevelCheck()
-        {
-            SkillLvs.skill1forExcel = "";
-            SkillLvs.skill2forExcel = "";
-            SkillLvs.skill3forExcel = "";
-            Dispatcher.Invoke(() =>
-            {
-                if (skill1ID.Text == "") return;
-                SkillDetailCheck(SkillLvs.skillID1);
-                skill1cdlv1.Text = SkillLvs.skilllv1chargetime;
-                skill1cdlv6.Text = SkillLvs.skilllv6chargetime;
-                skill1cdlv10.Text = SkillLvs.skilllv10chargetime;
-                for (var i = 0; i <= SkillLvs.SKLFuncstrArray.Length - 1; i++)
-                {
-                    if (SkillLvs.SKLFuncstrArray[i] == "" && SkillLvs.skilllv1svalArray[i].Count(c => c == ',') == 1 &&
-                        !SkillLvs.skilllv1svalArray[i].Contains("Hide")) SkillLvs.SKLFuncstrArray[i] = "HP回復";
-                    if (ToggleFuncDiffer.IsChecked == true)
-                    {
-                        SkillLvs.skilllv1svalArray[i] = ModifyFuncSvalDisplay.ModifyFuncStr(SkillLvs.SKLFuncstrArray[i],
-                            SkillLvs.skilllv1svalArray[i]);
-                        SkillLvs.skilllv6svalArray[i] = ModifyFuncSvalDisplay.ModifyFuncStr(SkillLvs.SKLFuncstrArray[i],
-                            SkillLvs.skilllv6svalArray[i]);
-                        SkillLvs.skilllv10svalArray[i] =
-                            ModifyFuncSvalDisplay.ModifyFuncStr(SkillLvs.SKLFuncstrArray[i],
-                                SkillLvs.skilllv10svalArray[i]);
-                    }
-
-                    Skill1FuncList.Items.Add(new SkillListSval(SkillLvs.SKLFuncstrArray[i],
-                        SkillLvs.skilllv1svalArray[i], SkillLvs.skilllv6svalArray[i], SkillLvs.skilllv10svalArray[i]));
-                    SkillLvs.skill1forExcel += SkillLvs.SKLFuncstrArray[i] + " 【{" +
-                                               (SkillLvs.skilllv1svalArray[i].Replace("\r\n", " ") ==
-                                                SkillLvs.skilllv10svalArray[i].Replace("\r\n", " ")
-                                                   ? SkillLvs.skilllv10svalArray[i].Replace("\r\n", " ")
-                                                   : SkillLvs.skilllv1svalArray[i].Replace("\r\n", " ") + "} - {" +
-                                                     SkillLvs.skilllv10svalArray[i].Replace("\r\n", " ")) + "}】\r\n";
-                }
-
-                try
-                {
-                    SkillLvs.skill1forExcel = SkillLvs.skill1forExcel.Substring(0, SkillLvs.skill1forExcel.Length - 2);
-                }
-                catch (Exception)
-                {
-                    // ignored
-                }
-
-                SkillDetailCheck(SkillLvs.skillID2);
-                skill2cdlv1.Text = SkillLvs.skilllv1chargetime;
-                skill2cdlv6.Text = SkillLvs.skilllv6chargetime;
-                skill2cdlv10.Text = SkillLvs.skilllv10chargetime;
-                for (var i = 0; i <= SkillLvs.SKLFuncstrArray.Length - 1; i++)
-                {
-                    if (SkillLvs.SKLFuncstrArray[i] == "" && SkillLvs.skilllv1svalArray[i].Count(c => c == ',') == 1 &&
-                        !SkillLvs.skilllv1svalArray[i].Contains("Hide")) SkillLvs.SKLFuncstrArray[i] = "HP回復";
-                    if (ToggleFuncDiffer.IsChecked == true)
-                    {
-                        SkillLvs.skilllv1svalArray[i] = ModifyFuncSvalDisplay.ModifyFuncStr(SkillLvs.SKLFuncstrArray[i],
-                            SkillLvs.skilllv1svalArray[i]);
-                        SkillLvs.skilllv6svalArray[i] = ModifyFuncSvalDisplay.ModifyFuncStr(SkillLvs.SKLFuncstrArray[i],
-                            SkillLvs.skilllv6svalArray[i]);
-                        SkillLvs.skilllv10svalArray[i] =
-                            ModifyFuncSvalDisplay.ModifyFuncStr(SkillLvs.SKLFuncstrArray[i],
-                                SkillLvs.skilllv10svalArray[i]);
-                    }
-
-                    Skill2FuncList.Items.Add(new SkillListSval(SkillLvs.SKLFuncstrArray[i],
-                        SkillLvs.skilllv1svalArray[i], SkillLvs.skilllv6svalArray[i], SkillLvs.skilllv10svalArray[i]));
-                    SkillLvs.skill2forExcel += SkillLvs.SKLFuncstrArray[i] + " 【{" +
-                                               (SkillLvs.skilllv1svalArray[i].Replace("\r\n", " ") ==
-                                                SkillLvs.skilllv10svalArray[i].Replace("\r\n", " ")
-                                                   ? SkillLvs.skilllv10svalArray[i].Replace("\r\n", " ")
-                                                   : SkillLvs.skilllv1svalArray[i].Replace("\r\n", " ") + "} - {" +
-                                                     SkillLvs.skilllv10svalArray[i].Replace("\r\n", " ")) + "}】\r\n";
-                }
-
-                try
-                {
-                    SkillLvs.skill2forExcel = SkillLvs.skill2forExcel.Substring(0, SkillLvs.skill2forExcel.Length - 2);
-                }
-                catch (Exception)
-                {
-                    // ignored
-                }
-
-                SkillDetailCheck(SkillLvs.skillID3);
-                skill3cdlv1.Text = SkillLvs.skilllv1chargetime;
-                skill3cdlv6.Text = SkillLvs.skilllv6chargetime;
-                skill3cdlv10.Text = SkillLvs.skilllv10chargetime;
-                for (var i = 0; i <= SkillLvs.SKLFuncstrArray.Length - 1; i++)
-                {
-                    if (SkillLvs.SKLFuncstrArray[i] == "" && SkillLvs.skilllv1svalArray[i].Count(c => c == ',') == 1 &&
-                        !SkillLvs.skilllv1svalArray[i].Contains("Hide")) SkillLvs.SKLFuncstrArray[i] = "HP回復";
-                    if (ToggleFuncDiffer.IsChecked == true)
-                    {
-                        SkillLvs.skilllv1svalArray[i] = ModifyFuncSvalDisplay.ModifyFuncStr(SkillLvs.SKLFuncstrArray[i],
-                            SkillLvs.skilllv1svalArray[i]);
-                        SkillLvs.skilllv6svalArray[i] = ModifyFuncSvalDisplay.ModifyFuncStr(SkillLvs.SKLFuncstrArray[i],
-                            SkillLvs.skilllv6svalArray[i]);
-                        SkillLvs.skilllv10svalArray[i] =
-                            ModifyFuncSvalDisplay.ModifyFuncStr(SkillLvs.SKLFuncstrArray[i],
-                                SkillLvs.skilllv10svalArray[i]);
-                    }
-
-                    Skill3FuncList.Items.Add(new SkillListSval(SkillLvs.SKLFuncstrArray[i],
-                        SkillLvs.skilllv1svalArray[i], SkillLvs.skilllv6svalArray[i], SkillLvs.skilllv10svalArray[i]));
-                    SkillLvs.skill3forExcel += SkillLvs.SKLFuncstrArray[i] + " 【{" +
-                                               (SkillLvs.skilllv1svalArray[i].Replace("\r\n", " ") ==
-                                                SkillLvs.skilllv10svalArray[i].Replace("\r\n", " ")
-                                                   ? SkillLvs.skilllv10svalArray[i].Replace("\r\n", " ")
-                                                   : SkillLvs.skilllv1svalArray[i].Replace("\r\n", " ") + "} - {" +
-                                                     SkillLvs.skilllv10svalArray[i].Replace("\r\n", " ")) + "}】\r\n";
-                }
-
-                try
-                {
-                    SkillLvs.skill3forExcel = SkillLvs.skill3forExcel.Substring(0, SkillLvs.skill3forExcel.Length - 2);
-                }
-                catch (Exception)
-                {
-                    // ignored
-                }
-            });
-            var SCPSSLC = new Task(ServantClassPassiveSkillSvalListCheck);
-            SCPSSLC.Start();
+            if (NPName == "" && NPDetail == "unknown")
+                npdetail.Dispatcher.Invoke(() => { npdetail.Text = "该宝具暂时没有描述."; });
         }
 
         private void ServantBasicInformationCheck()
@@ -591,7 +466,6 @@ namespace FGOSBIAReloaded
                 ClassName[14] = "?";
                 ClassName[13] = "?";
                 ClassName[12] = "?";
-                SkillLvs.TDFuncstr = "";
                 var svtClass = "unknown"; //ClassID
                 var svtgender = "unknown";
                 var gender = new string[4];
@@ -700,7 +574,7 @@ namespace FGOSBIAReloaded
                 var luckData = 0;
                 var TreasureData = 0;
                 var genderData = 0;
-                var CardArrange = "[A,B,C,D,E]";
+                var CardArrange = "[Q,Q,Q,Q,Q]";
                 var svtIndividualityInput = "";
                 GlobalPathsAndDatas.askxlsx = true;
                 foreach (var svtIDtmp in GlobalPathsAndDatas.mstSvtArray)
@@ -736,8 +610,7 @@ namespace FGOSBIAReloaded
                         cards.Text = CardArrange;
                         svtClassPassiveID = mstSvtobjtmp["classPassive"].ToString().Replace("\n", "").Replace("\t", "")
                             .Replace("\r", "").Replace(" ", "").Replace("[", "").Replace("]", "");
-                        SkillLvs.ClassPassiveID = svtClassPassiveID;
-                        var SCPSC = new Task(ServantClassPassiveSkillCheck);
+                        var SCPSC = new Task(() => { ServantClassPassiveSkillCheck(svtClassPassiveID); });
                         SCPSC.Start();
                         hiddenattri.Text = svtHideAttri;
                         classData = int.Parse(svtClass);
@@ -779,6 +652,8 @@ namespace FGOSBIAReloaded
                         GlobalPathsAndDatas.basichp = Convert.ToInt32(svthpBase);
                         GlobalPathsAndDatas.maxatk = Convert.ToInt32(svtatkMax);
                         GlobalPathsAndDatas.maxhp = Convert.ToInt32(svthpMax);
+                        var DSSCL = new Task(() => { DrawServantStrengthenCurveLine(GlobalPathsAndDatas.CurveType); });
+                        DSSCL.Start();
                         svtcriticalWeight = mstsvtLimitobjtmp["criticalWeight"].ToString();
                         jixing.Text = svtcriticalWeight;
                         svtpower = mstsvtLimitobjtmp["power"].ToString();
@@ -1202,12 +1077,12 @@ namespace FGOSBIAReloaded
             string[] svtTreasureDeviceFuncIDArray = null;
             string[] svtTreasureDeviceFuncArray;
             var svtTreasureDeviceFunc = string.Empty;
-            SkillLvs.TDFuncstrArray = null;
-            SkillLvs.TDlv1OC1strArray = null;
-            SkillLvs.TDlv2OC2strArray = null;
-            SkillLvs.TDlv3OC3strArray = null;
-            SkillLvs.TDlv4OC4strArray = null;
-            SkillLvs.TDlv5OC5strArray = null;
+            string[] TDFuncstrArray = null;
+            string[] TDlv1OC1strArray = null;
+            string[] TDlv2OC2strArray = null;
+            string[] TDlv3OC3strArray = null;
+            string[] TDlv4OC4strArray = null;
+            string[] TDlv5OC5strArray = null;
             SkillLvs.TDforExcel = "";
             foreach (var TDLVtmp in GlobalPathsAndDatas.mstTreasureDeviceLvArray)
             {
@@ -1218,7 +1093,7 @@ namespace FGOSBIAReloaded
                     var NPval1 = TDLVobjtmp["svals"].ToString().Replace("\n", "").Replace("\r", "")
                         .Replace("[", "").Replace("]", "*").Replace("\"", "").Replace(" ", "").Replace("*,", "|");
                     if (NPval1.Length >= 2) NPval1 = NPval1.Substring(0, NPval1.Length - 2);
-                    SkillLvs.TDlv1OC1strArray = NPval1.Split('|');
+                    TDlv1OC1strArray = NPval1.Split('|');
                 }
 
                 if (((JObject) TDLVtmp)["treaureDeviceId"].ToString() == svtTDID &&
@@ -1228,7 +1103,7 @@ namespace FGOSBIAReloaded
                     var NPval2 = TDLVobjtmp["svals2"].ToString().Replace("\n", "").Replace("\r", "")
                         .Replace("[", "").Replace("]", "*").Replace("\"", "").Replace(" ", "").Replace("*,", "|");
                     if (NPval2.Length >= 2) NPval2 = NPval2.Substring(0, NPval2.Length - 2);
-                    SkillLvs.TDlv2OC2strArray = NPval2.Split('|');
+                    TDlv2OC2strArray = NPval2.Split('|');
                 }
 
                 if (((JObject) TDLVtmp)["treaureDeviceId"].ToString() == svtTDID &&
@@ -1238,7 +1113,7 @@ namespace FGOSBIAReloaded
                     var NPval3 = TDLVobjtmp["svals3"].ToString().Replace("\n", "").Replace("\r", "")
                         .Replace("[", "").Replace("]", "*").Replace("\"", "").Replace(" ", "").Replace("*,", "|");
                     if (NPval3.Length >= 2) NPval3 = NPval3.Substring(0, NPval3.Length - 2);
-                    SkillLvs.TDlv3OC3strArray = NPval3.Split('|');
+                    TDlv3OC3strArray = NPval3.Split('|');
                 }
 
                 if (((JObject) TDLVtmp)["treaureDeviceId"].ToString() == svtTDID &&
@@ -1248,7 +1123,7 @@ namespace FGOSBIAReloaded
                     var NPval4 = TDLVobjtmp["svals4"].ToString().Replace("\n", "").Replace("\r", "")
                         .Replace("[", "").Replace("]", "*").Replace("\"", "").Replace(" ", "").Replace("*,", "|");
                     if (NPval4.Length >= 2) NPval4 = NPval4.Substring(0, NPval4.Length - 2);
-                    SkillLvs.TDlv4OC4strArray = NPval4.Split('|');
+                    TDlv4OC4strArray = NPval4.Split('|');
                 }
 
                 if (((JObject) TDLVtmp)["treaureDeviceId"].ToString() != svtTDID ||
@@ -1258,7 +1133,7 @@ namespace FGOSBIAReloaded
                     var NPval5 = TDLVobjtmp["svals5"].ToString().Replace("\n", "").Replace("\r", "")
                         .Replace("[", "").Replace("]", "*").Replace("\"", "").Replace(" ", "").Replace("*,", "|");
                     if (NPval5.Length >= 2) NPval5 = NPval5.Substring(0, NPval5.Length - 2);
-                    SkillLvs.TDlv5OC5strArray = NPval5.Split('|');
+                    TDlv5OC5strArray = NPval5.Split('|');
                     svtTreasureDeviceFuncID = TDLVobjtmp["funcId"].ToString().Replace("\n", "").Replace("\t", "")
                         .Replace("\r", "").Replace(" ", "").Replace("[", "").Replace("]", "");
                     svtTreasureDeviceFuncIDArray = svtTreasureDeviceFuncID.Split(',');
@@ -1286,47 +1161,46 @@ namespace FGOSBIAReloaded
                         select JObject.Parse(functmp.ToString())
                         into mstFuncobjtmp
                         select mstFuncobjtmp["popupText"].ToString()).ToArray();
-                SkillLvs.TDFuncstrArray = svtTreasureDeviceFuncArray;
+                TDFuncstrArray = svtTreasureDeviceFuncArray;
                 svtTreasureDeviceFunc = string.Join(", ", svtTreasureDeviceFuncArray);
-                SkillLvs.TDFuncstr = svtTreasureDeviceFunc;
-                for (var i = 0; i <= SkillLvs.TDFuncstrArray.Length - 1; i++)
+                for (var i = 0; i <= TDFuncstrArray.Length - 1; i++)
                 {
-                    if ((SkillLvs.TDFuncstrArray[i] == "なし" || SkillLvs.TDFuncstrArray[i] == "" &&
-                            SkillLvs.TDlv1OC1strArray[i].Contains("Hide")) &&
-                        SkillLvs.TDlv1OC1strArray[i].Count(c => c == ',') > 0)
-                        SkillLvs.TDFuncstrArray[i] = TranslateTDAttackName(svtTreasureDeviceFuncIDArray[i]);
+                    if ((TDFuncstrArray[i] == "なし" || TDFuncstrArray[i] == "" &&
+                            TDlv1OC1strArray[i].Contains("Hide")) &&
+                        TDlv1OC1strArray[i].Count(c => c == ',') > 0)
+                        TDFuncstrArray[i] = TranslateTDAttackName(svtTreasureDeviceFuncIDArray[i]);
 
-                    if (SkillLvs.TDFuncstrArray[i] == "" && SkillLvs.TDlv1OC1strArray[i].Count(c => c == ',') == 1 &&
-                        !SkillLvs.TDlv1OC1strArray[i].Contains("Hide")) SkillLvs.TDFuncstrArray[i] = "HP回復";
+                    if (TDFuncstrArray[i] == "" && TDlv1OC1strArray[i].Count(c => c == ',') == 1 &&
+                        !TDlv1OC1strArray[i].Contains("Hide")) TDFuncstrArray[i] = "HP回復";
                     ToggleFuncDiffer.Dispatcher.Invoke(() =>
                     {
                         if (ToggleFuncDiffer.IsChecked != true) return;
-                        SkillLvs.TDlv1OC1strArray[i] = ModifyFuncSvalDisplay.ModifyFuncStr(SkillLvs.TDFuncstrArray[i],
-                            SkillLvs.TDlv1OC1strArray[i]);
-                        SkillLvs.TDlv2OC2strArray[i] = ModifyFuncSvalDisplay.ModifyFuncStr(SkillLvs.TDFuncstrArray[i],
-                            SkillLvs.TDlv2OC2strArray[i]);
-                        SkillLvs.TDlv3OC3strArray[i] = ModifyFuncSvalDisplay.ModifyFuncStr(SkillLvs.TDFuncstrArray[i],
-                            SkillLvs.TDlv3OC3strArray[i]);
-                        SkillLvs.TDlv4OC4strArray[i] = ModifyFuncSvalDisplay.ModifyFuncStr(SkillLvs.TDFuncstrArray[i],
-                            SkillLvs.TDlv4OC4strArray[i]);
-                        SkillLvs.TDlv5OC5strArray[i] = ModifyFuncSvalDisplay.ModifyFuncStr(SkillLvs.TDFuncstrArray[i],
-                            SkillLvs.TDlv5OC5strArray[i]);
+                        TDlv1OC1strArray[i] = ModifyFuncSvalDisplay.ModifyFuncStr(TDFuncstrArray[i],
+                            TDlv1OC1strArray[i]);
+                        TDlv2OC2strArray[i] = ModifyFuncSvalDisplay.ModifyFuncStr(TDFuncstrArray[i],
+                            TDlv2OC2strArray[i]);
+                        TDlv3OC3strArray[i] = ModifyFuncSvalDisplay.ModifyFuncStr(TDFuncstrArray[i],
+                            TDlv3OC3strArray[i]);
+                        TDlv4OC4strArray[i] = ModifyFuncSvalDisplay.ModifyFuncStr(TDFuncstrArray[i],
+                            TDlv4OC4strArray[i]);
+                        TDlv5OC5strArray[i] = ModifyFuncSvalDisplay.ModifyFuncStr(TDFuncstrArray[i],
+                            TDlv5OC5strArray[i]);
                     });
                     TDFuncList.Dispatcher.Invoke(() =>
                     {
                         TDFuncList.Items.Add(new TDlistSval(
-                            SkillLvs.TDFuncstrArray[i] != "" ? SkillLvs.TDFuncstrArray[i] : "未知效果",
-                            SkillLvs.TDlv1OC1strArray[i], SkillLvs.TDlv2OC2strArray[i], SkillLvs.TDlv3OC3strArray[i],
-                            SkillLvs.TDlv4OC4strArray[i], SkillLvs.TDlv5OC5strArray[i]));
+                            TDFuncstrArray[i] != "" ? TDFuncstrArray[i] : "未知效果",
+                            TDlv1OC1strArray[i], TDlv2OC2strArray[i], TDlv3OC3strArray[i],
+                            TDlv4OC4strArray[i], TDlv5OC5strArray[i]));
                     });
-                    SkillLvs.TDforExcel += (SkillLvs.TDFuncstrArray[i] != ""
-                                               ? SkillLvs.TDFuncstrArray[i].Replace("\r\n", "")
+                    SkillLvs.TDforExcel += (TDFuncstrArray[i] != ""
+                                               ? TDFuncstrArray[i].Replace("\r\n", "")
                                                : "未知效果") +
-                                           " 【{" + (SkillLvs.TDlv1OC1strArray[i].Replace("\r\n", " ") ==
-                                                    SkillLvs.TDlv5OC5strArray[i].Replace("\r\n", " ")
-                                               ? SkillLvs.TDlv5OC5strArray[i].Replace("\r\n", " ")
-                                               : SkillLvs.TDlv1OC1strArray[i].Replace("\r\n", " ") + "} - {" +
-                                                 SkillLvs.TDlv5OC5strArray[i].Replace("\r\n", " ")) + "}】\r\n";
+                                           " 【{" + (TDlv1OC1strArray[i].Replace("\r\n", " ") ==
+                                                    TDlv5OC5strArray[i].Replace("\r\n", " ")
+                                               ? TDlv5OC5strArray[i].Replace("\r\n", " ")
+                                               : TDlv1OC1strArray[i].Replace("\r\n", " ") + "} - {" +
+                                                 TDlv5OC5strArray[i].Replace("\r\n", " ")) + "}】\r\n";
                 }
 
                 try
@@ -1348,7 +1222,8 @@ namespace FGOSBIAReloaded
         {
             try
             {
-                var GetTDFuncTranslationListArray = HttpRequest.GetTDAttackNameTranslationList().Replace("\r\n", "")
+                var GetTDFuncTranslationListArray = HttpRequest
+                    .GetList(TDAttackNameTranslationListLinkA, TDAttackNameTranslationListLinkB).Replace("\r\n", "")
                     .Replace("+", Environment.NewLine).Split('|');
                 var TDTranslistFullArray = new string[GetTDFuncTranslationListArray.Length][];
                 for (var i = 0; i < GetTDFuncTranslationListArray.Length; i++)
@@ -1431,14 +1306,14 @@ namespace FGOSBIAReloaded
             });
         }
 
-        private void ServantClassPassiveSkillCheck()
+        private void ServantClassPassiveSkillCheck(string ClassPassiveID)
         {
             try
             {
                 string[] svtClassPassiveIDArray = null;
                 string[] svtClassPassiveArray;
                 var svtClassPassive = string.Empty;
-                svtClassPassiveIDArray = SkillLvs.ClassPassiveID.Split(',');
+                svtClassPassiveIDArray = ClassPassiveID.Split(',');
                 svtClassPassiveArray = (from skilltmp in GlobalPathsAndDatas.mstSkillArray
                     from classpassiveidtmp in svtClassPassiveIDArray
                     where ((JObject) skilltmp)["id"].ToString() == classpassiveidtmp
@@ -1449,6 +1324,8 @@ namespace FGOSBIAReloaded
                         : "未知技能???" + " (" + mstsvtPskillobjtmp["id"] + ")").ToArray();
                 svtClassPassive = string.Join(", ", svtClassPassiveArray);
                 classskill.Dispatcher.Invoke(() => { classskill.Text = svtClassPassive; });
+                var SCPSSLC = new Task(() => { ServantClassPassiveSkillSvalListCheck(ClassPassiveID); });
+                SCPSSLC.Start();
             }
             catch (Exception)
             {
@@ -1456,14 +1333,16 @@ namespace FGOSBIAReloaded
             }
         }
 
-        private void ServantClassPassiveSkillSvalListCheck()
+        private void ServantClassPassiveSkillSvalListCheck(string ClassPassiveID)
         {
             try
             {
-                var svtClassPassiveIDListArray = SkillLvs.ClassPassiveID.Split(',');
+                var svtClassPassiveIDListArray = ClassPassiveID.Split(',');
                 var ClassPassiveSkillFuncName = "";
                 var SvalStr = "";
                 var NeedTranslate = false;
+                var lv10sval = "";
+                string[] lv10svalArray = null;
                 ToggleBuffFuncTranslate.Dispatcher.Invoke(() =>
                 {
                     if (ToggleBuffFuncTranslate.IsChecked == true) NeedTranslate = true;
@@ -1479,36 +1358,31 @@ namespace FGOSBIAReloaded
                             : skillobjtmp["name"].ToString();
                     }
 
-                    SkillDetailCheck(svtClassPassiveIDListArray[i]);
-                    for (var j = 0; j <= SkillLvs.SKLFuncstrArray.Length - 1; j++)
+                    var SkillSquare = GetSvtClassPassiveSval(svtClassPassiveIDListArray[i]);
+                    lv10svalArray = SkillSquare[0].Split('|');
+                    var SKLFuncstrArray = SkillSquare[1].Replace(" ", "").Split(',');
+                    for (var j = 0; j <= SKLFuncstrArray.Length - 1; j++)
                     {
-                        if (SkillLvs.SKLFuncstrArray[j] == "" &&
-                            SkillLvs.skilllv1svalArray[j].Count(c => c == ',') == 1 &&
-                            !SkillLvs.skilllv10svalArray[j].Contains("Hide"))
-                            SkillLvs.SKLFuncstrArray[j] = "HP回復";
+                        if (SKLFuncstrArray[j] == "" &&
+                            lv10svalArray[j].Count(c => c == ',') == 1 &&
+                            !lv10svalArray[j].Contains("Hide"))
+                            SKLFuncstrArray[j] = "HP回復";
                         ToggleFuncDiffer.Dispatcher.Invoke(() =>
                         {
                             if (ToggleFuncDiffer.IsChecked == true)
-                                SkillLvs.skilllv10svalArray[j] =
-                                    ModifyFuncSvalDisplay.ModifyFuncStr(SkillLvs.SKLFuncstrArray[j],
-                                        SkillLvs.skilllv10svalArray[j]);
+                                lv10svalArray[j] =
+                                    ModifyFuncSvalDisplay.ModifyFuncStr(SKLFuncstrArray[j],
+                                        lv10svalArray[j]);
                         });
                     }
 
-                    var FuncStr = "\r\n" + string.Join("\r\n", SkillLvs.SKLFuncstrArray) + "\r\n";
-                    if (SkillLvs.skilllv10svalArray == null)
+                    var FuncStr = "\r\n" + string.Join("\r\n", SKLFuncstrArray) + "\r\n";
+                    SvalStr = "\r\n" + string.Join("\r\n", lv10svalArray) + "\r\n";
+                    ClassPassiveFuncList.Dispatcher.Invoke(() =>
                     {
-                        SvalStr = "\r\n";
-                    }
-                    else
-                    {
-                        SvalStr = "\r\n" + string.Join("\r\n", SkillLvs.skilllv10svalArray) + "\r\n";
-                        ClassPassiveFuncList.Dispatcher.Invoke(() =>
-                        {
-                            ClassPassiveFuncList.Items.Add(new ClassPassiveSvalList(ClassPassiveSkillFuncName,
-                                svtClassPassiveIDListArray[i], FuncStr, SvalStr));
-                        });
-                    }
+                        ClassPassiveFuncList.Items.Add(new ClassPassiveSvalList(ClassPassiveSkillFuncName,
+                            svtClassPassiveIDListArray[i], FuncStr, SvalStr));
+                    });
                 }
             }
             catch (Exception)
@@ -1517,192 +1391,269 @@ namespace FGOSBIAReloaded
             }
         }
 
-        private void ServantSkillInformationCheck()
+        private string[] GetSvtClassPassiveSval(string SkillID)
         {
-            var skill1Name = string.Empty;
-            var skill2Name = string.Empty;
-            var skill3Name = string.Empty;
-            var skill1detail = string.Empty;
-            var skill2detail = string.Empty;
-            var skill3detail = string.Empty;
-            var sk1IsStrengthened = false;
-            var sk2IsStrengthened = false;
-            var sk3IsStrengthened = false;
-            IsSk1Strengthened.Dispatcher.Invoke(() => { IsSk1Strengthened.Text = "×"; });
-            IsSk2Strengthened.Dispatcher.Invoke(() => { IsSk2Strengthened.Text = "×"; });
-            IsSk3Strengthened.Dispatcher.Invoke(() => { IsSk3Strengthened.Text = "×"; });
+            var skilllv10sval = "";
+            var SkillFuncStr = "";
+            string[] SKLFuncstrArray = null;
+            string svtSKFuncID;
+            string[] svtSKFuncIDArray;
+            List<string> svtSKFuncIDList;
+            var svtSKFuncList = new List<string>();
+            string[] svtSKFuncArray;
+            var svtSKFunc = string.Empty;
+            var NeedTranslate = false;
+            Dispatcher.Invoke(() => { NeedTranslate = ToggleBuffFuncTranslate.IsChecked == true; });
+            foreach (var SKLTMP in GlobalPathsAndDatas.mstSkillLvArray)
+            {
+                if (((JObject) SKLTMP)["skillId"].ToString() != SkillID ||
+                    ((JObject) SKLTMP)["lv"].ToString() != "10") continue;
+                {
+                    var SKLobjtmp = JObject.Parse(SKLTMP.ToString());
+                    skilllv10sval = SKLobjtmp["svals"].ToString().Replace("\n", "").Replace("\r", "")
+                        .Replace("[", "").Replace("]", "*").Replace("\"", "").Replace(" ", "").Replace("*,", "|");
+                    skilllv10sval = skilllv10sval.Substring(0, skilllv10sval.Length - 2);
+                    svtSKFuncID = SKLobjtmp["funcId"].ToString().Replace("\n", "").Replace("\t", "")
+                        .Replace("\r", "").Replace(" ", "").Replace("[", "").Replace("]", "");
+                    svtSKFuncIDList = new List<string>(svtSKFuncID.Split(','));
+                    svtSKFuncIDArray = svtSKFuncIDList.ToArray();
+                    if (NeedTranslate)
+                        svtSKFuncList.AddRange(from skfuncidtmp in svtSKFuncIDArray
+                            from functmp in GlobalPathsAndDatas.mstFuncArray
+                            where ((JObject) functmp)["id"].ToString() == skfuncidtmp
+                            select JObject.Parse(functmp.ToString())
+                            into mstFuncobjtmp
+                            select TranslateBuff(mstFuncobjtmp["popupText"].ToString()));
+                    else
+                        svtSKFuncList.AddRange(from skfuncidtmp in svtSKFuncIDArray
+                            from functmp in GlobalPathsAndDatas.mstFuncArray
+                            where ((JObject) functmp)["id"].ToString() == skfuncidtmp
+                            select JObject.Parse(functmp.ToString())
+                            into mstFuncobjtmp
+                            select mstFuncobjtmp["popupText"].ToString());
+                }
+            }
+
+            svtSKFuncArray = svtSKFuncList.ToArray();
+            svtSKFunc = string.Join(", ", svtSKFuncArray);
+            var result = new string[2];
+            result[0] = skilllv10sval;
+            result[1] = svtSKFunc;
+            return result;
+        }
+
+        private string[] GetSvtSkillIDs(string svtID)
+        {
+            var skillID1 = "";
+            var skillID2 = "";
+            var skillID3 = "";
+            var sk1IsStrengthened = "false";
+            var sk2IsStrengthened = "false";
+            var sk3IsStrengthened = "false";
+            var result = new string[6];
             foreach (var svtskill in GlobalPathsAndDatas.mstSvtSkillArray)
             {
-                if (((JObject) svtskill)["svtId"].ToString() == JB.svtid &&
+                if (((JObject) svtskill)["svtId"].ToString() == svtID &&
                     ((JObject) svtskill)["num"].ToString() == "1" &&
                     ((JObject) svtskill)["priority"].ToString() == "1")
                 {
                     var mstsvtskillobjtmp = JObject.Parse(svtskill.ToString());
-                    SkillLvs.skillID1 = mstsvtskillobjtmp["skillId"].ToString();
+                    skillID1 = mstsvtskillobjtmp["skillId"].ToString();
                 }
 
-                if (((JObject) svtskill)["svtId"].ToString() == JB.svtid &&
+                if (((JObject) svtskill)["svtId"].ToString() == svtID &&
                     ((JObject) svtskill)["num"].ToString() == "1" &&
                     ((JObject) svtskill)["priority"].ToString() == "2")
                 {
                     var mstsvtskillobjtmp = JObject.Parse(svtskill.ToString());
-                    SkillLvs.skillID1 = mstsvtskillobjtmp["skillId"].ToString();
-                    IsSk1Strengthened.Dispatcher.Invoke(() => { IsSk1Strengthened.Text = "√"; });
-                    sk1IsStrengthened = true;
+                    skillID1 = mstsvtskillobjtmp["skillId"].ToString();
+                    sk1IsStrengthened = "true";
                 }
 
-                if (((JObject) svtskill)["svtId"].ToString() == JB.svtid &&
+                if (((JObject) svtskill)["svtId"].ToString() == svtID &&
                     ((JObject) svtskill)["num"].ToString() == "1" &&
                     ((JObject) svtskill)["priority"].ToString() == "3")
                 {
                     var mstsvtskillobjtmp = JObject.Parse(svtskill.ToString());
-                    SkillLvs.skillID1 = mstsvtskillobjtmp["skillId"].ToString();
-                    IsSk1Strengthened.Dispatcher.Invoke(() => { IsSk1Strengthened.Text = "√(2)"; });
-                    sk1IsStrengthened = true;
+                    skillID1 = mstsvtskillobjtmp["skillId"].ToString();
+                    sk1IsStrengthened = "twice";
                 }
 
-                if (((JObject) svtskill)["svtId"].ToString() == JB.svtid &&
+                if (((JObject) svtskill)["svtId"].ToString() == svtID &&
                     ((JObject) svtskill)["num"].ToString() == "2" &&
                     ((JObject) svtskill)["priority"].ToString() == "1")
                 {
                     var mstsvtskillobjtmp = JObject.Parse(svtskill.ToString());
-                    SkillLvs.skillID2 = mstsvtskillobjtmp["skillId"].ToString();
+                    skillID2 = mstsvtskillobjtmp["skillId"].ToString();
                 }
 
-                if (((JObject) svtskill)["svtId"].ToString() == JB.svtid &&
+                if (((JObject) svtskill)["svtId"].ToString() == svtID &&
                     ((JObject) svtskill)["num"].ToString() == "2" &&
                     ((JObject) svtskill)["priority"].ToString() == "2")
                 {
                     var mstsvtskillobjtmp = JObject.Parse(svtskill.ToString());
-                    SkillLvs.skillID2 = mstsvtskillobjtmp["skillId"].ToString();
-                    IsSk2Strengthened.Dispatcher.Invoke(() => { IsSk2Strengthened.Text = "√"; });
-                    sk2IsStrengthened = true;
+                    skillID2 = mstsvtskillobjtmp["skillId"].ToString();
+                    sk2IsStrengthened = "true";
                 }
 
-                if (((JObject) svtskill)["svtId"].ToString() == JB.svtid &&
+                if (((JObject) svtskill)["svtId"].ToString() == svtID &&
                     ((JObject) svtskill)["num"].ToString() == "2" &&
                     ((JObject) svtskill)["priority"].ToString() == "3")
                 {
                     var mstsvtskillobjtmp = JObject.Parse(svtskill.ToString());
-                    SkillLvs.skillID2 = mstsvtskillobjtmp["skillId"].ToString();
-                    IsSk2Strengthened.Dispatcher.Invoke(() => { IsSk2Strengthened.Text = "√(2)"; });
-                    sk2IsStrengthened = true;
+                    skillID2 = mstsvtskillobjtmp["skillId"].ToString();
+                    sk2IsStrengthened = "twice";
                 }
 
-                if (((JObject) svtskill)["svtId"].ToString() == JB.svtid &&
+                if (((JObject) svtskill)["svtId"].ToString() == svtID &&
                     ((JObject) svtskill)["num"].ToString() == "3" &&
                     ((JObject) svtskill)["priority"].ToString() == "1")
                 {
                     var mstsvtskillobjtmp = JObject.Parse(svtskill.ToString());
-                    SkillLvs.skillID3 = mstsvtskillobjtmp["skillId"].ToString();
+                    skillID3 = mstsvtskillobjtmp["skillId"].ToString();
                 }
 
-                if (((JObject) svtskill)["svtId"].ToString() == JB.svtid &&
+                if (((JObject) svtskill)["svtId"].ToString() == svtID &&
                     ((JObject) svtskill)["num"].ToString() == "3" &&
                     ((JObject) svtskill)["priority"].ToString() == "2")
                 {
                     var mstsvtskillobjtmp = JObject.Parse(svtskill.ToString());
-                    SkillLvs.skillID3 = mstsvtskillobjtmp["skillId"].ToString();
-                    IsSk3Strengthened.Dispatcher.Invoke(() => { IsSk3Strengthened.Text = "√"; });
-                    sk3IsStrengthened = true;
+                    skillID3 = mstsvtskillobjtmp["skillId"].ToString();
+                    sk3IsStrengthened = "true";
                 }
 
-                if (((JObject) svtskill)["svtId"].ToString() != JB.svtid ||
+                if (((JObject) svtskill)["svtId"].ToString() != svtID ||
                     ((JObject) svtskill)["num"].ToString() != "3" ||
                     ((JObject) svtskill)["priority"].ToString() != "3") continue;
                 {
                     var mstsvtskillobjtmp = JObject.Parse(svtskill.ToString());
-                    SkillLvs.skillID3 = mstsvtskillobjtmp["skillId"].ToString();
-                    IsSk3Strengthened.Dispatcher.Invoke(() => { IsSk3Strengthened.Text = "√(2)"; });
-                    sk3IsStrengthened = true;
+                    skillID3 = mstsvtskillobjtmp["skillId"].ToString();
+                    sk3IsStrengthened = "twice";
                 }
             }
 
-            if (SkillLvs.skillID1 == "" || SkillLvs.skillID2 == "" || SkillLvs.skillID3 == "")
+            if (skillID1 == "" || skillID2 == "" || skillID3 == "")
             {
-                SkillLvs.skillID1 = FindSkillIDinNPCSvt(JB.svtid, 1);
-                SkillLvs.skillID2 = FindSkillIDinNPCSvt(JB.svtid, 2);
-                SkillLvs.skillID3 = FindSkillIDinNPCSvt(JB.svtid, 3);
+                skillID1 = FindSkillIDinNPCSvt(svtID, 1);
+                skillID2 = FindSkillIDinNPCSvt(svtID, 2);
+                skillID3 = FindSkillIDinNPCSvt(svtID, 3);
             }
 
-            var SSLC = new Task(() => { ServantSkillLevelCheck(); });
-            SSLC.Start();
+            result[0] = skillID1;
+            result[2] = skillID2;
+            result[4] = skillID3;
+            result[1] = sk1IsStrengthened;
+            result[3] = sk2IsStrengthened;
+            result[5] = sk3IsStrengthened;
+            return result;
+        }
+
+        private void ServantSkillInformationCheck(string svtID)
+        {
+            IsSk1Strengthened.Dispatcher.Invoke(() => { IsSk1Strengthened.Text = "×"; });
+            IsSk2Strengthened.Dispatcher.Invoke(() => { IsSk2Strengthened.Text = "×"; });
+            IsSk3Strengthened.Dispatcher.Invoke(() => { IsSk3Strengthened.Text = "×"; });
+            var skillSquare = GetSvtSkillIDs(svtID);
+            var sk1IsStrengthened = skillSquare[1] != "false";
+            var sk2IsStrengthened = skillSquare[3] != "false";
+            var sk3IsStrengthened = skillSquare[5] != "false";
+            var skillID1 = skillSquare[0];
+            var skillID2 = skillSquare[2];
+            var skillID3 = skillSquare[4];
+            switch (skillSquare[1])
+            {
+                case "true":
+                    IsSk1Strengthened.Dispatcher.Invoke(() => { IsSk1Strengthened.Text = "√"; });
+                    break;
+                case "twice":
+                    IsSk1Strengthened.Dispatcher.Invoke(() => { IsSk1Strengthened.Text = "√(2)"; });
+                    break;
+            }
+
+            switch (skillSquare[3])
+            {
+                case "true":
+                    IsSk2Strengthened.Dispatcher.Invoke(() => { IsSk2Strengthened.Text = "√"; });
+                    break;
+                case "twice":
+                    IsSk2Strengthened.Dispatcher.Invoke(() => { IsSk2Strengthened.Text = "√(2)"; });
+                    break;
+            }
+
+            switch (skillSquare[5])
+            {
+                case "true":
+                    IsSk3Strengthened.Dispatcher.Invoke(() => { IsSk3Strengthened.Text = "√"; });
+                    break;
+                case "twice":
+                    IsSk3Strengthened.Dispatcher.Invoke(() => { IsSk3Strengthened.Text = "√(2)"; });
+                    break;
+            }
 
             Dispatcher.Invoke(() =>
             {
-                skill1ID.Text = SkillLvs.skillID1;
-                skill2ID.Text = SkillLvs.skillID2;
-                skill3ID.Text = SkillLvs.skillID3;
-                foreach (var skilltmp in GlobalPathsAndDatas.mstSkillArray)
-                {
-                    if (((JObject) skilltmp)["id"].ToString() == SkillLvs.skillID1)
-                    {
-                        var skillobjtmp = JObject.Parse(skilltmp.ToString());
-                        skill1Name = skillobjtmp["name"].ToString();
-                        skill1name.Text = skill1Name;
-                        if (sk1IsStrengthened) skill1name.Text += " ▲";
-                    }
+                skill1ID.Text = skillID1;
+                skill2ID.Text = skillID2;
+                skill3ID.Text = skillID3;
+            });
+            var Display1 = new Task(() => { DisplaySkills(skillID1, sk1IsStrengthened, 1); });
+            var Display2 = new Task(() => { DisplaySkills(skillID2, sk2IsStrengthened, 2); });
+            var Display3 = new Task(() => { DisplaySkills(skillID3, sk3IsStrengthened, 3); });
+            Display1.Start();
+            Display2.Start();
+            Display3.Start();
+        }
 
-                    if (((JObject) skilltmp)["id"].ToString() == SkillLvs.skillID2)
-                    {
-                        var skillobjtmp = JObject.Parse(skilltmp.ToString());
-                        skill2Name = skillobjtmp["name"].ToString();
-                        skill2name.Text = skill2Name;
-                        if (sk2IsStrengthened) skill2name.Text += " ▲";
-                    }
+        private void DisplaySkills(string SkillID, bool isStrengthed, int SkillNum)
+        {
+            var skillName = "";
+            var skillDetail = "";
+            foreach (var skilltmp in GlobalPathsAndDatas.mstSkillArray)
+            {
+                if (((JObject) skilltmp)["id"].ToString() != SkillID) continue;
+                var skillobjtmp = JObject.Parse(skilltmp.ToString());
+                skillName = skillobjtmp["name"].ToString();
+                if (isStrengthed) skillName += " ▲";
+            }
 
-                    if (((JObject) skilltmp)["id"].ToString() != SkillLvs.skillID3) continue;
-                    {
-                        var skillobjtmp = JObject.Parse(skilltmp.ToString());
-                        skill3Name = skillobjtmp["name"].ToString();
-                        skill3name.Text = skill3Name;
-                        if (sk3IsStrengthened) skill3name.Text += " ▲";
-                    }
-                }
-
+            Dispatcher.Invoke(() =>
+            {
                 foreach (var skillDetailtmp in GlobalPathsAndDatas.mstSkillDetailArray)
                 {
-                    if (((JObject) skillDetailtmp)["id"].ToString() == SkillLvs.skillID1)
-                    {
-                        var skillDetailobjtmp = JObject.Parse(skillDetailtmp.ToString());
-                        if (ToggleDetailbr.IsChecked == true)
-                            skill1detail = skillDetailobjtmp["detail"].ToString().Replace("[{0}]", "[Lv.1 - Lv.10]")
-                                .Replace("[g]", "").Replace("[o]", "").Replace("[/g]", "").Replace("[/o]", "")
-                                .Replace(@"＆", "\r\n ＋").Replace(@"＋", "\r\n ＋").Replace("\r\n \r\n", "\r\n");
-                        else
-                            skill1detail = skillDetailobjtmp["detail"].ToString().Replace("[{0}]", "[Lv.1 - Lv.10]")
-                                .Replace("[g]", "").Replace("[o]", "").Replace("[/g]", "").Replace("[/o]", "")
-                                .Replace(@"＆", " ＋");
-                        skill1details.Text = skill1detail;
-                    }
-
-                    if (((JObject) skillDetailtmp)["id"].ToString() == SkillLvs.skillID2)
-                    {
-                        var skillDetailobjtmp = JObject.Parse(skillDetailtmp.ToString());
-                        if (ToggleDetailbr.IsChecked == true)
-                            skill2detail = skillDetailobjtmp["detail"].ToString().Replace("[{0}]", "[Lv.1 - Lv.10]")
-                                .Replace("[g]", "").Replace("[o]", "").Replace("[/g]", "").Replace("[/o]", "")
-                                .Replace(@"＆", "\r\n ＋").Replace(@"＋", "\r\n ＋").Replace("\r\n \r\n", "\r\n");
-                        else
-                            skill2detail = skillDetailobjtmp["detail"].ToString().Replace("[{0}]", "[Lv.1 - Lv.10]")
-                                .Replace("[g]", "").Replace("[o]", "").Replace("[/g]", "").Replace("[/o]", "")
-                                .Replace(@"＆", " ＋");
-                        skill2details.Text = skill2detail;
-                    }
-
-                    if (((JObject) skillDetailtmp)["id"].ToString() != SkillLvs.skillID3) continue;
-                    {
-                        var skillDetailobjtmp = JObject.Parse(skillDetailtmp.ToString());
-                        if (ToggleDetailbr.IsChecked == true)
-                            skill3detail = skillDetailobjtmp["detail"].ToString().Replace("[{0}]", "[Lv.1 - Lv.10]")
-                                .Replace("[g]", "").Replace("[o]", "").Replace("[/g]", "").Replace("[/o]", "")
-                                .Replace(@"＆", "\r\n ＋").Replace(@"＋", "\r\n ＋").Replace("\r\n \r\n", "\r\n");
-                        else
-                            skill3detail = skillDetailobjtmp["detail"].ToString().Replace("[{0}]", "[Lv.1 - Lv.10]")
-                                .Replace("[g]", "").Replace("[o]", "").Replace("[/g]", "").Replace("[/o]", "")
-                                .Replace(@"＆", " ＋");
-                        skill3details.Text = skill3detail;
-                    }
+                    if (((JObject) skillDetailtmp)["id"].ToString() != SkillID) continue;
+                    var skillDetailobjtmp = JObject.Parse(skillDetailtmp.ToString());
+                    if (ToggleDetailbr.IsChecked == true)
+                        skillDetail = skillDetailobjtmp["detail"].ToString().Replace("[{0}]", "[Lv.1 - Lv.10]")
+                            .Replace("[g]", "").Replace("[o]", "").Replace("[/g]", "").Replace("[/o]", "")
+                            .Replace(@"＆", "\r\n ＋").Replace(@"＋", "\r\n ＋").Replace("\r\n \r\n", "\r\n");
+                    else
+                        skillDetail = skillDetailobjtmp["detail"].ToString().Replace("[{0}]", "[Lv.1 - Lv.10]")
+                            .Replace("[g]", "").Replace("[o]", "").Replace("[/g]", "").Replace("[/o]", "")
+                            .Replace(@"＆", " ＋");
+                }
+            });
+            Dispatcher.Invoke(() =>
+            {
+                switch (SkillNum)
+                {
+                    case 1:
+                        skill1name.Text = skillName;
+                        skill1details.Text = skillDetail;
+                        var SSC = new Task(() => { SkillSvalsCheck(SkillID, 1); });
+                        SSC.Start();
+                        break;
+                    case 2:
+                        skill2name.Text = skillName;
+                        skill2details.Text = skillDetail;
+                        var SSC2 = new Task(() => { SkillSvalsCheck(SkillID, 2); });
+                        SSC2.Start();
+                        break;
+                    case 3:
+                        skill3name.Text = skillName;
+                        skill3details.Text = skillDetail;
+                        var SSC3 = new Task(() => { SkillSvalsCheck(SkillID, 3); });
+                        SSC3.Start();
+                        break;
                 }
             });
         }
@@ -1831,86 +1782,194 @@ namespace FGOSBIAReloaded
             });
         }
 
-        private void SkillDetailCheck(string sklid)
+        private void SkillSvalsCheck(string SkillID, int SkillNum)
+        {
+            var skilllv1chargetime = "";
+            var skilllv6chargetime = "";
+            var skilllv10chargetime = "";
+            var skilllv1sval = "";
+            var skilllv6sval = "";
+            var skilllv10sval = "";
+            var SkillFuncStr = "";
+            string[] SKLFuncstrArray = null;
+            string svtSKFuncID;
+            string[] svtSKFuncIDArray;
+            List<string> svtSKFuncIDList;
+            var svtSKFuncList = new List<string>();
+            string[] svtSKFuncArray;
+            var svtSKFunc = string.Empty;
+            var NeedTranslate = false;
+            Dispatcher.Invoke(() => { NeedTranslate = ToggleBuffFuncTranslate.IsChecked == true; });
+            foreach (var SKLTMP in GlobalPathsAndDatas.mstSkillLvArray)
+            {
+                if (((JObject) SKLTMP)["skillId"].ToString() == SkillID && ((JObject) SKLTMP)["lv"].ToString() == "1")
+                {
+                    var SKLobjtmp = JObject.Parse(SKLTMP.ToString());
+                    skilllv1sval = SKLobjtmp["svals"].ToString().Replace("\n", "").Replace("\r", "")
+                        .Replace("[", "").Replace("]", "*").Replace("\"", "").Replace(" ", "").Replace("*,", "|");
+                    skilllv1sval = skilllv1sval.Substring(0, skilllv1sval.Length - 2);
+                    skilllv1chargetime = SKLobjtmp["chargeTurn"].ToString();
+                }
+
+                if (((JObject) SKLTMP)["skillId"].ToString() == SkillID && ((JObject) SKLTMP)["lv"].ToString() == "6")
+                {
+                    var SKLobjtmp = JObject.Parse(SKLTMP.ToString());
+                    skilllv6sval = SKLobjtmp["svals"].ToString().Replace("\n", "").Replace("\r", "")
+                        .Replace("[", "").Replace("]", "*").Replace("\"", "").Replace(" ", "").Replace("*,", "|");
+                    skilllv6sval = skilllv6sval.Substring(0, skilllv6sval.Length - 2);
+                    skilllv6chargetime = SKLobjtmp["chargeTurn"].ToString();
+                }
+
+                if (((JObject) SKLTMP)["skillId"].ToString() != SkillID ||
+                    ((JObject) SKLTMP)["lv"].ToString() != "10") continue;
+                {
+                    var SKLobjtmp = JObject.Parse(SKLTMP.ToString());
+                    skilllv10sval = SKLobjtmp["svals"].ToString().Replace("\n", "").Replace("\r", "")
+                        .Replace("[", "").Replace("]", "*").Replace("\"", "").Replace(" ", "").Replace("*,", "|");
+                    skilllv10sval = skilllv10sval.Substring(0, skilllv10sval.Length - 2);
+                    skilllv10chargetime = SKLobjtmp["chargeTurn"].ToString();
+                    svtSKFuncID = SKLobjtmp["funcId"].ToString().Replace("\n", "").Replace("\t", "")
+                        .Replace("\r", "").Replace(" ", "").Replace("[", "").Replace("]", "");
+                    svtSKFuncIDList = new List<string>(svtSKFuncID.Split(','));
+                    svtSKFuncIDArray = svtSKFuncIDList.ToArray();
+                    if (NeedTranslate)
+                        svtSKFuncList.AddRange(from skfuncidtmp in svtSKFuncIDArray
+                            from functmp in GlobalPathsAndDatas.mstFuncArray
+                            where ((JObject) functmp)["id"].ToString() == skfuncidtmp
+                            select JObject.Parse(functmp.ToString())
+                            into mstFuncobjtmp
+                            select TranslateBuff(mstFuncobjtmp["popupText"].ToString()));
+                    else
+                        svtSKFuncList.AddRange(from skfuncidtmp in svtSKFuncIDArray
+                            from functmp in GlobalPathsAndDatas.mstFuncArray
+                            where ((JObject) functmp)["id"].ToString() == skfuncidtmp
+                            select JObject.Parse(functmp.ToString())
+                            into mstFuncobjtmp
+                            select mstFuncobjtmp["popupText"].ToString());
+                }
+            }
+
+            switch (SkillNum)
+            {
+                case 1:
+                    Dispatcher.Invoke(() =>
+                    {
+                        skill1cdlv1.Text = skilllv1chargetime;
+                        skill1cdlv6.Text = skilllv6chargetime;
+                        skill1cdlv10.Text = skilllv10chargetime;
+                    });
+                    break;
+                case 2:
+                    Dispatcher.Invoke(() =>
+                    {
+                        skill2cdlv1.Text = skilllv1chargetime;
+                        skill2cdlv6.Text = skilllv6chargetime;
+                        skill2cdlv10.Text = skilllv10chargetime;
+                    });
+                    break;
+                case 3:
+                    Dispatcher.Invoke(() =>
+                    {
+                        skill3cdlv1.Text = skilllv1chargetime;
+                        skill3cdlv6.Text = skilllv6chargetime;
+                        skill3cdlv10.Text = skilllv10chargetime;
+                    });
+                    break;
+            }
+
+            svtSKFuncArray = svtSKFuncList.ToArray();
+            svtSKFunc = string.Join(", ", svtSKFuncArray);
+            var SSD = new Task(() =>
+            {
+                SkillSvalsDisplay(skilllv1sval, skilllv6sval, skilllv10sval, svtSKFunc, SkillNum);
+            });
+            SSD.Start();
+        }
+
+        private void SkillSvalsDisplay(string lv1, string lv6, string lv10, string FuncName, int SkillNum)
         {
             Dispatcher.Invoke(() =>
             {
-                SkillLvs.skilllv1sval = "";
-                SkillLvs.skilllv6sval = "";
-                SkillLvs.skilllv10sval = "";
-                SkillLvs.skilllv1svalArray = null;
-                SkillLvs.skilllv6svalArray = null;
-                SkillLvs.skilllv10svalArray = null;
-                SkillLvs.skilllv1chargetime = "";
-                SkillLvs.skilllv6chargetime = "";
-                SkillLvs.skilllv10chargetime = "";
-                SkillLvs.SKLFuncstr = "";
-                SkillLvs.SKLFuncstrArray = null;
-                string svtSKFuncID;
-                string[] svtSKFuncIDArray;
-                List<string> svtSKFuncIDList;
-                var svtSKFuncList = new List<string>();
-                string[] svtSKFuncArray;
-                var svtSKFunc = string.Empty;
-                var NeedTranslate = false || ToggleBuffFuncTranslate.IsChecked == true;
-                foreach (var SKLTMP in GlobalPathsAndDatas.mstSkillLvArray)
+                if (skill1ID.Text == "") return;
+                var lv1Array = lv1.Split('|');
+                var lv6Array = lv6.Split('|');
+                var lv10Array = lv10.Split('|');
+                var FuncArray = FuncName.Replace(" ", "").Split(',');
+                for (var i = 0; i <= FuncArray.Length - 1; i++)
                 {
-                    if (((JObject) SKLTMP)["skillId"].ToString() == sklid && ((JObject) SKLTMP)["lv"].ToString() == "1")
+                    if (FuncArray[i] == "" && lv1Array[i].Count(c => c == ',') == 1 &&
+                        !lv1Array[i].Contains("Hide")) FuncArray[i] = "HP回復";
+                    if (ToggleFuncDiffer.IsChecked == true)
                     {
-                        var SKLobjtmp = JObject.Parse(SKLTMP.ToString());
-                        SkillLvs.skilllv1sval = SKLobjtmp["svals"].ToString().Replace("\n", "").Replace("\r", "")
-                            .Replace("[", "").Replace("]", "*").Replace("\"", "").Replace(" ", "").Replace("*,", "|");
-                        SkillLvs.skilllv1sval = SkillLvs.skilllv1sval.Substring(0, SkillLvs.skilllv1sval.Length - 2);
-                        SkillLvs.skilllv1chargetime = SKLobjtmp["chargeTurn"].ToString();
-                        SkillLvs.skilllv1svalArray = SkillLvs.skilllv1sval.Split('|');
+                        lv1Array[i] = ModifyFuncSvalDisplay.ModifyFuncStr(FuncArray[i],
+                            lv1Array[i]);
+                        lv6Array[i] = ModifyFuncSvalDisplay.ModifyFuncStr(FuncArray[i],
+                            lv6Array[i]);
+                        lv10Array[i] =
+                            ModifyFuncSvalDisplay.ModifyFuncStr(FuncArray[i],
+                                lv10Array[i]);
                     }
 
-                    if (((JObject) SKLTMP)["skillId"].ToString() == sklid && ((JObject) SKLTMP)["lv"].ToString() == "6")
+                    switch (SkillNum)
                     {
-                        var SKLobjtmp = JObject.Parse(SKLTMP.ToString());
-                        SkillLvs.skilllv6sval = SKLobjtmp["svals"].ToString().Replace("\n", "").Replace("\r", "")
-                            .Replace("[", "").Replace("]", "*").Replace("\"", "").Replace(" ", "").Replace("*,", "|");
-                        SkillLvs.skilllv6sval = SkillLvs.skilllv6sval.Substring(0, SkillLvs.skilllv6sval.Length - 2);
-                        SkillLvs.skilllv6chargetime = SKLobjtmp["chargeTurn"].ToString();
-                        SkillLvs.skilllv6svalArray = SkillLvs.skilllv6sval.Split('|');
-                    }
-
-                    if (((JObject) SKLTMP)["skillId"].ToString() != sklid ||
-                        ((JObject) SKLTMP)["lv"].ToString() != "10") continue;
-                    {
-                        var SKLobjtmp = JObject.Parse(SKLTMP.ToString());
-                        SkillLvs.skilllv10sval = SKLobjtmp["svals"].ToString().Replace("\n", "").Replace("\r", "")
-                            .Replace("[", "").Replace("]", "*").Replace("\"", "").Replace(" ", "").Replace("*,", "|");
-                        SkillLvs.skilllv10sval = SkillLvs.skilllv10sval.Substring(0, SkillLvs.skilllv10sval.Length - 2);
-                        SkillLvs.skilllv10chargetime = SKLobjtmp["chargeTurn"].ToString();
-                        SkillLvs.skilllv10svalArray = SkillLvs.skilllv10sval.Split('|');
-                        svtSKFuncID = SKLobjtmp["funcId"].ToString().Replace("\n", "").Replace("\t", "")
-                            .Replace("\r", "").Replace(" ", "").Replace("[", "").Replace("]", "");
-                        svtSKFuncIDList = new List<string>(svtSKFuncID.Split(','));
-                        svtSKFuncIDArray = svtSKFuncIDList.ToArray();
-                        if (NeedTranslate)
-                            svtSKFuncList.AddRange(from skfuncidtmp in svtSKFuncIDArray
-                                from functmp in GlobalPathsAndDatas.mstFuncArray
-                                where ((JObject) functmp)["id"].ToString() == skfuncidtmp
-                                select JObject.Parse(functmp.ToString())
-                                into mstFuncobjtmp
-                                select TranslateBuff(mstFuncobjtmp["popupText"].ToString()));
-                        else
-                            svtSKFuncList.AddRange(from skfuncidtmp in svtSKFuncIDArray
-                                from functmp in GlobalPathsAndDatas.mstFuncArray
-                                where ((JObject) functmp)["id"].ToString() == skfuncidtmp
-                                select JObject.Parse(functmp.ToString())
-                                into mstFuncobjtmp
-                                select mstFuncobjtmp["popupText"].ToString());
+                        case 1:
+                            Skill1FuncList.Items.Add(new SkillListSval(FuncArray[i],
+                                lv1Array[i], lv6Array[i], lv10Array[i]));
+                            SkillLvs.skill1forExcel += FuncArray[i] + " 【{" +
+                                                       (lv1Array[i].Replace("\r\n", " ") ==
+                                                        lv10Array[i].Replace("\r\n", " ")
+                                                           ? lv10Array[i].Replace("\r\n", " ")
+                                                           : lv1Array[i].Replace("\r\n", " ") + "} - {" +
+                                                             lv10Array[i].Replace("\r\n", " ")) + "}】\r\n";
+                            break;
+                        case 2:
+                            Skill2FuncList.Items.Add(new SkillListSval(FuncArray[i],
+                                lv1Array[i], lv6Array[i], lv10Array[i]));
+                            SkillLvs.skill2forExcel += FuncArray[i] + " 【{" +
+                                                       (lv1Array[i].Replace("\r\n", " ") ==
+                                                        lv10Array[i].Replace("\r\n", " ")
+                                                           ? lv10Array[i].Replace("\r\n", " ")
+                                                           : lv1Array[i].Replace("\r\n", " ") + "} - {" +
+                                                             lv10Array[i].Replace("\r\n", " ")) + "}】\r\n";
+                            break;
+                        case 3:
+                            Skill3FuncList.Items.Add(new SkillListSval(FuncArray[i],
+                                lv1Array[i], lv6Array[i], lv10Array[i]));
+                            SkillLvs.skill3forExcel += FuncArray[i] + " 【{" +
+                                                       (lv1Array[i].Replace("\r\n", " ") ==
+                                                        lv10Array[i].Replace("\r\n", " ")
+                                                           ? lv10Array[i].Replace("\r\n", " ")
+                                                           : lv1Array[i].Replace("\r\n", " ") + "} - {" +
+                                                             lv10Array[i].Replace("\r\n", " ")) + "}】\r\n";
+                            break;
                     }
                 }
 
-                svtSKFuncArray = svtSKFuncList.ToArray();
-                SkillLvs.SKLFuncstrArray = svtSKFuncArray;
-                svtSKFunc = string.Join(", ", svtSKFuncArray);
-                SkillLvs.SKLFuncstr = svtSKFunc;
+                try
+                {
+                    switch (SkillNum)
+                    {
+                        case 1:
+                            SkillLvs.skill1forExcel =
+                                SkillLvs.skill1forExcel.Substring(0, SkillLvs.skill1forExcel.Length - 2);
+                            break;
+                        case 2:
+                            SkillLvs.skill2forExcel =
+                                SkillLvs.skill2forExcel.Substring(0, SkillLvs.skill2forExcel.Length - 2);
+                            break;
+                        case 3:
+                            SkillLvs.skill3forExcel =
+                                SkillLvs.skill3forExcel.Substring(0, SkillLvs.skill3forExcel.Length - 2);
+                            break;
+                    }
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
             });
         }
+
 
         private void Button_Click_2(object sender, RoutedEventArgs e)
         {
@@ -2950,7 +3009,8 @@ namespace FGOSBIAReloaded
         public void CheckSvtIndividuality(object Input)
         {
             var IndividualityStringArray = Input.ToString().Split(',');
-            var TempSplit1 = HttpRequest.GetIndividualityList().Replace("\r\n", "").Split('|');
+            var TempSplit1 = HttpRequest.GetList(IndividualListLinkA, IndividualListLinkB).Replace("\r\n", "")
+                .Split('|');
             var IndividualityCommons = new string[TempSplit1.Length][];
             for (var i = 0; i < TempSplit1.Length; i++)
             {
@@ -3123,10 +3183,10 @@ namespace FGOSBIAReloaded
             if (acbFilename == "")
             {
                 await Dispatcher.Invoke(async () =>
-                 {
-                     decryptstatus.Content = "该文件不是cpk类型文件.请重试.";
-                     await this.ShowMessageAsync("错误:", "该文件不是cpk类型文件.");
-                 });
+                {
+                    decryptstatus.Content = "该文件不是cpk类型文件.请重试.";
+                    await this.ShowMessageAsync("错误:", "该文件不是cpk类型文件.");
+                });
                 return;
             }
 

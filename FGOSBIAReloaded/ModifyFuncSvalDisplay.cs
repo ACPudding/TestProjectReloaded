@@ -6,6 +6,12 @@ namespace FGOSBIAReloaded
     //对所有从者数值进行规范化显示(可能会有误显示的问题)
     internal class ModifyFuncSvalDisplay
     {
+        private static readonly string BuffTranslationListLinkA =
+            "https://raw.githubusercontent.com/ACPudding/ACPudding.github.io/master/fileserv/BuffTranslation";
+
+        private static readonly string BuffTranslationListLinkB =
+            "https://gitee.com/ACPudding/ACPudding.github.io/raw/master/fileserv/BuffTranslation";
+
         public static string ModifyFuncStr(string Funcname, string Funcsval)
         {
             var output = Funcsval;
@@ -102,6 +108,7 @@ namespace FGOSBIAReloaded
                 case 140:
                 case 141:
                 case 149:
+                case 163:
                     Tempsval = Funcsval.Split(',');
                     if (Tempsval.Length == 4)
                     {
@@ -600,7 +607,8 @@ namespace FGOSBIAReloaded
         {
             if (GlobalPathsAndDatas.TranslationListArray == null)
                 GlobalPathsAndDatas.TranslationListArray =
-                    HttpRequest.GetBuffTranslationList().Replace("\r\n", "").Split('|');
+                    HttpRequest.GetList(BuffTranslationListLinkA, BuffTranslationListLinkB).Replace("\r\n", "")
+                        .Split('|');
             var TranslationListFullArray = new string[GlobalPathsAndDatas.TranslationListArray.Length][];
             for (var i = 0; i < GlobalPathsAndDatas.TranslationListArray.Length; i++)
             {
