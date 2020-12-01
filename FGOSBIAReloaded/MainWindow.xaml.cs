@@ -1560,6 +1560,9 @@ namespace FGOSBIAReloaded
             var skillID1 = skillSquare[0];
             var skillID2 = skillSquare[2];
             var skillID3 = skillSquare[4];
+            SkillLvs.skill1forExcel = "";
+            SkillLvs.skill2forExcel = "";
+            SkillLvs.skill3forExcel = "";
             switch (skillSquare[1])
             {
                 case "true":
