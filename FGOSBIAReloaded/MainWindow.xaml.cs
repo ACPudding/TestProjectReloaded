@@ -614,15 +614,9 @@ namespace FGOSBIAReloaded
                         SCPSC.Start();
                         hiddenattri.Text = svtHideAttri;
                         classData = int.Parse(svtClass);
-                        try
-                        {
-                            svtclass.Text = ClassName[classData];
-                        }
-                        catch (Exception)
-                        {
-                            svtclass.Text = ReadClassName.ReadClassOriginName(classData);
-                        }
-
+                        svtclass.Text = ClassName[classData] != null
+                            ? ClassName[classData]
+                            : ReadClassName.ReadClassOriginName(classData);
                         var CheckShiZhuang = new Task(() => { CheckSvtIsFullinGame(classData); });
                         CheckShiZhuang.Start();
                         genderData = int.Parse(svtgender);
