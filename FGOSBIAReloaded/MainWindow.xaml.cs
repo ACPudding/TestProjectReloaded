@@ -175,6 +175,20 @@ namespace FGOSBIAReloaded
                     }
 
                     if (((JObject) svtTreasureDevicestmp)["svtId"].ToString() == svtID &&
+                        ((JObject) svtTreasureDevicestmp)["priority"].ToString() == "198")
+                    {
+                        var mstsvtTDobjtmp = JObject.Parse(svtTreasureDevicestmp.ToString());
+                        svtTDID = mstsvtTDobjtmp["treasureDeviceId"].ToString();
+                    }
+
+                    if (((JObject) svtTreasureDevicestmp)["svtId"].ToString() == svtID &&
+                        ((JObject) svtTreasureDevicestmp)["priority"].ToString() == "199")
+                    {
+                        var mstsvtTDobjtmp = JObject.Parse(svtTreasureDevicestmp.ToString());
+                        svtTDID = mstsvtTDobjtmp["treasureDeviceId"].ToString();
+                    }
+
+                    if (((JObject) svtTreasureDevicestmp)["svtId"].ToString() == svtID &&
                         ((JObject) svtTreasureDevicestmp)["priority"].ToString() == "101")
                     {
                         var mstsvtTDobjtmp = JObject.Parse(svtTreasureDevicestmp.ToString());
