@@ -298,15 +298,18 @@
                             </TextBox.Background>
                         </TextBox>
                         <Label x:Name="atkbalance1" Content="( x 1.0 -)" HorizontalAlignment="Left" Height="27"
-                               VerticalAlignment="Top" Width="97" FontFamily="Microsoft JhengHei UI" FontSize="12"
+                               VerticalAlignment="Top" Width="70" FontFamily="Microsoft JhengHei UI" FontSize="12"
                                Foreground="#FF333333" Margin="240,314,0,0" FontWeight="Bold" />
                         <Label x:Name="atkbalance2" Content="( x 1.0 -)" HorizontalAlignment="Left" Height="27"
-                               VerticalAlignment="Top" Width="97" FontFamily="Microsoft JhengHei UI" FontSize="12"
+                               VerticalAlignment="Top" Width="70" FontFamily="Microsoft JhengHei UI" FontSize="12"
                                Foreground="#FF333333" Margin="240,345,0,0" FontWeight="Bold" />
                         <Label x:Name="sixwei" Content="" HorizontalAlignment="Left" Height="59"
                                VerticalAlignment="Top"
-                               Width="202" FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
-                               Margin="290,313,0,0" HorizontalContentAlignment="Center" FontWeight="Bold" />
+                               Width="155" FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
+                               Margin="337,313,0,0" HorizontalContentAlignment="Center" FontWeight="Bold" />
+                        <Label x:Name="hpatkbalance" Content="( 攻防倾向: 均衡 )" HorizontalAlignment="Left" Height="27"
+                            VerticalAlignment="Top" Width="108" FontFamily="Microsoft JhengHei UI" FontSize="10.5"
+                            Foreground="#FF333333" Margin="240,330,0,0" FontWeight="Bold" HorizontalContentAlignment="Left"/>
                     </Grid>
                 </TabItem>
                 <TabItem Header="成长曲线" FontFamily="Microsoft JhengHei UI">

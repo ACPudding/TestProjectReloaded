@@ -670,6 +670,11 @@ namespace FGOSBIAReloaded
                         svtmagic = mstsvtLimitobjtmp["magic"].ToString();
                         svtluck = mstsvtLimitobjtmp["luck"].ToString();
                         svttreasureDevice = mstsvtLimitobjtmp["treasureDevice"].ToString();
+                        var SHAB = new Task(() =>
+                        {
+                            ShowHPAtkBalance(JB.svtid, svtrarity, svtdefense, svthpBase, svtClass);
+                        });
+                        SHAB.Start();
                         powerData = int.Parse(svtpower);
                         defenseData = int.Parse(svtdefense);
                         agilityData = int.Parse(svtagility);
@@ -1772,6 +1777,7 @@ namespace FGOSBIAReloaded
                 Title = "FGO从者基础信息解析";
                 chartCanvas.Children.Remove(plhp);
                 chartCanvas.Children.Remove(platk);
+                hpatkbalance.Content = "( 攻防倾向: 均衡 )";
             });
             IsSk1Strengthened.Dispatcher.Invoke(() => { IsSk1Strengthened.Text = "×"; });
             IsSk2Strengthened.Dispatcher.Invoke(() => { IsSk2Strengthened.Text = "×"; });
@@ -2376,7 +2382,8 @@ namespace FGOSBIAReloaded
                 worksheet.Cells["X19"].Value = skill3cdlv10.Text;
                 worksheet.Cells["P20"].Value = skill3details.Text;
                 worksheet.Cells["C28"].Value = svtIndividuality.Text;
-                worksheet.Cells["C12"].Value = Convert.ToString(sixwei.Content).Replace("\n", "        ");
+                worksheet.Cells["C12"].Value = Convert.ToString(sixwei.Content).Replace("\n", "        ") + "      " +
+                                               hpatkbalance.Content;
                 worksheet.Cells["P6"].Value = SkillLvs.skill1forExcel;
                 worksheet.Cells["P15"].Value = SkillLvs.skill2forExcel;
                 worksheet.Cells["P24"].Value = SkillLvs.skill3forExcel;
@@ -2898,6 +2905,106 @@ namespace FGOSBIAReloaded
             }
 
             GC.Collect();
+        }
+
+        private void ShowHPAtkBalance(string svtID, string rarity, string endurance, string basichp, string ClassID)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                var endurancebase = new double[100];
+                endurancebase[11] = 1.02;
+                endurancebase[12] = 1.025;
+                endurancebase[13] = 1.03;
+                endurancebase[14] = 1.015;
+                endurancebase[15] = 1.035;
+                endurancebase[21] = 1;
+                endurancebase[22] = 1.005;
+                endurancebase[23] = 1.01;
+                endurancebase[24] = 0.995;
+                endurancebase[25] = 1.015;
+                endurancebase[31] = 0.99;
+                endurancebase[32] = 0.9925;
+                endurancebase[33] = 0.995;
+                endurancebase[34] = 0.985;
+                endurancebase[35] = 0.9975;
+                endurancebase[41] = 0.98;
+                endurancebase[42] = 0.9825;
+                endurancebase[43] = 0.985;
+                endurancebase[44] = 0.975;
+                endurancebase[45] = 0.9875;
+                endurancebase[51] = 0.97;
+                endurancebase[52] = 0.9725;
+                endurancebase[53] = 0.975;
+                endurancebase[54] = 0.965;
+                endurancebase[55] = 0.9775;
+                endurancebase[61] = 1.04;
+                endurancebase[0] = 0.0;
+                endurancebase[99] = 0.0;
+                endurancebase[98] = 0.0;
+                endurancebase[97] = 0.0;
+                var HPBasicWithRarity = new double[6];
+                HPBasicWithRarity[0] = 1600;
+                HPBasicWithRarity[1] = 1500;
+                HPBasicWithRarity[2] = 1600;
+                HPBasicWithRarity[3] = 1800;
+                HPBasicWithRarity[4] = 2000;
+                HPBasicWithRarity[5] = 2200;
+                var ClassBasicBase = new double[30];
+                ClassBasicBase[1] = 1.01;
+                ClassBasicBase[2] = 0.98;
+                ClassBasicBase[3] = 1.02;
+                ClassBasicBase[4] = 0.96;
+                ClassBasicBase[5] = 0.98;
+                ClassBasicBase[6] = 0.95;
+                ClassBasicBase[7] = 0.90;
+                ClassBasicBase[8] = 1.01;
+                ClassBasicBase[9] = 1.00;
+                ClassBasicBase[10] = 0.95;
+                ClassBasicBase[11] = 0.88;
+                ClassBasicBase[17] = 0.98;
+                ClassBasicBase[23] = 1.05;
+                ClassBasicBase[25] = 1.00;
+                var ShowString = new string[8];
+                ShowString[1] = "( 攻防倾向: 全HP )";
+                ShowString[2] = "( 攻防倾向: 偏HP )";
+                ShowString[3] = "( 攻防倾向: 均衡 )";
+                ShowString[4] = "( 攻防倾向: 偏ATK )";
+                ShowString[5] = "( 攻防倾向: 全ATK )";
+                ShowString[6] = "( 攻防倾向: 特殊 )";
+                ShowString[7] = "( 攻防倾向: - )";
+                double resultHPBaseCheck;
+                if (ClassID != "1" && ClassID != "2" && ClassID != "3" && ClassID != "4" && ClassID != "5" &&
+                    ClassID != "6" && ClassID != "7" && ClassID != "8" && ClassID != "9" && ClassID != "10" &&
+                    ClassID != "11" && ClassID != "17" && ClassID != "23" && ClassID != "25")
+                {
+                    hpatkbalance.Content = ShowString[7];
+                    return;
+                }
+
+                if (svtID == "100300")
+                {
+                    hpatkbalance.Content = ShowString[6];
+                }
+                else
+                {
+                    var inserthp = Convert.ToDouble(basichp);
+                    resultHPBaseCheck = inserthp / (HPBasicWithRarity[Convert.ToInt64(rarity)] *
+                                                    endurancebase[Convert.ToInt64(endurance)] *
+                                                    ClassBasicBase[Convert.ToInt64(ClassID)]);
+                    if (Math.Abs(resultHPBaseCheck - 1.10) <= 0.005)
+                        hpatkbalance.Content = ShowString[1];
+                    else if (Math.Abs(resultHPBaseCheck - 1.05) <= 0.005)
+                        hpatkbalance.Content = ShowString[2];
+                    else if (Math.Abs(resultHPBaseCheck - 1.00) <= 0.005)
+                        hpatkbalance.Content = ShowString[3];
+                    else if (Math.Abs(resultHPBaseCheck - 0.95) <= 0.005)
+                        hpatkbalance.Content = ShowString[4];
+                    else if (Math.Abs(resultHPBaseCheck - 0.90) <= 0.005)
+                        hpatkbalance.Content = ShowString[5];
+                    else
+                        hpatkbalance.Content = ShowString[7];
+                }
+            });
         }
 
         private void AddChart(int[] Array)

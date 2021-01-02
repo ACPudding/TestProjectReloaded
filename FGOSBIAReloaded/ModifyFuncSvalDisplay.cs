@@ -472,6 +472,9 @@ namespace FGOSBIAReloaded
                         break;
                     }
                 case "幻惑":
+                case "呪厄":
+                case "蝕毒":
+                case "延焼":
                     Tempsval = Funcsval.Split(',');
                     if (Tempsval.Length == 4)
                     {
