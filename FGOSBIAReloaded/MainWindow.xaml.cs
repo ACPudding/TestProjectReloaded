@@ -2144,23 +2144,6 @@ namespace FGOSBIAReloaded
                         return;
                     }
                 }
-
-
-                var fileinfo = gamedata.GetFileSystemInfos(); //返回目录中所有文件和子目录
-                foreach (var i in fileinfo)
-                {
-                    if (i is DirectoryInfo) //判断是否文件夹
-                    {
-                        var subdir = new DirectoryInfo(i.FullName);
-                        subdir.Delete(true); //删除子目录和文件
-                        updatestatus.Dispatcher.Invoke(
-                            () => { updatestatus.Content = "删除: " + subdir; });
-                        continue;
-                    }
-
-                    i.Delete();
-                    updatestatus.Dispatcher.Invoke(() => { updatestatus.Content = "删除: " + i; });
-                }
             }
 
             File.WriteAllText(gamedata.FullName + "raw", result);
@@ -2192,12 +2175,34 @@ namespace FGOSBIAReloaded
                 var ProgressValue = (double) 9800 / DataCount;
                 var unpackeditem = (List<object>) miniMessagePacker.Unpack(item.Value);
                 var json = JsonConvert.SerializeObject(unpackeditem, Formatting.Indented);
-                File.WriteAllText(gamedata.FullName + "decrypted_masterdata/" + item.Key, json);
-                updatestatus.Dispatcher.Invoke(() =>
+                var t = "";
+                try
                 {
-                    updatestatus.Content = "写入: " + gamedata.FullName +
-                                           "decrypted__masterdata\\" + item.Key;
-                });
+                    t = File.ReadAllText(gamedata.FullName + "decrypted_masterdata/" + item.Key);
+                }
+                catch (Exception)
+                {
+                    t = "";
+                }
+
+                if (string.CompareOrdinal(t, json) != 0)
+                {
+                    File.WriteAllText(gamedata.FullName + "decrypted_masterdata/" + item.Key, json);
+                    updatestatus.Dispatcher.Invoke(() =>
+                    {
+                        updatestatus.Content = "写入: " + gamedata.FullName +
+                                               "decrypted__masterdata\\" + item.Key;
+                    });
+                }
+                else
+                {
+                    updatestatus.Dispatcher.Invoke(() =>
+                    {
+                        updatestatus.Content = "跳过: " + gamedata.FullName +
+                                               "decrypted__masterdata\\" + item.Key;
+                    });
+                }
+
                 progressbar.Dispatcher.Invoke(() => { progressbar.Value += ProgressValue; });
             }
 

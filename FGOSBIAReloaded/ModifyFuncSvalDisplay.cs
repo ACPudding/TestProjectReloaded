@@ -531,7 +531,9 @@ namespace FGOSBIAReloaded
             }
 
             if (Funcname == "強化解除" || Funcname == "防御強化解除" || Funcname == "攻撃強化解除" || Funcname == "攻撃弱体解除" ||
-                Funcname == "防御弱体解除" || Funcname == "弱体解除" || Funcname == "必中解除" || Funcname == "回避状態解除")
+                Funcname == "防御弱体解除" || Funcname == "弱体解除" || Funcname == "必中解除" || Funcname == "回避状態解除" ||
+                Funcname == "ガッツ解除" || Funcname == "毅力解除")
+
             {
                 Tempsval = Funcsval.Split(',');
                 if (Tempsval.Length == 1)
