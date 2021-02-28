@@ -681,11 +681,11 @@ namespace FGOSBIAReloaded
                         magicData = int.Parse(svtmagic);
                         luckData = int.Parse(svtluck);
                         TreasureData = int.Parse(svttreasureDevice);
-                        sixwei.Content = "筋力: " + RankString[powerData] + "        耐久: " + RankString[defenseData] +
-                                         "\n敏捷: " +
+                        sixwei.Content = "筋力: " + RankString[powerData] + "    耐久: " + RankString[defenseData] +
+                                         "    敏捷: " +
                                          RankString[agilityData] +
-                                         "        魔力: " + RankString[magicData] + "\n幸运: " + RankString[luckData] +
-                                         "        宝具: " +
+                                         "    魔力: " + RankString[magicData] + "    幸运: " + RankString[luckData] +
+                                         "    宝具: " +
                                          RankString[TreasureData];
                         break;
                     }
@@ -1796,6 +1796,7 @@ namespace FGOSBIAReloaded
                 PickupQuestList.Items.Clear();
                 PickupGachaList.Items.Clear();
                 PickupEndedGachaList.Items.Clear();
+                SvtFilterList.Items.Clear();
             });
         }
 
@@ -2387,7 +2388,7 @@ namespace FGOSBIAReloaded
                 worksheet.Cells["X19"].Value = skill3cdlv10.Text;
                 worksheet.Cells["P20"].Value = skill3details.Text;
                 worksheet.Cells["C28"].Value = svtIndividuality.Text;
-                worksheet.Cells["C12"].Value = Convert.ToString(sixwei.Content).Replace("\n", "        ") + "      " +
+                worksheet.Cells["C12"].Value = Convert.ToString(sixwei.Content) + "    " +
                                                hpatkbalance.Content;
                 worksheet.Cells["P6"].Value = SkillLvs.skill1forExcel;
                 worksheet.Cells["P15"].Value = SkillLvs.skill2forExcel;
@@ -2642,7 +2643,8 @@ namespace FGOSBIAReloaded
                 var TempName = ((JObject) mstQuest)["name"].ToString();
                 if (TempName.Length > 14) TempName = TempName.Insert(14, "\r\n");
                 QuestName = "\r\n" + TempName + "\r\n\r\nAP消耗: " + ((JObject) mstQuest)["actConsume"] + "   等级推荐: lv." +
-                            ((JObject) mstQuest)["recommendLv"] + "\r\n从者ID: " + CharaID + "\r\n";
+                            ((JObject) mstQuest)["recommendLv"] + "\r\n从者: " + CharaID + " - " +
+                            GetSvtName(CharaID, 1) + "\r\n";
                 if (((JObject) mstQuest)["giftId"].ToString() != "0")
                 {
                     var giftid = ((JObject) mstQuest)["giftId"].ToString();
@@ -3191,11 +3193,11 @@ namespace FGOSBIAReloaded
                 basicatk.Text = "1789";
                 maxhp.Text = "14535";
                 maxatk.Text = "11593";
-                sixwei.Content = "筋力: " + "B+" + "        耐久: " + "A" +
-                                 "\n敏捷: " +
+                sixwei.Content = "筋力: " + "B+" + "    耐久: " + "A" +
+                                 "    敏捷: " +
                                  "C+" +
-                                 "        魔力: " + "B+" + "\n幸运: " + "A" +
-                                 "        宝具: " +
+                                 "    魔力: " + "B+" + "    幸运: " + "A" +
+                                 "    宝具: " +
                                  "C";
                 cards.Text = "[Q,Q,A,A,B]";
                 bustercard.Text = "4 hit [10,20,30,40]";
@@ -3388,6 +3390,20 @@ namespace FGOSBIAReloaded
             File.WriteAllText(decrypt.FullName + @"\AudioName.json", AudioArrayConverter);
             File.WriteAllText(decrypt.FullName + @"\MovieName.json", MovieArrayConverter);
             File.WriteAllText(decrypt.FullName + @"\AssetName.json", AssetArrayConverter);
+        }
+
+        private string GetSvtName(string svtID, int Option)
+        {
+            var svtName = "";
+            foreach (var svtIDtmp in GlobalPathsAndDatas.mstSvtArray)
+            {
+                if (((JObject) svtIDtmp)["id"].ToString() != svtID) continue;
+                var mstSvtobjtmp = JObject.Parse(svtIDtmp.ToString());
+                svtName = Option == 1 ? mstSvtobjtmp["battleName"].ToString() : mstSvtobjtmp["name"].ToString();
+                return svtName;
+            }
+
+            return "???";
         }
 
         private async Task DecryptBinFileFolderAsync(DirectoryInfo inputdest, DirectoryInfo outputdest,
@@ -3593,6 +3609,52 @@ namespace FGOSBIAReloaded
             Process.Start(decrypt.FullName);
         }
 
+        private void Button_Click_SvtFilter(object sender, RoutedEventArgs e)
+        {
+            ButtonSvtFilter.IsEnabled = false;
+            var LSF = new Task(LoadSvtFilter);
+            LSF.Start();
+        }
+
+        private async void LoadSvtFilter()
+        {
+            Dispatcher.Invoke(() => { SvtFilterList.Items.Clear(); });
+            var svtIDlist = "";
+            var FilterID = "";
+            foreach (var svtFiltertmp in GlobalPathsAndDatas.mstSvtFilterArray)
+            {
+                if (((JObject) svtFiltertmp)["name"].ToString() != "次回イベント対象") continue;
+                var svtFilterobjtmp = JObject.Parse(svtFiltertmp.ToString());
+                FilterID = svtFilterobjtmp["id"].ToString();
+                svtIDlist = svtFilterobjtmp["svtIds"].ToString().Replace("\n", "").Replace("\t", "").Replace("\r", "")
+                    .Replace(" ", "").Replace("[", "").Replace("]", "");
+            }
+
+            if (svtIDlist == "") return;
+            var SvtIDArray = svtIDlist.Split(',');
+            var SvtOutputStr = SvtIDArray.Aggregate("\r\n",
+                (current, svtIDtmp) => current + GetSvtName(svtIDtmp, 0) + "(" + svtIDtmp + ")\r\n");
+            Dispatcher.Invoke(() => { SvtFilterList.Items.Add(new FilterList(FilterID, "次回イベント対象", SvtOutputStr)); });
+            Dispatcher.Invoke(() =>
+            {
+                GlobalPathsAndDatas.SuperMsgBoxRes = MessageBox.Show(
+                    Application.Current.MainWindow,
+                    "是否需要导出该加成列表?",
+                    "提示", MessageBoxButton.OKCancel, MessageBoxImage.Information);
+            });
+            if (GlobalPathsAndDatas.SuperMsgBoxRes == MessageBoxResult.OK)
+            {
+                File.WriteAllText(GlobalPathsAndDatas.path + "/次回イベント対象" + ".txt", SvtOutputStr);
+                await Dispatcher.Invoke(async () =>
+                {
+                    await this.ShowMessageAsync("完成", "导出完成.\n\r文件名为: " + "次回イベント対象.txt");
+                });
+                Process.Start(GlobalPathsAndDatas.path + "/次回イベント対象" + ".txt");
+            }
+
+            Dispatcher.Invoke(() => { ButtonSvtFilter.IsEnabled = true; });
+        }
+
         private struct SkillListSval
         {
             public string SkillName { get; }
@@ -3700,6 +3762,20 @@ namespace FGOSBIAReloaded
                 ClassName = v1;
                 WeakClass = v2;
                 ResistClass = v3;
+            }
+        }
+
+        private struct FilterList
+        {
+            public string FilterID { get; }
+            public string FilterTag { get; }
+            public string SvtName { get; }
+
+            public FilterList(string v1, string v2, string v3) : this()
+            {
+                FilterID = v1;
+                FilterTag = v2;
+                SvtName = v3;
             }
         }
 

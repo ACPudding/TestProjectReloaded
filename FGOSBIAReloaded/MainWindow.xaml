@@ -3,7 +3,7 @@
                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                  xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
                  GlowBrush="{DynamicResource MahApps.Brushes.Accent}"
-                 Title="FGO从者基础信息解析" Height="470" Width="574" ShowMaxRestoreButton="False"
+                 Title="FGO从者基础信息解析" Height="500" Width="574" ShowMaxRestoreButton="False"
                  ShowMinButton="False" ResizeMode="NoResize" Icon="icon.ico" Loaded="Form_Load">
     <mah:MetroWindow.Background>
         <LinearGradientBrush EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
@@ -34,13 +34,13 @@
                 Width="81" Click="Button_Click_1" FontFamily="Microsoft JhengHei UI" Foreground="#FF333333" />
         <Button Content="清空" HorizontalAlignment="Left" Height="26" Margin="473,28,0,0" VerticalAlignment="Top"
                 Width="81" Click="Button_Click_2" FontFamily="Microsoft JhengHei UI" Foreground="#FF333333" />
-        <TextBlock x:Name="RemindText" TextWrapping="Wrap" Text="" Margin="112,10,272,387.8" Foreground="#FF333333"
+        <TextBlock x:Name="RemindText" TextWrapping="Wrap" Text="" Margin="112,10,272,412" Foreground="#FF333333"
                    FontFamily="Microsoft JhengHei UI" FontSize="11" FontWeight="Bold" />
         <Grid Margin="0,59,0,0">
             <Grid.Background>
                 <SolidColorBrush Color="#FFDDDDDD" Opacity="0.4" />
             </Grid.Background>
-            <TabControl HorizontalAlignment="Left" Height="378" Margin="0,0,0,0" VerticalAlignment="Top" Width="568"
+            <TabControl HorizontalAlignment="Left" Height="412" Margin="0,0,0,0" VerticalAlignment="Top" Width="568"
                         mah:HeaderedControlHelper.HeaderFontFamily="Microsoft JhengHei UI"
                         mah:HeaderedControlHelper.HeaderFontSize="14" mah:TabControlHelper.UnderlineBrush="#FF484848"
                         TabStripPlacement="Left" Background="{x:Null}" Foreground="#FF333333">
@@ -303,13 +303,14 @@
                         <Label x:Name="atkbalance2" Content="( x 1.0 -)" HorizontalAlignment="Left" Height="27"
                                VerticalAlignment="Top" Width="70" FontFamily="Microsoft JhengHei UI" FontSize="12"
                                Foreground="#FF333333" Margin="240,345,0,0" FontWeight="Bold" />
-                        <Label x:Name="sixwei" Content="" HorizontalAlignment="Left" Height="59"
+                        <Label x:Name="sixwei" Content="" HorizontalAlignment="Left" Height="27"
                                VerticalAlignment="Top"
-                               Width="155" FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
-                               Margin="337,313,0,0" HorizontalContentAlignment="Center" FontWeight="Bold" />
+                               Width="473" FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
+                               Margin="10,377,0,0" HorizontalContentAlignment="Center" FontWeight="Bold" />
                         <Label x:Name="hpatkbalance" Content="( 攻防倾向: 均衡 )" HorizontalAlignment="Left" Height="27"
-                            VerticalAlignment="Top" Width="108" FontFamily="Microsoft JhengHei UI" FontSize="10.5"
-                            Foreground="#FF333333" Margin="240,330,0,0" FontWeight="Bold" HorizontalContentAlignment="Left"/>
+                               VerticalAlignment="Top" Width="173" FontFamily="Microsoft JhengHei UI" FontSize="14"
+                               Foreground="#FF333333" Margin="310,327,0,0" FontWeight="Bold"
+                               HorizontalContentAlignment="Left" />
                     </Grid>
                 </TabItem>
                 <TabItem Header="成长曲线" FontFamily="Microsoft JhengHei UI">
@@ -353,7 +354,7 @@
                             <TextBlock x:Name="y_label" Text="max" Canvas.Left="-10" Canvas.Top="30"
                                        FontFamily="Microsoft JhengHei" FontSize="14" />
 
-                            <TextBlock x:Name="o_label" Text="0" Canvas.Left="-15" Canvas.Top="346"
+                            <TextBlock x:Name="o_label" Text="0" Canvas.Left="-10" Canvas.Top="350"
                                        FontFamily="Microsoft JhengHei UI" FontSize="14" />
                         </Canvas>
                         <ListView x:Name="HpAtkListView" Margin="21,67,262,222" Foreground="#FF737373" FontSize="10.5">
@@ -378,7 +379,7 @@
                         <SolidColorBrush Color="#FF333333" Opacity="0.2" />
                     </TabItem.Background>
                     <Grid Margin="0,0,0,0">
-                        <ListView x:Name="LimitCombineItems" Margin="5,0,5,239" Foreground="#FF737373" FontSize="11">
+                        <ListView x:Name="LimitCombineItems" Margin="5,0,5,273" Foreground="#FF737373" FontSize="11">
                             <ListView.Background>
                                 <SolidColorBrush Color="White" Opacity="0.4" />
                             </ListView.Background>
@@ -493,7 +494,7 @@
                             </TextBox.Background>
                         </TextBox>
                         <Button x:Name="JBOutput" Content="导出文本" HorizontalAlignment="Left" Height="26"
-                                Margin="210,320,0,0" VerticalAlignment="Top" Width="81"
+                                Margin="210,350,0,0" VerticalAlignment="Top" Width="81"
                                 FontFamily="Microsoft JhengHei UI" IsEnabled="False" Click="JBOutput_Click"
                                 Foreground="#FF333333" />
                         <Label Content="注:&#xD;&#xA;若文本7为空,则该从者的羁绊文本暂未实装&#xD;&#xA;（游戏内提示的为&quot;???&quot;）"
@@ -584,7 +585,7 @@
                             Content="注:&#xD;&#xA;除开&quot;配卡&quot;文本框以外的所有文本框中, &quot;Hit&quot;之前的表示该类型的指令卡的攻击次数&#xD;&#xA;(跳伤害几次), &quot;Hit&quot;之后的表示每次攻击所造成的伤害百分比.&#xD;&#xA;例如:&#xD;&#xA;&quot;5 hit [6,13,20,26,35]&quot; 表示该类型指令卡攻击次数 5 次,&#xD;&#xA;且每次伤害分别为 6% 13% 20% 26% 35%."
                             HorizontalAlignment="Left" Width="487"
                             FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
-                            Margin="0,252,0,0" FontWeight="Bold" />
+                            Margin="0,285,0,0" FontWeight="Bold" />
                     </Grid>
                 </TabItem>
                 <TabItem Header="宝具信息" FontFamily="Microsoft JhengHei UI">
@@ -676,7 +677,7 @@
                                FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
                                Margin="2,171,0,0" FontWeight="Bold" />
                         <TextBlock x:Name="IsNPStrengthened" HorizontalAlignment="Center" Height="18"
-                                   Margin="431,155,21.2,166" TextWrapping="Wrap" Text="×" Block.TextAlignment="Center"
+                                   Margin="435,172,22,216" TextWrapping="Wrap" Text="×" Block.TextAlignment="Center"
                                    VerticalAlignment="Center" Width="35" FontFamily="Microsoft JhengHei UI"
                                    FontSize="16" Foreground="#FF333333" />
                         <Label Content="是否有强化本:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top"
@@ -817,7 +818,7 @@
                                FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
                                Margin="2,128,0,0" FontWeight="Bold" />
                         <TextBlock x:Name="IsSk1Strengthened" HorizontalAlignment="Center" Height="18"
-                                   Margin="435,114,17.2,209" TextWrapping="Wrap" Text="×" Block.TextAlignment="Center"
+                                   Margin="436,129,21,259" TextWrapping="Wrap" Text="×" Block.TextAlignment="Center"
                                    VerticalAlignment="Center" Width="35" FontFamily="Microsoft JhengHei UI"
                                    FontSize="16" Foreground="#FF333333" />
                         <Label Content="是否有强化本:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top"
@@ -934,7 +935,7 @@
                                FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
                                Margin="2,128,0,0" FontWeight="Bold" />
                         <TextBlock x:Name="IsSk2Strengthened" HorizontalAlignment="Center" Height="18"
-                                   Margin="435,114,17.2,209" TextWrapping="Wrap" Text="×" Block.TextAlignment="Center"
+                                   Margin="436,129,21,259" TextWrapping="Wrap" Text="×" Block.TextAlignment="Center"
                                    VerticalAlignment="Center" Width="35" FontFamily="Microsoft JhengHei UI"
                                    FontSize="16" Foreground="#FF333333" />
                         <Label Content="是否有强化本:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top"
@@ -1051,7 +1052,7 @@
                                FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
                                Margin="2,128,0,0" FontWeight="Bold" />
                         <TextBlock x:Name="IsSk3Strengthened" HorizontalAlignment="Center" Height="18"
-                                   Margin="435,114,17.2,209" TextWrapping="Wrap" Text="×" Block.TextAlignment="Center"
+                                   Margin="436,129,21,259" TextWrapping="Wrap" Text="×" Block.TextAlignment="Center"
                                    VerticalAlignment="Center" Width="35" FontFamily="Microsoft JhengHei UI"
                                    FontSize="16" Foreground="#FF333333" />
                         <Label Content="是否有强化本:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top"
@@ -1099,7 +1100,7 @@
                                HorizontalAlignment="Left" Height="31" VerticalAlignment="Top"
                                Width="248" FontFamily="Microsoft JhengHei UI" FontSize="16" Foreground="#FF333333"
                                FontWeight="Bold" />
-                        <ListView x:Name="PickupGachaList" Margin="5,31,5,225" Foreground="#FF737373" FontSize="11">
+                        <ListView x:Name="PickupGachaList" Margin="5,31,5,259" Foreground="#FF737373" FontSize="11">
                             <ListView.Background>
                                 <SolidColorBrush Color="White" Opacity="0.4" />
                             </ListView.Background>
@@ -1149,7 +1150,7 @@
                                HorizontalAlignment="Left" Height="31" VerticalAlignment="Top"
                                Width="248" FontFamily="Microsoft JhengHei UI" FontSize="16" Foreground="#FF333333"
                                FontWeight="Bold" />
-                        <ListView x:Name="PickupEventList" Margin="5,31,5,225" Foreground="#FF737373" FontSize="11">
+                        <ListView x:Name="PickupEventList" Margin="5,31,5,259" Foreground="#FF737373" FontSize="11">
                             <ListView.Background>
                                 <SolidColorBrush Color="White" Opacity="0.4" />
                             </ListView.Background>
@@ -1254,6 +1255,37 @@
                                 FontWeight="Bold" Foreground="#FF333333" />
                     </Grid>
                 </TabItem>
+                <TabItem Header="加成从者" FontFamily="Microsoft JhengHei UI">
+                    <TabItem.Background>
+                        <SolidColorBrush Color="#FF333333" Opacity="0.2" />
+                    </TabItem.Background>
+                    <Grid Margin="0,0,0,0">
+                        <Label Content="注:&#13;本页仅解析下一活动(即游戏内显示 次回イベント対象)的加成从者."
+                               HorizontalAlignment="Left" Height="44" VerticalAlignment="Top"
+                               Width="471" FontFamily="Microsoft JhengHei UI" FontSize="11.5" Foreground="#FF333333"
+                               FontWeight="Bold" />
+                        <ListView x:Name="SvtFilterList" Margin="5,68,5,5" Foreground="#FF737373" FontSize="10">
+                            <ListView.Background>
+                                <SolidColorBrush Color="White" Opacity="0.4" />
+                            </ListView.Background>
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Header="筛选器ID" Width="80"
+                                                    DisplayMemberBinding="{Binding FilterID}" />
+                                    <GridViewColumn Header="筛选器Tag" Width="120"
+                                                    DisplayMemberBinding="{Binding FilterTag}" />
+                                    <GridViewColumn Header="从者名称" Width="280"
+                                                    DisplayMemberBinding="{Binding SvtName}" />
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
+                        <Button x:Name="ButtonSvtFilter" Content="显示" HorizontalAlignment="Left" Height="26"
+                                Margin="5,37,0,0"
+                                VerticalAlignment="Top" Width="81" Click="Button_Click_SvtFilter"
+                                FontFamily="Microsoft JhengHei UI"
+                                FontWeight="Bold" Foreground="#FF333333" />
+                    </Grid>
+                </TabItem>
                 <TabItem Header="资源解包" FontFamily="Microsoft JhengHei UI">
                     <TabItem.Background>
                         <SolidColorBrush Color="#FF333333" Opacity="0.2" />
@@ -1288,14 +1320,14 @@
                             Width="492"
                             FontFamily="Microsoft JhengHei UI" FontSize="14" Foreground="LightGray" />
                         <Label Content="单音频文件转wav(cpk2wav)" HorizontalAlignment="Left" Height="40"
-                            VerticalAlignment="Top"
-                            Width="383" FontFamily="Microsoft JhengHei UI"
-                            FontSize="16" Foreground="#FF333333" FontWeight="Bold" Margin="0,301,0,0" />
+                               VerticalAlignment="Top"
+                               Width="383" FontFamily="Microsoft JhengHei UI"
+                               FontSize="16" Foreground="#FF333333" FontWeight="Bold" Margin="0,301,0,0" />
                         <Button x:Name="ButtonCpkSelect" Content="选择文件" HorizontalAlignment="Left" Height="26"
-                            Margin="401,305,0,0"
-                            VerticalAlignment="Top" Width="81" Click="Button_DecryptBinFile"
-                            FontFamily="Microsoft JhengHei UI"
-                            FontWeight="Bold" Foreground="#FF333333" />
+                                Margin="401,305,0,0"
+                                VerticalAlignment="Top" Width="81" Click="Button_DecryptBinFile"
+                                FontFamily="Microsoft JhengHei UI"
+                                FontWeight="Bold" Foreground="#FF333333" />
                     </Grid>
                 </TabItem>
                 <TabItem Header="设置" FontFamily="Microsoft JhengHei UI">
@@ -1334,19 +1366,19 @@
                                VerticalAlignment="Top" Width="259" FontFamily="Microsoft JhengHei UI" FontSize="14"
                                Foreground="#FF333333" FontWeight="Bold" />
                         <mah:ProgressRing x:Name="updatestatusring" Foreground="DarkSlateGray"
-                                          IsActive="False" Height="26" Margin="454,232,11,114" Width="27" />
+                                          IsActive="False" Height="26" Margin="454,235,11,145" Width="27" />
                         <ProgressBar x:Name="progressbar" HorizontalAlignment="Left" Height="19" Margin="10,266,0,0"
                                      VerticalAlignment="Top" Width="472" Maximum="10000" Foreground="#FF8BFFC7"
                                      Background="#FFB9B9B9" Visibility="Hidden" />
                         <Label x:Name="updatestatus" Content="" HorizontalAlignment="Left" Height="30"
-                               Margin="9,285,0,0"
+                               Margin="9,290,0,0"
                                VerticalAlignment="Top" Width="472" FontFamily="Microsoft JhengHei UI" FontSize="9"
                                Foreground="#FF333333" VerticalContentAlignment="Center" />
-                        <Label x:Name="updatesign" Content="" HorizontalAlignment="Left" Height="27" Margin="9,320,0,0"
-                               VerticalAlignment="Top" Width="178" FontFamily="Microsoft JhengHei UI" FontSize="9"
+                        <Label x:Name="updatesign" Content="" HorizontalAlignment="Left" Height="27" Margin="9,350,0,0"
+                               VerticalAlignment="Top" Width="178" FontFamily="Microsoft JhengHei UI" FontSize="11"
                                Foreground="#FF333333" VerticalContentAlignment="Center" />
                         <Button x:Name="updatedatabutton" Content="下载/更新游戏数据" HorizontalAlignment="Left" Height="26"
-                                Margin="195,320,0,0" VerticalAlignment="Top" Width="105"
+                                Margin="195,350,0,0" VerticalAlignment="Top" Width="105"
                                 FontFamily="Microsoft JhengHei UI" FontWeight="Bold" Click="Button_Click_3"
                                 Foreground="#FF333333" />
                         <CheckBox x:Name="ToggleDispIndi" Content="" HorizontalAlignment="Left" Height="17"
@@ -1435,11 +1467,11 @@
                         <Label Content="检查软件更新:" HorizontalAlignment="Left" Height="27" Margin="10,232,0,0"
                                VerticalAlignment="Top" Width="259" FontFamily="Microsoft JhengHei UI" FontSize="14"
                                Foreground="#FF333333" FontWeight="Bold" />
-                        <Button x:Name="CheckUpdate" Content="检查更新" HorizontalAlignment="Left" Margin="195,320,0,0"
+                        <Button x:Name="CheckUpdate" Content="检查更新" HorizontalAlignment="Left" Margin="210,350,0,0"
                                 VerticalAlignment="Top" Width="75" FontFamily="Microsoft JhengHei UI" FontWeight="Bold"
                                 Foreground="#FF333333" Click="Button_Click_5" />
                         <mah:ProgressRing x:Name="updatestatusring2" Foreground="DarkSlateGray"
-                                          IsActive="False" Height="26" Margin="14,290,451,56" Width="27"
+                                          IsActive="False" Height="26" Margin="9,290,456,90" Width="27"
                                           RenderTransformOrigin="-5.459,-0.346" />
                         <ProgressBar x:Name="progressbar1" HorizontalAlignment="Left" Height="19" Margin="10,266,0,0"
                                      VerticalAlignment="Top" Width="472" Maximum="100" Foreground="#FF8BFFC7"

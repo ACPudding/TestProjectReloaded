@@ -12,6 +12,7 @@ namespace FGOSBIAReloaded.Properties
         public static DirectoryInfo folder = new DirectoryInfo(path + @"\Android\");
         public static DirectoryInfo outputdir = new DirectoryInfo(path + @"\Output\");
         public static JArray mstSvtExpArray = null;
+        public static JArray mstSvtFilterArray = null;
         public static JArray mstGiftArray = null;
         public static JArray mstClassRelationArray = null;
         public static JArray mstClassArray = null;
