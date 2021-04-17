@@ -3630,7 +3630,12 @@ namespace FGOSBIAReloaded
                     .Replace(" ", "").Replace("[", "").Replace("]", "");
             }
 
-            if (svtIDlist == "") return;
+            if (svtIDlist == "")
+            {
+                Dispatcher.Invoke(() => { ButtonSvtFilter.IsEnabled = true; });
+                return;
+            }
+
             var SvtIDArray = svtIDlist.Split(',');
             var SvtOutputStr = SvtIDArray.Aggregate("\r\n",
                 (current, svtIDtmp) => current + GetSvtName(svtIDtmp, 0) + "(" + svtIDtmp + ")\r\n");

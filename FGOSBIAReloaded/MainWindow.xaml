@@ -309,7 +309,7 @@
                                Margin="10,377,0,0" HorizontalContentAlignment="Center" FontWeight="Bold" />
                         <Label x:Name="hpatkbalance" Content="( 攻防倾向: 均衡 )" HorizontalAlignment="Left" Height="27"
                                VerticalAlignment="Top" Width="173" FontFamily="Microsoft JhengHei UI" FontSize="14"
-                               Foreground="#FF333333" Margin="310,327,0,0" FontWeight="Bold"
+                               Foreground="#FF333333" Margin="310,315,0,0" FontWeight="Bold"
                                HorizontalContentAlignment="Left" />
                     </Grid>
                 </TabItem>
