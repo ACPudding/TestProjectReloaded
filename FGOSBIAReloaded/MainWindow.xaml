@@ -3,7 +3,7 @@
                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                  xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
                  GlowBrush="{DynamicResource MahApps.Brushes.Accent}"
-                 Title="FGO从者基础信息解析" Height="500" Width="574" ShowMaxRestoreButton="False"
+                 Title="FGO从者基础信息解析" Height="520" Width="1148" ShowMaxRestoreButton="False"
                  ShowMinButton="False" ResizeMode="NoResize" Icon="icon.ico" Loaded="Form_Load">
     <mah:MetroWindow.Background>
         <LinearGradientBrush EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
@@ -15,8 +15,8 @@
                     <TranslateTransform />
                 </TransformGroup>
             </LinearGradientBrush.RelativeTransform>
-            <GradientStop Color="#FF009385" Offset="1" />
-            <GradientStop Color="#FF0078AD" />
+            <GradientStop Color="#FFD4D4D4" Offset="1" />
+            <GradientStop Color="White" />
         </LinearGradientBrush>
     </mah:MetroWindow.Background>
     <Grid>
@@ -34,20 +34,16 @@
                 Width="81" Click="Button_Click_1" FontFamily="Microsoft JhengHei UI" Foreground="#FF333333" />
         <Button Content="清空" HorizontalAlignment="Left" Height="26" Margin="473,28,0,0" VerticalAlignment="Top"
                 Width="81" Click="Button_Click_2" FontFamily="Microsoft JhengHei UI" Foreground="#FF333333" />
-        <TextBlock x:Name="RemindText" TextWrapping="Wrap" Text="" Margin="112,10,272,412" Foreground="#FF333333"
+        <TextBlock x:Name="RemindText" TextWrapping="Wrap" Text="" Margin="112,10,841,412" Foreground="#FF333333"
                    FontFamily="Microsoft JhengHei UI" FontSize="11" FontWeight="Bold" />
         <Grid Margin="0,59,0,0">
             <Grid.Background>
                 <SolidColorBrush Color="#FFDDDDDD" Opacity="0.4" />
             </Grid.Background>
-            <TabControl HorizontalAlignment="Left" Height="412" Margin="0,0,0,0" VerticalAlignment="Top" Width="568"
+            <TabControl HorizontalAlignment="Left" Height="412" Margin="0,0,0,0" VerticalAlignment="Top" Width="1136"
                         mah:HeaderedControlHelper.HeaderFontFamily="Microsoft JhengHei UI"
-                        mah:HeaderedControlHelper.HeaderFontSize="14" mah:TabControlHelper.UnderlineBrush="#FF484848"
-                        TabStripPlacement="Left" Background="{x:Null}" Foreground="#FF333333">
+                        mah:HeaderedControlHelper.HeaderFontSize="14" mah:TabControlHelper.UnderlineBrush="#FF484848" Background="{x:Null}" Foreground="{x:Null}">
                 <TabItem x:Name="Tab1" Header="基础信息" FontFamily="Microsoft JhengHei UI" FontSize="9">
-                    <TabItem.Background>
-                        <SolidColorBrush Color="#FF333333" Opacity="0.2" />
-                    </TabItem.Background>
                     <Grid x:Name="svtdetail" Margin="0,0,0,0">
                         <Label Content="从者名称:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top"
                                Width="97"
@@ -305,18 +301,93 @@
                                Foreground="#FF333333" Margin="240,345,0,0" FontWeight="Bold" />
                         <Label x:Name="sixwei" Content="" HorizontalAlignment="Left" Height="27"
                                VerticalAlignment="Top"
-                               Width="473" FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
-                               Margin="10,377,0,0" HorizontalContentAlignment="Center" FontWeight="Bold" />
+                               Width="482" FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
+                               Margin="0,377,0,-20" HorizontalContentAlignment="Center" FontWeight="Bold" />
                         <Label x:Name="hpatkbalance" Content="( 攻防倾向: 均衡 )" HorizontalAlignment="Left" Height="27"
                                VerticalAlignment="Top" Width="173" FontFamily="Microsoft JhengHei UI" FontSize="14"
                                Foreground="#FF333333" Margin="310,315,0,0" FontWeight="Bold"
                                HorizontalContentAlignment="Left" />
+                        <Label Content="配卡:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top" Width="97"
+                               FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
+                               Margin="483,28,0,0" FontWeight="Bold" />
+                        <TextBox x:Name="cards" HorizontalAlignment="Left" Height="80" Margin="520,1,0,0"
+                                 TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="370"
+                                 IsReadOnly="True" HorizontalContentAlignment="Center"
+                                 VerticalContentAlignment="Center"
+                                 Foreground="#FF333333" FontFamily="Meiryo" FontSize="36">
+                            <TextBox.Background>
+                                <SolidColorBrush Color="#FF484848" Opacity="0.15" />
+                            </TextBox.Background>
+                        </TextBox>
+                        <Label Content="B卡:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top" Width="97"
+                               FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
+                               Margin="483,86,0,0" FontWeight="Bold" />
+                        <TextBox x:Name="bustercard" HorizontalAlignment="Left" Height="17" Margin="520,87,0,0"
+                                 TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="370"
+                                 IsReadOnly="True" HorizontalContentAlignment="Center"
+                                 VerticalContentAlignment="Center"
+                                 Foreground="#FF333333" FontFamily="Meiryo">
+                            <TextBox.Background>
+                                <SolidColorBrush Color="#FF484848" Opacity="0.15" />
+                            </TextBox.Background>
+                        </TextBox>
+                        <Label Content="A卡:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top" Width="97"
+                               FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
+                               Margin="483,118,0,0" FontWeight="Bold" />
+                        <TextBox x:Name="artscard" HorizontalAlignment="Left" Height="17" Margin="520,119,0,0"
+                                 TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="370"
+                                 IsReadOnly="True" HorizontalContentAlignment="Center"
+                                 VerticalContentAlignment="Center"
+                                 Foreground="#FF333333" FontFamily="Meiryo">
+                            <TextBox.Background>
+                                <SolidColorBrush Color="#FF484848" Opacity="0.15" />
+                            </TextBox.Background>
+                        </TextBox>
+                        <Label Content="Q卡:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top" Width="97"
+                               FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
+                               Margin="483,149,0,0" FontWeight="Bold" />
+                        <TextBox x:Name="quickcard" HorizontalAlignment="Left" Height="17" Margin="520,150,0,0"
+                                 TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="370"
+                                 IsReadOnly="True" HorizontalContentAlignment="Center"
+                                 VerticalContentAlignment="Center"
+                                 Foreground="#FF333333" FontFamily="Meiryo">
+                            <TextBox.Background>
+                                <SolidColorBrush Color="#FF484848" Opacity="0.15" />
+                            </TextBox.Background>
+                        </TextBox>
+                        <Label Content="EX卡:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top" Width="97"
+                               FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
+                               Margin="483,180,0,0" FontWeight="Bold" />
+                        <TextBox x:Name="extracard" HorizontalAlignment="Left" Height="17" Margin="520,181,0,0"
+                                 TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="370"
+                                 IsReadOnly="True" HorizontalContentAlignment="Center"
+                                 VerticalContentAlignment="Center"
+                                 Foreground="#FF333333" FontFamily="Meiryo">
+                            <TextBox.Background>
+                                <SolidColorBrush Color="#FF484848" Opacity="0.15" />
+                            </TextBox.Background>
+                        </TextBox>
+                        <Label Content="宝具:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top" Width="97"
+                               FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
+                               Margin="483,211,0,0" FontWeight="Bold" />
+                        <TextBox x:Name="treasuredevicescard" HorizontalAlignment="Left" Height="17"
+                                 Margin="520,212,0,0"
+                                 TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="370"
+                                 IsReadOnly="True" HorizontalContentAlignment="Center"
+                                 VerticalContentAlignment="Center"
+                                 Foreground="#FF333333" FontFamily="Meiryo">
+                            <TextBox.Background>
+                                <SolidColorBrush Color="#FF484848" Opacity="0.15" />
+                            </TextBox.Background>
+                        </TextBox>
+                        <Label
+                            Content="注:&#xD;&#xA;除开&quot;配卡&quot;文本框以外的所有文本框中, &quot;Hit&quot;之前的表示该类型的指令卡的攻击次数&#xD;&#xA;(跳伤害几次), &quot;Hit&quot;之后的表示每次攻击所造成的伤害百分比.&#xD;&#xA;例如:&#xD;&#xA;&quot;5 hit [6,13,20,26,35]&quot; 表示该类型指令卡攻击次数 5 次,&#xD;&#xA;且每次伤害分别为 6% 13% 20% 26% 35%."
+                            HorizontalAlignment="Left" Width="454"
+                            FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
+                            Margin="488,285,0,0" FontWeight="Bold" />
                     </Grid>
                 </TabItem>
                 <TabItem Header="成长曲线" FontFamily="Microsoft JhengHei UI">
-                    <TabItem.Background>
-                        <SolidColorBrush Color="#FF333333" Opacity="0.2" />
-                    </TabItem.Background>
                     <Grid Margin="0,0,0,0">
                         <Label Content="注:&#13;本页仅供显示从者成长的曲线图形状,红色为ATK曲线,蓝色为HP曲线,目前仅能实现显示功能."
                                HorizontalAlignment="Left" Height="38" VerticalAlignment="Top"
@@ -375,9 +446,6 @@
                     </Grid>
                 </TabItem>
                 <TabItem Header="升级材料" FontFamily="Microsoft JhengHei UI">
-                    <TabItem.Background>
-                        <SolidColorBrush Color="#FF333333" Opacity="0.2" />
-                    </TabItem.Background>
                     <Grid Margin="0,0,0,0">
                         <ListView x:Name="LimitCombineItems" Margin="5,0,5,273" Foreground="#FF737373" FontSize="11">
                             <ListView.Background>
@@ -412,9 +480,6 @@
                     </Grid>
                 </TabItem>
                 <TabItem Header="羁绊文本" FontFamily="Microsoft JhengHei UI">
-                    <TabItem.Background>
-                        <SolidColorBrush Color="#FF333333" Opacity="0.2" />
-                    </TabItem.Background>
                     <Grid x:Name="svttexts" Margin="0,0,0,0">
                         <Label Content="文本1:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top" Width="97"
                                FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
@@ -503,95 +568,7 @@
                                Margin="244,224,0,0" FontWeight="Bold" />
                     </Grid>
                 </TabItem>
-                <TabItem Header="配卡信息" FontFamily="Microsoft JhengHei UI">
-                    <TabItem.Background>
-                        <SolidColorBrush Color="#FF333333" Opacity="0.2" />
-                    </TabItem.Background>
-                    <Grid x:Name="svtcards" Margin="0,0,0,0">
-                        <Label Content="配卡:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top" Width="97"
-                               FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
-                               Margin="0,37,0,0" FontWeight="Bold" />
-                        <TextBox x:Name="cards" HorizontalAlignment="Left" Height="80" Margin="37,10,0,0"
-                                 TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="443"
-                                 IsReadOnly="True" HorizontalContentAlignment="Center"
-                                 VerticalContentAlignment="Center"
-                                 Foreground="#FF333333" FontFamily="Meiryo" FontSize="36">
-                            <TextBox.Background>
-                                <SolidColorBrush Color="#FF484848" Opacity="0.15" />
-                            </TextBox.Background>
-                        </TextBox>
-                        <Label Content="B卡:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top" Width="97"
-                               FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
-                               Margin="0,95,0,0" FontWeight="Bold" />
-                        <TextBox x:Name="bustercard" HorizontalAlignment="Left" Height="17" Margin="37,96,0,0"
-                                 TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="443"
-                                 IsReadOnly="True" HorizontalContentAlignment="Center"
-                                 VerticalContentAlignment="Center"
-                                 Foreground="#FF333333" FontFamily="Meiryo">
-                            <TextBox.Background>
-                                <SolidColorBrush Color="#FF484848" Opacity="0.15" />
-                            </TextBox.Background>
-                        </TextBox>
-                        <Label Content="A卡:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top" Width="97"
-                               FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
-                               Margin="0,127,0,0" FontWeight="Bold" />
-                        <TextBox x:Name="artscard" HorizontalAlignment="Left" Height="17" Margin="37,128,0,0"
-                                 TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="443"
-                                 IsReadOnly="True" HorizontalContentAlignment="Center"
-                                 VerticalContentAlignment="Center"
-                                 Foreground="#FF333333" FontFamily="Meiryo">
-                            <TextBox.Background>
-                                <SolidColorBrush Color="#FF484848" Opacity="0.15" />
-                            </TextBox.Background>
-                        </TextBox>
-                        <Label Content="Q卡:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top" Width="97"
-                               FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
-                               Margin="0,158,0,0" FontWeight="Bold" />
-                        <TextBox x:Name="quickcard" HorizontalAlignment="Left" Height="17" Margin="37,159,0,0"
-                                 TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="443"
-                                 IsReadOnly="True" HorizontalContentAlignment="Center"
-                                 VerticalContentAlignment="Center"
-                                 Foreground="#FF333333" FontFamily="Meiryo">
-                            <TextBox.Background>
-                                <SolidColorBrush Color="#FF484848" Opacity="0.15" />
-                            </TextBox.Background>
-                        </TextBox>
-                        <Label Content="EX卡:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top" Width="97"
-                               FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
-                               Margin="0,189,0,0" FontWeight="Bold" />
-                        <TextBox x:Name="extracard" HorizontalAlignment="Left" Height="17" Margin="37,190,0,0"
-                                 TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="443"
-                                 IsReadOnly="True" HorizontalContentAlignment="Center"
-                                 VerticalContentAlignment="Center"
-                                 Foreground="#FF333333" FontFamily="Meiryo">
-                            <TextBox.Background>
-                                <SolidColorBrush Color="#FF484848" Opacity="0.15" />
-                            </TextBox.Background>
-                        </TextBox>
-                        <Label Content="宝具:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top" Width="97"
-                               FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
-                               Margin="0,220,0,0" FontWeight="Bold" />
-                        <TextBox x:Name="treasuredevicescard" HorizontalAlignment="Left" Height="17"
-                                 Margin="37,221,0,0"
-                                 TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="443"
-                                 IsReadOnly="True" HorizontalContentAlignment="Center"
-                                 VerticalContentAlignment="Center"
-                                 Foreground="#FF333333" FontFamily="Meiryo">
-                            <TextBox.Background>
-                                <SolidColorBrush Color="#FF484848" Opacity="0.15" />
-                            </TextBox.Background>
-                        </TextBox>
-                        <Label
-                            Content="注:&#xD;&#xA;除开&quot;配卡&quot;文本框以外的所有文本框中, &quot;Hit&quot;之前的表示该类型的指令卡的攻击次数&#xD;&#xA;(跳伤害几次), &quot;Hit&quot;之后的表示每次攻击所造成的伤害百分比.&#xD;&#xA;例如:&#xD;&#xA;&quot;5 hit [6,13,20,26,35]&quot; 表示该类型指令卡攻击次数 5 次,&#xD;&#xA;且每次伤害分别为 6% 13% 20% 26% 35%."
-                            HorizontalAlignment="Left" Width="487"
-                            FontFamily="Microsoft JhengHei UI" FontSize="12" Foreground="#FF333333"
-                            Margin="0,285,0,0" FontWeight="Bold" />
-                    </Grid>
-                </TabItem>
                 <TabItem Header="宝具信息" FontFamily="Microsoft JhengHei UI">
-                    <TabItem.Background>
-                        <SolidColorBrush Color="#FF333333" Opacity="0.2" />
-                    </TabItem.Background>
                     <Grid x:Name="svtTDs" Margin="0,0,0,0">
                         <Label Content="宝具卡色:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top"
                                Width="97"
@@ -708,9 +685,6 @@
                     </Grid>
                 </TabItem>
                 <TabItem Header="职介技能" FontFamily="Microsoft JhengHei UI">
-                    <TabItem.Background>
-                        <SolidColorBrush Color="#FF333333" Opacity="0.2" />
-                    </TabItem.Background>
                     <Grid Margin="0,0,0,0">
                         <Label Content="注:&#13;此处显示职介技能的详细数值,按照技能进行分类,如果一个技能有多个效果则会换行显示." HorizontalAlignment="Left"
                                Height="52" VerticalAlignment="Top"
@@ -741,9 +715,6 @@
                     </Grid>
                 </TabItem>
                 <TabItem Header="技能1" FontFamily="Microsoft JhengHei UI">
-                    <TabItem.Background>
-                        <SolidColorBrush Color="#FF333333" Opacity="0.2" />
-                    </TabItem.Background>
                     <Grid x:Name="svtskill1" Margin="0,0,0,0">
                         <Label Content="技能名称:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top"
                                Width="97"
@@ -858,9 +829,6 @@
                     </Grid>
                 </TabItem>
                 <TabItem Header="技能2" FontFamily="Microsoft JhengHei UI" FontSize="11">
-                    <TabItem.Background>
-                        <SolidColorBrush Color="#FF333333" Opacity="0.2" />
-                    </TabItem.Background>
                     <Grid x:Name="svtskill2" Margin="0,0,0,0">
                         <Label Content="技能名称:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top"
                                Width="97"
@@ -975,9 +943,6 @@
                     </Grid>
                 </TabItem>
                 <TabItem Header="技能3" FontFamily="Microsoft JhengHei UI" FontSize="11">
-                    <TabItem.Background>
-                        <SolidColorBrush Color="#FF333333" Opacity="0.2" />
-                    </TabItem.Background>
                     <Grid x:Name="svtskill3" Margin="0,0,0,0">
                         <Label Content="技能名称:" HorizontalAlignment="Left" Height="27" VerticalAlignment="Top"
                                Width="97"
@@ -1092,9 +1057,6 @@
                     </Grid>
                 </TabItem>
                 <TabItem Header="卡池列表" FontFamily="Microsoft JhengHei UI">
-                    <TabItem.Background>
-                        <SolidColorBrush Color="#FF333333" Opacity="0.2" />
-                    </TabItem.Background>
                     <Grid Margin="0,0,0,0">
                         <Label Content="正在PickUp的限时卡池:"
                                HorizontalAlignment="Left" Height="31" VerticalAlignment="Top"
@@ -1142,9 +1104,6 @@
                     </Grid>
                 </TabItem>
                 <TabItem Header="活动列表" FontFamily="Microsoft JhengHei UI">
-                    <TabItem.Background>
-                        <SolidColorBrush Color="#FF333333" Opacity="0.2" />
-                    </TabItem.Background>
                     <Grid Margin="0,0,0,0">
                         <Label Content="正在进行的活动(永久活动除外):"
                                HorizontalAlignment="Left" Height="31" VerticalAlignment="Top"
@@ -1192,9 +1151,6 @@
                     </Grid>
                 </TabItem>
                 <TabItem Header="关卡列表" FontFamily="Microsoft JhengHei UI">
-                    <TabItem.Background>
-                        <SolidColorBrush Color="#FF333333" Opacity="0.2" />
-                    </TabItem.Background>
                     <Grid Margin="0,0,0,0">
                         <Label Content="注:&#13;本页暂时只作为在新发布的强化任务时查询PickUP关卡以便快速定位强化本对象."
                                HorizontalAlignment="Left" Height="44" VerticalAlignment="Top"
@@ -1225,9 +1181,6 @@
                     </Grid>
                 </TabItem>
                 <TabItem Header="职介一览" FontFamily="Microsoft JhengHei UI">
-                    <TabItem.Background>
-                        <SolidColorBrush Color="#FF333333" Opacity="0.2" />
-                    </TabItem.Background>
                     <Grid Margin="0,0,0,0">
                         <Label Content="注:&#13;职介栏中括号内显示的为克制/逆克制伤害倍率.(全部为攻击侧数据)"
                                HorizontalAlignment="Left" Height="44" VerticalAlignment="Top"
@@ -1256,9 +1209,6 @@
                     </Grid>
                 </TabItem>
                 <TabItem Header="加成从者" FontFamily="Microsoft JhengHei UI">
-                    <TabItem.Background>
-                        <SolidColorBrush Color="#FF333333" Opacity="0.2" />
-                    </TabItem.Background>
                     <Grid Margin="0,0,0,0">
                         <Label Content="注:&#13;本页仅解析下一活动(即游戏内显示 次回イベント対象)的加成从者."
                                HorizontalAlignment="Left" Height="44" VerticalAlignment="Top"
@@ -1287,9 +1237,6 @@
                     </Grid>
                 </TabItem>
                 <TabItem Header="资源解包" FontFamily="Microsoft JhengHei UI">
-                    <TabItem.Background>
-                        <SolidColorBrush Color="#FF333333" Opacity="0.2" />
-                    </TabItem.Background>
                     <Grid Margin="0,0,0,0">
                         <Label Content="资源文件解密/重命名(JP Version Only)" HorizontalAlignment="Left" Height="40"
                                VerticalAlignment="Top"
@@ -1331,9 +1278,6 @@
                     </Grid>
                 </TabItem>
                 <TabItem Header="设置" FontFamily="Microsoft JhengHei UI">
-                    <TabItem.Background>
-                        <SolidColorBrush Color="#FF333333" Opacity="0.2" />
-                    </TabItem.Background>
                     <Grid Margin="0,0,0,0">
                         <Label Content="设置" HorizontalAlignment="Left" Height="40"
                                Margin="10,0,0,0" VerticalAlignment="Top" Width="259" FontFamily="Microsoft JhengHei UI"
@@ -1414,9 +1358,7 @@
                     </Grid>
                 </TabItem>
                 <TabItem Header="关于" FontFamily="Microsoft JhengHei UI">
-                    <TabItem.Background>
-                        <SolidColorBrush Color="#FF333333" Opacity="0.2" />
-                    </TabItem.Background>
+                    
                     <Grid Margin="0,0,0,0">
                         <Label Content="FGOServantBasicInformationAnalyzer" HorizontalAlignment="Left" Height="40"
                                Margin="10,0,0,0" VerticalAlignment="Top" Width="383" FontFamily="Microsoft JhengHei UI"

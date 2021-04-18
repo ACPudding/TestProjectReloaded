@@ -1741,10 +1741,10 @@ namespace FGOSBIAReloaded
                 foreach (UIElement ui2 in childrens2)
                     if (ui2 is TextBox box)
                         box.Text = "";
-                var childrens3 = svtcards.Children;
+                /*var childrens3 = svtcards.Children;
                 foreach (UIElement ui2 in childrens3)
                     if (ui2 is TextBox box)
-                        box.Text = "";
+                        box.Text = "";*/
                 var childrens4 = svtTDs.Children;
                 foreach (UIElement ui2 in childrens4)
                     if (ui2 is TextBox box)
